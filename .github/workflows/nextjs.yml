@@ -1,37 +1,55 @@
-import type {NextConfig} from 'next';
+name: Deploy Next.js site to Pages
 
-const nextConfig: NextConfig = {
-  reactStrictMode: true,
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: false,
-  },
-  // Allow access to remote image placeholder.
-  images: {
-    // GitHub Pages static export cannot use Next.js default image optimization
-    unoptimized: !!process.env.GITHUB_ACTIONS, 
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-        port: '',
-        pathname: '/**', 
-      },
-    ],
-  },
-  // Automatically use 'export' for GitHub Pages, and 'standalone' for AI Studio
-  output: process.env.GITHUB_ACTIONS ? 'export' : 'standalone',
-  transpilePackages: ['motion'],
-  webpack: (config, {dev}) => {
-    if (dev && process.env.DISABLE_HMR === 'true') {
-      config.watchOptions = {
-        ignored: /.*/,
-      };
-    }
-    return config;
-  },
-};
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
 
-export default nextConfig;
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          static_site_generator: next
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Build with Next.js
+        run: npm run build
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
