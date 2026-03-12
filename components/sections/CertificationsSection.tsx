@@ -1,13 +1,14 @@
 'use client';
 import { motion } from 'motion/react';
 import { ExternalLink } from 'lucide-react';
+import Image from 'next/image'; // <-- Added this import
 
 const certs = [
   { 
     name: "IELTS Band 7", 
     link: "/ielts.pdf",
     desc: "Demonstrated high proficiency in English language skills, including listening, reading, writing, and speaking.",
-    logo: "/ielts.png" // Placeholder for user's transparent PNG
+    logo: "/ielts.png"
   },
   { 
     name: "CompTIA ITF+", 
@@ -59,7 +60,13 @@ export default function CertificationsSection() {
             {/* Logo Placeholder */}
             <div className="w-24 h-24 md:w-32 md:h-32 shrink-0 bg-black/50 border border-red-900/30 rounded-xl flex items-center justify-center mb-6 md:mb-0 md:mr-8 relative group-hover:border-red-500/50 transition-colors overflow-hidden shadow-[inset_0_0_20px_rgba(220,38,38,0.1)] group-hover:shadow-[inset_0_0_30px_rgba(220,38,38,0.3)]">
               {c.logo ? (
-                <img src={c.logo} alt={`${c.name} logo`} className="w-full h-full object-contain p-2 relative z-10" />
+                /* Swapped <img> for <Image /> and added the fill property */
+                <Image 
+                  src={c.logo} 
+                  alt={`${c.name} logo`} 
+                  fill 
+                  className="object-contain p-2 relative z-10" 
+                />
               ) : (
                 <span className="text-red-900/50 text-xs tracking-widest uppercase text-center px-2 relative z-10">Logo<br/>Here</span>
               )}
