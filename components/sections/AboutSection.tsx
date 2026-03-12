@@ -26,10 +26,14 @@ export default function AboutSection() {
       delay: Math.random() * 2
     }));
     
-    setParticles(generatedParticles);
-
-    const timer = setTimeout(() => setShowContent(true), 800);
-    return () => clearTimeout(timer);
+    // Defer the state update to avoid synchronous setState warnings in Next.js 15
+    const particleTimer = setTimeout(() => setParticles(generatedParticles), 0);
+    const contentTimer = setTimeout(() => setShowContent(true), 800);
+    
+    return () => {
+      clearTimeout(particleTimer);
+      clearTimeout(contentTimer);
+    };
   }, []);
 
   return (
