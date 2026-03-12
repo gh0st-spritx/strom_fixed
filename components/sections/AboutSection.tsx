@@ -2,10 +2,32 @@
 import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 
+type Particle = {
+  id: number;
+  initialX: string;
+  animateX: string;
+  scale: number;
+  duration: number;
+  delay: number;
+};
+
 export default function AboutSection() {
   const [showContent, setShowContent] = useState(false);
+  const [particles, setParticles] = useState<Particle[]>([]);
 
   useEffect(() => {
+    // Generate random values for particles only on the client side
+    const generatedParticles: Particle[] = Array.from({ length: 35 }).map((_, i) => ({
+      id: i,
+      initialX: `${Math.random() * 100}%`,
+      animateX: `${Math.random() * 100}%`,
+      scale: Math.random() * 2 + 1,
+      duration: Math.random() * 3 + 2,
+      delay: Math.random() * 2
+    }));
+    
+    setParticles(generatedParticles);
+
     const timer = setTimeout(() => setShowContent(true), 800);
     return () => clearTimeout(timer);
   }, []);
@@ -14,25 +36,25 @@ export default function AboutSection() {
     <div className="h-full flex flex-col items-center justify-center px-6 md:px-20 max-w-5xl mx-auto py-12 relative overflow-hidden">
       {/* Fire/Ember Particles Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-60">
-        {[...Array(35)].map((_, i) => (
+        {particles.map((particle) => (
           <motion.div
-            key={i}
+            key={particle.id}
             className="absolute w-1.5 h-1.5 bg-orange-500 rounded-full blur-[1px]"
             initial={{ 
               y: '100%', 
-              x: `${Math.random() * 100}%`,
+              x: particle.initialX,
               opacity: 0 
             }}
             animate={{ 
               y: '-10%', 
-              x: `${Math.random() * 100}%`,
+              x: particle.animateX,
               opacity: [0, 1, 0],
-              scale: [1, Math.random() * 2 + 1, 1]
+              scale: [1, particle.scale, 1]
             }}
             transition={{ 
-              duration: Math.random() * 3 + 2, 
+              duration: particle.duration, 
               repeat: Infinity, 
-              delay: Math.random() * 2 
+              delay: particle.delay 
             }}
           />
         ))}
