@@ -5,6 +5,12 @@ import Image from 'next/image'; // <-- Added this import
 
 const certs = [
   { 
+    name: "CompTIA A+", 
+    link: "https://www.credly.com/badges/a0084bc0-bc09-40e5-8448-cf32bb86fd7d/public_url",
+    desc: "Demonstrated high proficiency in comprehensive hardware, software, and network troubleshooting.",
+    logo: "/a.png"
+  },
+  { 
     name: "IELTS Band 7", 
     link: "/ielts.pdf",
     desc: "Demonstrated high proficiency in English language skills, including listening, reading, writing, and speaking.",
