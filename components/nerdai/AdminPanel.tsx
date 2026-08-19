@@ -8,6 +8,7 @@ import {
 import { createUser, deleteUser, toggleUserActive } from '@/lib/nerdai/auth';
 import { getUsers, getModels, saveModels, getSettings, saveSettings } from '@/lib/nerdai/store';
 import type { AuthSession, NerdUser, NerdModel, NerdAISettings, ProviderType, AccessType } from '@/lib/nerdai/types';
+import { syncModels } from '@/lib/nerdai/modelSync';
 
 type Tab = 'users' | 'models' | 'settings';
 type ModelStep = 1 | 2 | 3 | 4;
@@ -149,15 +150,9 @@ export default function AdminPanel({ session, onBack }: { session: AuthSession; 
   const handleSyncModels = async () => {
     setMs({ syncLoading: true, syncError: '', syncedModels: [] });
     try {
-      const res = await fetch('/api/nerdai/models/sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider: ms.provider, config: getProviderConfig() }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Sync failed');
-      setMs({ syncedModels: data.models ?? [], syncLoading: false });
-      if (!data.models?.length) setMs({ syncError: 'No models found.' });
+      const models = await syncModels(ms.provider, getProviderConfig());
+      setMs({ syncedModels: models, syncLoading: false });
+      if (!models.length) setMs({ syncError: 'No models found.' });
     } catch (e) {
       setMs({ syncLoading: false, syncError: e instanceof Error ? e.message : 'Sync failed' });
     }

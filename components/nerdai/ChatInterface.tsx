@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { logout } from '@/lib/nerdai/auth';
 import { getChats, saveChats, getModels, getSettings } from '@/lib/nerdai/store';
+import { callAI } from '@/lib/nerdai/providers';
 import type { AuthSession, NerdModel, ChatSession, ChatMessage } from '@/lib/nerdai/types';
 
 // ── Markdown renderer ──────────────────────────────────────────────────────
@@ -303,71 +304,16 @@ export default function ChatInterface({
     const systemPrompt = model.systemPrompt || settings.defaultSystemPrompt;
 
     try {
-      const res = await fetch('/api/nerdai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          provider: model.provider,
-          config: model.config,
-          messages: contextMessages,
-          modelId: model.modelId,
-          maxTokens: model.maxTokens,
-          temperature: model.temperature,
-          systemPrompt,
-          stream: model.provider !== 'bedrock',
-        }),
+      const content = await callAI(model, contextMessages, systemPrompt, (acc) => {
+        setStreamingContent(acc);
       });
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error((errData as { error?: string }).error ?? `HTTP ${res.status}`);
-      }
-
-      const contentType = res.headers.get('content-type') ?? '';
-
-      if (contentType.includes('text/event-stream') && res.body) {
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
-        let accumulated = '';
-        let buf = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buf += decoder.decode(value, { stream: true });
-          const lines = buf.split('\n');
-          buf = lines.pop() ?? '';
-          for (const line of lines) {
-            const trimmed = line.trim();
-            if (!trimmed.startsWith('data:')) continue;
-            const jsonStr = trimmed.slice(5).trim();
-            if (jsonStr === '[DONE]') continue;
-            try {
-              const chunk = JSON.parse(jsonStr);
-              if (chunk.content) {
-                accumulated += chunk.content;
-                setStreamingContent(accumulated);
-              }
-            } catch { /* skip */ }
-          }
-        }
-
-        const assistantMsg: ChatMessage = {
-          id: genId(), role: 'assistant', content: accumulated, timestamp: Date.now(), modelId: model.id,
-        };
-        const finalChat = { ...currentChat, messages: [...currentChat.messages, assistantMsg], updatedAt: Date.now() };
-        const finalChats = updatedChats.map(c => c.id === finalChat.id ? finalChat : c);
-        persistChats(finalChats);
-        setStreamingContent('');
-      } else {
-        const data = await res.json();
-        const assistantMsg: ChatMessage = {
-          id: genId(), role: 'assistant', content: (data as { content: string }).content ?? '', timestamp: Date.now(), modelId: model.id,
-        };
-        const finalChat = { ...currentChat, messages: [...currentChat.messages, assistantMsg], updatedAt: Date.now() };
-        const finalChats = updatedChats.map(c => c.id === finalChat.id ? finalChat : c);
-        persistChats(finalChats);
-      }
+      const assistantMsg: ChatMessage = {
+        id: genId(), role: 'assistant', content, timestamp: Date.now(), modelId: model.id,
+      };
+      const finalChat = { ...currentChat, messages: [...currentChat.messages, assistantMsg], updatedAt: Date.now() };
+      const finalChats = updatedChats.map(c => c.id === finalChat.id ? finalChat : c);
+      persistChats(finalChats);
+      setStreamingContent('');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Request failed');
     } finally {
