@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowLeft, Users, Cpu, Settings, Plus, Trash2, Shield,
@@ -75,9 +75,9 @@ const defaultModelState = (): AddModelState => ({
 
 export default function AdminPanel({ session, onBack }: { session: AuthSession; onBack: () => void }) {
   const [tab, setTab] = useState<Tab>('users');
-  const [users, setUsers] = useState<NerdUser[]>([]);
-  const [models, setModels] = useState<NerdModel[]>([]);
-  const [settings, setSettings] = useState<NerdAISettings>({ systemName: '', welcomeMessage: '', allowRegistration: false, defaultSystemPrompt: '' });
+  const [users, setUsers] = useState<NerdUser[]>(getUsers);
+  const [models, setModels] = useState<NerdModel[]>(getModels);
+  const [settings, setSettings] = useState<NerdAISettings>(getSettings);
 
   // Users form
   const [showAddUser, setShowAddUser] = useState(false);
@@ -98,11 +98,6 @@ export default function AdminPanel({ session, onBack }: { session: AuthSession; 
   // Settings
   const [settingsSaved, setSettingsSaved] = useState(false);
 
-  useEffect(() => {
-    setUsers(getUsers());
-    setModels(getModels());
-    setSettings(getSettings());
-  }, []);
 
   // ── USERS ──
   const handleAddUser = async () => {

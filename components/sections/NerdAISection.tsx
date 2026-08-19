@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Brain, Cpu, Zap, Lock, ChevronRight, ArrowLeft } from 'lucide-react';
 import LoginPage from '@/components/nerdai/LoginPage';
@@ -22,14 +22,10 @@ interface Particle {
 }
 
 export default function NerdAISection({ onBack }: { onBack?: () => void }) {
-  const [view, setView] = useState<View>('landing');
-  const [session, setSession] = useState<AuthSession | null>(null);
-  const [particles, setParticles] = useState<Particle[]>([]);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const ps: Particle[] = Array.from({ length: 40 }, (_, i) => ({
+  // NerdAISection is only ever mounted client-side (rendered after user navigation),
+  // so lazy initialisers with Math.random and localStorage are safe here.
+  const [particles] = useState<Particle[]>(() =>
+    Array.from({ length: 40 }, (_, i) => ({
       id: i,
       x: `${Math.random() * 100}%`,
       y: `${Math.random() * 100}%`,
@@ -38,15 +34,10 @@ export default function NerdAISection({ onBack }: { onBack?: () => void }) {
       size: Math.random() * 3 + 1,
       duration: Math.random() * 5 + 4,
       delay: Math.random() * 4,
-    }));
-    setParticles(ps);
-
-    const existing = getCurrentSession();
-    if (existing) {
-      setSession(existing);
-      setView('chat');
-    }
-  }, []);
+    }))
+  );
+  const [session, setSession] = useState<AuthSession | null>(() => getCurrentSession());
+  const [view, setView] = useState<View>(() => (getCurrentSession() ? 'chat' : 'landing'));
 
   const handleLogin = (s: AuthSession) => {
     setSession(s);
@@ -68,8 +59,6 @@ export default function NerdAISection({ onBack }: { onBack?: () => void }) {
       setView('login');
     }
   };
-
-  if (!mounted) return null;
 
   return (
     <div className="w-full h-full relative overflow-hidden bg-black/80 backdrop-blur-[2px]">
