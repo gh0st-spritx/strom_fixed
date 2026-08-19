@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
-const navItems = ['Home', 'About', 'Projects', 'Certifications', 'Contact'];
+const navItems = ['Home', 'About', 'Projects', 'Certifications', 'Contact', 'NerdAI'];
 
 export default function Navbar({ activeSection, onNavigate }: { activeSection: string, onNavigate: (s: string) => void }) {
   const [isOpen, setIsOpen] = useState(false);

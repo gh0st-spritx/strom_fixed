@@ -12,6 +12,7 @@ import AboutSection from '@/components/sections/AboutSection';
 import ProjectsSection from '@/components/sections/ProjectsSection';
 import CertificationsSection from '@/components/sections/CertificationsSection';
 import ContactSection from '@/components/sections/ContactSection';
+import NerdAISection from '@/components/sections/NerdAISection';
 
 export default function Portfolio() {
   const [loading, setLoading] = useState(true);
@@ -68,21 +69,39 @@ export default function Portfolio() {
           <Navbar activeSection={activeSection} onNavigate={handleNavigate} />
           <MusicToggle />
 
-          {/* Main Content Area */}
-          <div className="relative z-20 w-full h-full pt-24 pb-12 overflow-y-auto">
-            <AnimatePresence mode="wait">
+          {/* Main Content Area (portfolio sections) */}
+          {displaySection !== 'NerdAI' && (
+            <div className="relative z-20 w-full h-full pt-24 pb-12 overflow-y-auto">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={displaySection}
+                  initial={{ opacity: 0, filter: 'blur(10px)' }}
+                  animate={{ opacity: 1, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, filter: 'blur(10px)' }}
+                  transition={{ duration: 0.5 }}
+                  className="min-h-full"
+                >
+                  {renderSection()}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          )}
+
+          {/* NerdAI Full-Screen Overlay — sits above navbar (z-40) but below lightning (z-50) */}
+          <AnimatePresence>
+            {displaySection === 'NerdAI' && (
               <motion.div
-                key={displaySection}
-                initial={{ opacity: 0, filter: 'blur(10px)' }}
-                animate={{ opacity: 1, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, filter: 'blur(10px)' }}
+                key="nerdai-overlay"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 transition={{ duration: 0.5 }}
-                className="min-h-full"
+                className="fixed inset-0 z-[45]"
               >
-                {renderSection()}
+                <NerdAISection onBack={() => handleNavigate('Home')} />
               </motion.div>
-            </AnimatePresence>
-          </div>
+            )}
+          </AnimatePresence>
         </>
       )}
     </main>
