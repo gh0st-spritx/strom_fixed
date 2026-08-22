@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CSE215L – Full Study Guide (Lab Final)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #222; background: #fff; padding: 30px 40px; line-height: 1.6; }
+  h1 { text-align: center; font-size: 22px; color: #1a237e; margin-bottom: 4px; }
+  .subtitle { text-align: center; color: #555; font-size: 13px; margin-bottom: 20px; }
+  h2 { font-size: 16px; color: #fff; background: #1565c0; padding: 6px 12px; margin: 25px 0 10px 0; border-radius: 4px; }
+  h3 { font-size: 14px; color: #0d47a1; margin: 14px 0 5px 0; border-bottom: 1px solid #90caf9; padding-bottom: 2px; }
+  h4 { font-size: 13px; color: #1a237e; margin: 10px 0 4px 0; }
+  p { margin-bottom: 6px; }
+  ul, ol { margin-left: 20px; margin-bottom: 8px; }
+  li { margin-bottom: 3px; }
+  pre { background: #263238; color: #eceff1; font-family: 'Courier New', monospace; font-size: 12px; padding: 12px 15px; border-radius: 5px; overflow-x: auto; margin: 8px 0; line-height: 1.5; }
+  code { background: #e8eaf6; color: #1a237e; font-family: 'Courier New', monospace; padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+  .note { background: #e3f2fd; border-left: 4px solid #1565c0; padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; }
+  .rule { background: #e8f5e9; border-left: 4px solid #2e7d32; padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; }
+  .warning { background: #fff3e0; border-left: 4px solid #e65100; padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; }
+  .danger { background: #ffebee; border-left: 4px solid #c62828; padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 12px; }
+  th { background: #1565c0; color: #fff; padding: 7px 10px; text-align: left; }
+  td { border: 1px solid #cfd8dc; padding: 6px 10px; vertical-align: top; }
+  tr:nth-child(even) { background: #f5f5f5; }
+  .toc { background: #f8f9fa; border: 1px solid #ddd; padding: 14px 20px; margin-bottom: 25px; border-radius: 5px; }
+  .toc h3 { color: #1a237e; border: none; }
+  .toc ol { margin-top: 6px; }
+  .toc a { color: #1565c0; text-decoration: none; }
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0; }
+  .compare-box { border: 1px solid #90caf9; border-radius: 5px; padding: 10px; }
+  .compare-box h4 { background: #bbdefb; padding: 4px 8px; border-radius: 3px; margin: -10px -10px 8px -10px; }
+  @media print {
+    body { padding: 15px 20px; font-size: 12px; }
+    h2 { page-break-after: avoid; }
+    pre { page-break-inside: avoid; }
+    .pagebreak { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+
+<h1>CSE215L – Programming Language II Lab</h1>
+<div class="subtitle">Full Study Guide for Lab Final Exam &nbsp;|&nbsp; North South University &nbsp;|&nbsp; Topics: Labs 10–13</div>
+
+<div class="toc">
+  <h3>Table of Contents</h3>
+  <ol>
+    <li><a href="#poly">Polymorphism</a></li>
+    <li><a href="#abstract">Abstract Classes</a></li>
+    <li><a href="#interface">Interfaces</a></li>
+    <li><a href="#exception">Exception Handling</a></li>
+    <li><a href="#fileio">File I/O</a></li>
+    <li><a href="#arraylist">ArrayList with Polymorphism</a></li>
+    <li><a href="#uml">Reading UML Diagrams</a></li>
+    <li><a href="#comparison">Abstract Class vs Interface</a></li>
+    <li><a href="#fullexample">Full Code Examples</a></li>
+  </ol>
+</div>
+
+<!-- ==================== POLYMORPHISM ==================== -->
+<h2 id="poly">1. Polymorphism</h2>
+
+<p>Polymorphism means "many forms." In Java, it allows a parent-class reference to point to a child-class object. The correct (child) version of an overridden method runs at runtime — this is called <strong>dynamic dispatch</strong>.</p>
+
+<h3>Key Rules</h3>
+<ul>
+  <li>A parent reference can hold a child object: <code>Animal a = new Dog();</code></li>
+  <li>The method called is determined by the <em>actual object type</em>, not the reference type.</li>
+  <li>Use <code>@Override</code> annotation when overriding a method.</li>
+  <li>The child method signature must exactly match the parent signature.</li>
+  <li>Child can call parent constructor with <code>super(args)</code>.</li>
+  <li>Child can call parent method with <code>super.methodName()</code>.</li>
+</ul>
+
+<h3>Method Overriding Example</h3>
+<pre>class Animal {
+    String name;
+    Animal(String name) { this.name = name; }
+
+    void makeSound() {
+        System.out.println(name + " makes a sound.");
+    }
+}
+
+class Dog extends Animal {
+    Dog(String name) { super(name); }
+
+    @Override
+    void makeSound() {
+        System.out.println(name + " says: Woof!");
+    }
+}
+
+class Cat extends Animal {
+    Cat(String name) { super(name); }
+
+    @Override
+    void makeSound() {
+        System.out.println(name + " says: Meow!");
+    }
+}
+
+// Main
+Animal a1 = new Dog("Rex");  // parent ref, child object
+Animal a2 = new Cat("Whiskers");
+a1.makeSound();  // Woof! — resolved at RUNTIME
+a2.makeSound();  // Meow!</pre>
+
+<div class="rule">
+  <strong>Golden Rule:</strong> The reference type determines what methods you CAN call. The object type determines WHICH version runs.
+</div>
+
+<!-- ==================== ABSTRACT CLASSES ==================== -->
+<h2 id="abstract">2. Abstract Classes</h2>
+
+<h3>What is an Abstract Class?</h3>
+<p>An abstract class is declared with the <code>abstract</code> keyword. It hides implementation details and shows only functionality. Think of it as an incomplete blueprint.</p>
+
+<h3>Key Rules for Abstract Classes</h3>
+<ul>
+  <li>Use <code>abstract</code> keyword: <code>abstract class MyClass { }</code></li>
+  <li><strong>Cannot be instantiated</strong> — you cannot do <code>new AbstractClass()</code></li>
+  <li>Must be <strong>inherited</strong> by another class using <code>extends</code></li>
+  <li>Can have both <strong>abstract</strong> (no body) and <strong>concrete</strong> (with body) methods</li>
+  <li>Can have <strong>constructors</strong>, <strong>data fields</strong>, and <strong>regular methods</strong></li>
+  <li>In UML diagrams, abstract classes and abstract methods are shown in <em>Italics</em></li>
+</ul>
+
+<h3>What is an Abstract Method?</h3>
+<ul>
+  <li>Declared with <code>abstract</code> keyword, <strong>no body</strong>, ends with <code>;</code></li>
+  <li>Example: <code>public abstract void displayInfo();</code></li>
+  <li>Must be in an abstract class</li>
+  <li>Must be overridden in any concrete (non-abstract) subclass</li>
+  <li><strong>Do NOT use <code>final</code> or <code>static</code></strong> on abstract methods — final prevents overriding!</li>
+</ul>
+
+<div class="warning">
+  <strong>Cannot instantiate abstract class!</strong> <code>Book b = new Book();</code> → COMPILE ERROR. You can only instantiate the concrete subclasses.
+</div>
+
+<h3>Abstract Class Syntax</h3>
+<pre>abstract class ClassName {
+    // data fields (same as normal class)
+    private String field;
+
+    // constructors (same as normal class)
+    public ClassName() {}
+    public ClassName(String field) { this.field = field; }
+
+    // concrete method (has a body)
+    public void setField(String f) { this.field = f; }
+    public String getField() { return field; }
+
+    // abstract methods (NO body, ends with ;)
+    public abstract void displayInfo();
+    public abstract boolean checkSomething(int value);
+}</pre>
+
+<h3>Book / FictionBook / NonFictionBook Example (From Lab)</h3>
+
+<pre>// Abstract parent class
+abstract class Book {
+    private String name;
+    private String author;
+
+    public Book() {}
+
+    public Book(String name, String author) {
+        this.name = name;
+        this.author = author;
+    }
+
+    public void setName(String name) { this.name = name; }
+    public String getName() { return name; }
+    public void setAuthor(String author) { this.author = author; }
+    public String getAuthor() { return author; }
+
+    // Abstract methods — subclasses MUST implement these
+    public abstract void displayInfo();
+    public abstract boolean isRecommendedForAge(int age);
+}
+
+// Concrete subclass 1
+class FictionBook extends Book {
+    private String genre;
+
+    public FictionBook() {}
+
+    public FictionBook(String name, String author, String genre) {
+        super(name, author);   // calls Book(name, author) constructor
+        this.genre = genre;
+    }
+
+    public void setGenre(String genre) { this.genre = genre; }
+    public String getGenre() { return genre; }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(getName());    // use getter from parent
+        System.out.println(getAuthor());
+        System.out.println(genre);
+    }
+
+    @Override
+    public boolean isRecommendedForAge(int age) {
+        return age >= 14;    // FictionBook: 14 and above
+    }
+}
+
+// Concrete subclass 2
+class NonFictionBook extends Book {
+    private String subject;
+
+    public NonFictionBook() {}
+
+    public NonFictionBook(String name, String author, String subject) {
+        super(name, author);
+        this.subject = subject;
+    }
+
+    public void setSubject(String subject) { this.subject = subject; }
+    public String getSubject() { return subject; }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(getName());
+        System.out.println(getAuthor());
+        System.out.println(subject);
+    }
+
+    @Override
+    public boolean isRecommendedForAge(int age) {
+        return age >= 18;    // NonFictionBook: 18 and above
+    }
+}</pre>
+
+<h3>Using Abstract Classes in Main</h3>
+<pre>import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        FictionBook fb = new FictionBook("Harry Potter", "J.K. Rowling", "Fantasy");
+        NonFictionBook nfb = new NonFictionBook("Sapiens", "Yuval Noah Harari", "History");
+
+        fb.displayInfo();
+        System.out.print("Enter age: ");
+        int age = sc.nextInt();
+        System.out.println("Recommended: " + fb.isRecommendedForAge(age));
+
+        System.out.println("---");
+        nfb.displayInfo();
+        System.out.println("Recommended: " + nfb.isRecommendedForAge(age));
+    }
+}</pre>
+
+<!-- ==================== INTERFACES ==================== -->
+<h2 id="interface">3. Interfaces</h2>
+
+<h3>What is an Interface?</h3>
+<p>An interface is a completely abstract type that defines <em>what</em> a class must do, but not <em>how</em>. It is a contract or blueprint of behavior.</p>
+
+<h3>Key Rules for Interfaces</h3>
+<ul>
+  <li>Use <code>interface</code> keyword instead of <code>class</code></li>
+  <li>Use <code>implements</code> (not <code>extends</code>) to use an interface in a class</li>
+  <li><strong>Cannot be instantiated</strong></li>
+  <li>A class can implement <strong>MULTIPLE interfaces</strong> (unlike extends which is single only)</li>
+  <li>All variables in interface are <code>public static final</code> by default</li>
+  <li>All methods in interface are <code>public abstract</code> by default</li>
+  <li>The implementing class <strong>MUST override all interface methods</strong></li>
+  <li>Interfaces can extend other interfaces (using <code>extends</code>)</li>
+</ul>
+
+<h3>Interface Syntax</h3>
+<pre>public interface InterfaceName {
+    int CONSTANT = 10;           // public static final BY DEFAULT
+
+    void methodA();              // public abstract BY DEFAULT
+    String methodB(int x);       // public abstract BY DEFAULT
+    public abstract void methodC();  // explicitly written (same as above)
+}
+
+// Implementing the interface
+class MyClass implements InterfaceName {
+    @Override
+    public void methodA() {
+        System.out.println("Implementation of methodA");
+    }
+
+    @Override
+    public String methodB(int x) {
+        return "Value: " + x;
+    }
+
+    @Override
+    public void methodC() {
+        System.out.println("Implementation of methodC");
+    }
+}</pre>
+
+<h3>Pokemon Interface Example (From Lab)</h3>
+
+<pre>// The Interface
+interface Pokemon {
+    void setName(String name);
+    String getName();
+    int getLevel();
+    void levelUp();
+    void attack();
+    void displayInfo();
+}
+
+// FirePokemon implementing Pokemon
+class FirePokemon implements Pokemon {
+    private String name;
+    private int level;
+
+    public FirePokemon() {}
+
+    public FirePokemon(String name, int level) {
+        this.name = name;
+        this.level = level;
+    }
+
+    @Override public void setName(String name) { this.name = name; }
+    @Override public String getName() { return name; }
+    @Override public int getLevel() { return level; }
+    @Override public void levelUp() { level++; }
+
+    @Override
+    public void attack() {
+        int choice = (int) Math.ceil(3 * Math.random());
+        if (choice == 1)      System.out.println(name + " has used Ember");
+        else if (choice == 2) System.out.println(name + " has used Fire Spin");
+        else                  System.out.println(name + " has used Flame Charge");
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(name);
+        System.out.println("Fire");
+        System.out.println(level);
+    }
+}
+
+// WaterPokemon implementing Pokemon
+class WaterPokemon implements Pokemon {
+    private String name;
+    private int level;
+
+    public WaterPokemon() {}
+    public WaterPokemon(String name, int level) { this.name = name; this.level = level; }
+
+    @Override public void setName(String name) { this.name = name; }
+    @Override public String getName() { return name; }
+    @Override public int getLevel() { return level; }
+    @Override public void levelUp() { level++; }
+
+    @Override
+    public void attack() {
+        int choice = (int) Math.ceil(3 * Math.random());
+        if (choice == 1)      System.out.println(name + " has used Water Gun");
+        else if (choice == 2) System.out.println(name + " has used Bubble");
+        else                  System.out.println(name + " has used Aqua Jet");
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(name);
+        System.out.println("Water");
+        System.out.println(level);
+    }
+}</pre>
+
+<h3>All Pokemon Attack Methods Reference Table</h3>
+<table>
+  <tr><th>Type</th><th>choice == 1</th><th>choice == 2</th><th>choice == 3</th></tr>
+  <tr><td>FirePokemon</td><td>Ember</td><td>Fire Spin</td><td>Flame Charge</td></tr>
+  <tr><td>WaterPokemon</td><td>Water Gun</td><td>Bubble</td><td>Aqua Jet</td></tr>
+  <tr><td>GrassPokemon</td><td>Vine Whip</td><td>Razor Leaf</td><td>Leech Seed</td></tr>
+  <tr><td>ElectricPokemon</td><td>Thunder Shock</td><td>Shock Wave</td><td>Charge Beam</td></tr>
+  <tr><td>FlyingPokemon</td><td>Wing Attack</td><td>Gust</td><td>Drill Peck</td></tr>
+  <tr><td>FightingPokemon</td><td>Low Sweep</td><td>Mach Punch</td><td>Double Kick</td></tr>
+</table>
+
+<div class="note">
+  <strong>Random choice formula:</strong> <code>int choice = (int) Math.ceil(3 * Math.random());</code><br>
+  Math.random() returns [0.0, 1.0) → multiplied by 3 gives [0, 3) → Math.ceil gives 0, 1, 2, or 3 → cast to int gives 0, 1, 2, or 3. <strong>Note:</strong> when Math.random() = 0, Math.ceil(0) = 0, so choice can be 0. When the problem says choice == 1, 2, 3 — handle choice == 0 same as choice == 3 to be safe, or just trust the formula gives 1, 2, or 3 in practice.
+</div>
+
+<h3>Implementing Multiple Interfaces</h3>
+<pre>interface Flyable {
+    void fly();
+}
+
+interface Swimmable {
+    void swim();
+}
+
+// A class implementing TWO interfaces
+class Duck implements Flyable, Swimmable {
+    @Override
+    public void fly() { System.out.println("Duck is flying"); }
+
+    @Override
+    public void swim() { System.out.println("Duck is swimming"); }
+}</pre>
+
+<!-- ==================== EXCEPTION HANDLING ==================== -->
+<h2 id="exception">4. Exception Handling</h2>
+
+<p>Exception handling prevents the program from crashing when errors occur. It separates error-handling code from normal code.</p>
+
+<h3>try-catch-finally Structure</h3>
+<pre>try {
+    // Code that might throw an exception
+    int result = 10 / 0;                // ArithmeticException
+    String s = null;
+    s.length();                         // NullPointerException
+} catch (ArithmeticException e) {
+    System.out.println("Math error: " + e.getMessage());
+} catch (NullPointerException e) {
+    System.out.println("Null error: " + e.getMessage());
+} catch (Exception e) {
+    // Catches ANY exception not caught above
+    System.out.println("Error: " + e.getMessage());
+} finally {
+    // Always runs — use for cleanup (closing files, etc.)
+    System.out.println("Finally block always executes");
+}</pre>
+
+<h3>Common Exception Types</h3>
+<table>
+  <tr><th>Exception</th><th>When it occurs</th></tr>
+  <tr><td>IOException</td><td>File read/write errors</td></tr>
+  <tr><td>FileNotFoundException</td><td>File does not exist</td></tr>
+  <tr><td>ArithmeticException</td><td>Division by zero</td></tr>
+  <tr><td>NullPointerException</td><td>Using null reference</td></tr>
+  <tr><td>ArrayIndexOutOfBoundsException</td><td>Invalid array index</td></tr>
+  <tr><td>NumberFormatException</td><td>Invalid number conversion</td></tr>
+</table>
+
+<h3>throws keyword</h3>
+<pre>// Declare that a method can throw an exception
+public static void readFile(String filename) throws IOException {
+    BufferedReader reader = new BufferedReader(new FileReader(filename));
+    String line;
+    while ((line = reader.readLine()) != null) {
+        System.out.println(line);
+    }
+    reader.close();
+}
+
+// Caller must handle it
+public static void main(String[] args) {
+    try {
+        readFile("data.txt");
+    } catch (IOException e) {
+        System.out.println("Could not read file.");
+    }
+}</pre>
+
+<!-- ==================== FILE I/O ==================== -->
+<h2 id="fileio">5. File I/O (Input / Output)</h2>
+
+<p>File I/O allows Java programs to store data persistently in files. Data survives after the program ends.</p>
+
+<div class="rule">Always import: <code>import java.io.*;</code></div>
+
+<h3>Key Classes</h3>
+<table>
+  <tr><th>Class</th><th>Purpose</th></tr>
+  <tr><td>File</td><td>Represents a file or directory path</td></tr>
+  <tr><td>FileWriter</td><td>Writes characters to a file</td></tr>
+  <tr><td>FileReader</td><td>Reads characters from a file</td></tr>
+  <tr><td>BufferedWriter</td><td>Efficiently writes text (wraps FileWriter)</td></tr>
+  <tr><td>BufferedReader</td><td>Efficiently reads text line by line (wraps FileReader)</td></tr>
+</table>
+
+<h3>Creating a File</h3>
+<pre>try {
+    File file = new File("student.txt");
+    if (file.createNewFile()) {
+        System.out.println("File created.");
+    } else {
+        System.out.println("File already exists.");
+    }
+} catch (IOException e) {
+    System.out.println("Unable to create file.");
+}</pre>
+
+<h3>Writing to a File</h3>
+<pre>try {
+    BufferedWriter writer = new BufferedWriter(new FileWriter("student.txt"));
+    writer.write("Name: Alex");
+    writer.newLine();        // writes a newline character
+    writer.write("ID: 12345");
+    writer.newLine();
+    writer.write("Dept: CSE");
+    writer.close();          // ALWAYS close after writing!
+    System.out.println("Student information saved successfully.");
+} catch (IOException e) {
+    System.out.println("Error writing file.");
+}</pre>
+
+<h3>Append Mode (add without overwriting)</h3>
+<pre>// Pass 'true' as second argument to FileWriter for append mode
+BufferedWriter writer = new BufferedWriter(new FileWriter("student.txt", true));</pre>
+
+<h3>Reading from a File</h3>
+<pre>try {
+    BufferedReader reader = new BufferedReader(new FileReader("student.txt"));
+    String line;
+    while ((line = reader.readLine()) != null) {  // null means end of file
+        System.out.println(line);
+    }
+    reader.close();    // ALWAYS close after reading!
+} catch (IOException e) {
+    System.out.println("Error reading file.");
+}</pre>
+
+<h3>Complete Student Info Program (Classwork Pattern)</h3>
+<pre>import java.util.Scanner;
+import java.io.*;
+
+public class StudentFile {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Write student info
+        System.out.print("Enter name: ");
+        String name = sc.nextLine();
+        System.out.print("Enter student ID: ");
+        String id = sc.nextLine();
+        System.out.print("Enter department: ");
+        String dept = sc.nextLine();
+
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("student.txt"));
+            writer.write("Name: " + name);
+            writer.newLine();
+            writer.write("ID: " + id);
+            writer.newLine();
+            writer.write("Department: " + dept);
+            writer.close();
+            System.out.println("Student information saved successfully.");
+        } catch (IOException e) {
+            System.out.println("Error writing file.");
+        }
+
+        // Read student info
+        System.out.println("\n--- Reading file ---");
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("student.txt"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+            reader.close();
+        } catch (IOException e) {
+            System.out.println("Error reading file.");
+        }
+    }
+}</pre>
+
+<h3>Homework Pattern: Static Methods for File Operations</h3>
+<pre>import java.util.Scanner;
+import java.io.*;
+
+public class NamesFile {
+
+    static void writeNames() throws IOException {
+        Scanner sc = new Scanner(System.in);
+        BufferedWriter writer = new BufferedWriter(new FileWriter("names.txt"));
+        System.out.println("Enter 5 names:");
+        for (int i = 0; i < 5; i++) {
+            String name = sc.nextLine();
+            writer.write(name);
+            writer.newLine();
+        }
+        writer.close();
+    }
+
+    static void readNames() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader("names.txt"));
+        System.out.println("Names in the file:");
+        String line;
+        while ((line = reader.readLine()) != null) {
+            System.out.println(line);
+        }
+        reader.close();
+    }
+
+    static void countLines() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader("names.txt"));
+        int count = 0;
+        while (reader.readLine() != null) {
+            count++;
+        }
+        reader.close();
+        System.out.println("Total lines: " + count);
+    }
+
+    public static void main(String[] args) {
+        try {
+            writeNames();
+            readNames();
+            countLines();
+        } catch (IOException e) {
+            System.out.println("File error: " + e.getMessage());
+        }
+    }
+}</pre>
+
+<!-- ==================== ARRAYLIST ==================== -->
+<h2 id="arraylist">6. ArrayList with Polymorphism</h2>
+
+<p>You can store child objects in an ArrayList declared with the parent type. This is powerful — you can call overridden methods on each element and get the correct child behavior.</p>
+
+<h3>ArrayList Syntax</h3>
+<pre>import java.util.ArrayList;
+
+// Declare and populate
+ArrayList&lt;Book&gt; library = new ArrayList&lt;Book&gt;();
+
+// Add objects (both child types work!)
+library.add(new FictionBook("Harry Potter", "J.K. Rowling", "Fantasy"));
+library.add(new FictionBook("Dune", "Frank Herbert", "Sci-Fi"));
+library.add(new FictionBook("1984", "George Orwell", "Dystopia"));
+library.add(new NonFictionBook("Sapiens", "Yuval Harari", "History"));
+library.add(new NonFictionBook("Thinking Fast and Slow", "D. Kahneman", "Psychology"));
+library.add(new NonFictionBook("A Brief History of Time", "S. Hawking", "Physics"));
+
+// Iterate and call methods (polymorphism in action)
+for (Book b : library) {
+    b.displayInfo();                              // calls correct override
+    System.out.println("Recommended for 16: " + b.isRecommendedForAge(16));
+    System.out.println("---");
+}</pre>
+
+<div class="note">
+  <strong>instanceof check:</strong> To know if an object is FictionBook or NonFictionBook inside the loop:<br>
+  <code>if (b instanceof FictionBook) { ... }</code>
+</div>
+
+<!-- ==================== UML ==================== -->
+<h2 id="uml">7. Reading UML Diagrams</h2>
+
+<table>
+  <tr><th>UML Symbol</th><th>Meaning</th></tr>
+  <tr><td><code>-</code> prefix</td><td>private field/method</td></tr>
+  <tr><td><code>+</code> prefix</td><td>public field/method</td></tr>
+  <tr><td><em>Italic</em> class name</td><td>Abstract class</td></tr>
+  <tr><td><em>Italic</em> method name</td><td>Abstract method</td></tr>
+  <tr><td><code>&lt;&lt;interface&gt;&gt;</code> label</td><td>Interface</td></tr>
+  <tr><td>Solid arrow (→)</td><td>extends (inheritance)</td></tr>
+  <tr><td>Dashed arrow (---&gt;)</td><td>implements (interface)</td></tr>
+  <tr><td><code>+methodName(param: Type): ReturnType</code></td><td>Method signature</td></tr>
+  <tr><td><code>-fieldName: Type</code></td><td>Field declaration</td></tr>
+</table>
+
+<h3>How to implement from UML:</h3>
+<ol>
+  <li>Check if the class name is in italics → add <code>abstract</code> keyword</li>
+  <li>Check the arrow direction → determine parent/child relationship</li>
+  <li>Check for <code>&lt;&lt;interface&gt;&gt;</code> → use <code>interface</code> keyword and <code>implements</code></li>
+  <li>List all fields (private) with getters/setters</li>
+  <li>Implement all methods — italic ones are abstract (no body)</li>
+  <li>Constructors: no-arg + parameterized (use <code>super()</code> in child)</li>
+</ol>
+
+<!-- ==================== COMPARISON ==================== -->
+<h2 id="comparison">8. Abstract Class vs Interface — Key Differences</h2>
+
+<table>
+  <tr><th>Feature</th><th>Abstract Class</th><th>Interface</th></tr>
+  <tr><td>Keyword</td><td>abstract class</td><td>interface</td></tr>
+  <tr><td>Usage in child</td><td>extends</td><td>implements</td></tr>
+  <tr><td>Can have concrete methods?</td><td>YES</td><td>NO (default: abstract)</td></tr>
+  <tr><td>Can have constructors?</td><td>YES</td><td>NO</td></tr>
+  <tr><td>Multiple inheritance</td><td>Only ONE parent class</td><td>Multiple interfaces OK</td></tr>
+  <tr><td>Variables</td><td>Any access modifier</td><td>public static final only</td></tr>
+  <tr><td>Can instantiate?</td><td>NO</td><td>NO</td></tr>
+  <tr><td>UML representation</td><td>Italics class name</td><td>&lt;&lt;interface&gt;&gt; label</td></tr>
+</table>
+
+<!-- ==================== FULL EXAMPLES ==================== -->
+<div class="pagebreak"></div>
+<h2 id="fullexample">9. Full Code Examples for Exam Practice</h2>
+
+<h3>Example A: Shape Hierarchy (Abstract Class Pattern)</h3>
+<pre>abstract class Shape {
+    private String color;
+
+    public Shape(String color) { this.color = color; }
+    public String getColor() { return color; }
+
+    public abstract double getArea();
+    public abstract double getPerimeter();
+
+    public void displayInfo() {
+        System.out.println("Color: " + color);
+        System.out.printf("Area: %.2f%n", getArea());
+        System.out.printf("Perimeter: %.2f%n", getPerimeter());
+    }
+}
+
+class Circle extends Shape {
+    private double radius;
+
+    public Circle(String color, double radius) {
+        super(color);
+        this.radius = radius;
+    }
+
+    @Override
+    public double getArea() { return Math.PI * radius * radius; }
+
+    @Override
+    public double getPerimeter() { return 2 * Math.PI * radius; }
+}
+
+class Rectangle extends Shape {
+    private double width, height;
+
+    public Rectangle(String color, double width, double height) {
+        super(color);
+        this.width = width;
+        this.height = height;
+    }
+
+    @Override
+    public double getArea() { return width * height; }
+
+    @Override
+    public double getPerimeter() { return 2 * (width + height); }
+}
+
+// Main
+import java.util.ArrayList;
+
+public class ShapeMain {
+    public static void main(String[] args) {
+        ArrayList&lt;Shape&gt; shapes = new ArrayList&lt;Shape&gt;();
+        shapes.add(new Circle("Red", 5.0));
+        shapes.add(new Rectangle("Blue", 4.0, 6.0));
+
+        for (Shape s : shapes) {
+            s.displayInfo();
+            System.out.println("---");
+        }
+    }
+}</pre>
+
+<h3>Example B: Interface with Multiple Types</h3>
+<pre>interface Vehicle {
+    void setSpeed(int speed);
+    int getSpeed();
+    void accelerate(int amount);
+    void displayInfo();
+}
+
+class Car implements Vehicle {
+    private String brand;
+    private int speed;
+
+    public Car(String brand, int speed) {
+        this.brand = brand;
+        this.speed = speed;
+    }
+
+    @Override public void setSpeed(int speed) { this.speed = speed; }
+    @Override public int getSpeed() { return speed; }
+    @Override public void accelerate(int amount) { speed += amount; }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(brand);
+        System.out.println("Car");
+        System.out.println(speed + " km/h");
+    }
+}
+
+class Bicycle implements Vehicle {
+    private String type;
+    private int speed;
+
+    public Bicycle(String type, int speed) {
+        this.type = type;
+        this.speed = speed;
+    }
+
+    @Override public void setSpeed(int speed) { this.speed = speed; }
+    @Override public int getSpeed() { return speed; }
+    @Override public void accelerate(int amount) { speed += amount; }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(type);
+        System.out.println("Bicycle");
+        System.out.println(speed + " km/h");
+    }
+}
+
+public class VehicleMain {
+    public static void main(String[] args) {
+        Vehicle v1 = new Car("Toyota", 60);
+        Vehicle v2 = new Bicycle("Mountain", 20);
+
+        v1.accelerate(30);
+        v2.accelerate(10);
+
+        v1.displayInfo();
+        System.out.println("---");
+        v2.displayInfo();
+    }
+}</pre>
+
+<h3>Example C: File I/O with Classes</h3>
+<pre>import java.io.*;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class StudentManager {
+
+    static void saveStudents(ArrayList&lt;String&gt; students) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter("students.txt"));
+        for (String s : students) {
+            writer.write(s);
+            writer.newLine();
+        }
+        writer.close();
+        System.out.println("Data saved.");
+    }
+
+    static void loadStudents() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader("students.txt"));
+        String line;
+        System.out.println("Students:");
+        while ((line = reader.readLine()) != null) {
+            System.out.println(line);
+        }
+        reader.close();
+    }
+
+    public static void main(String[] args) {
+        ArrayList&lt;String&gt; list = new ArrayList&lt;String&gt;();
+        list.add("Alice - 2020001");
+        list.add("Bob - 2020002");
+        list.add("Charlie - 2020003");
+
+        try {
+            saveStudents(list);
+            loadStudents();
+        } catch (IOException e) {
+            System.out.println("File error: " + e.getMessage());
+        }
+    }
+}</pre>
+
+<div class="danger">
+  <strong>Common Mistakes to Avoid:</strong>
+  <ul>
+    <li>Forgetting <code>import java.io.*;</code> for File I/O</li>
+    <li>Forgetting <code>import java.util.ArrayList;</code> for ArrayLists</li>
+    <li>Not calling <code>writer.close()</code> or <code>reader.close()</code></li>
+    <li>Trying to instantiate an abstract class or interface</li>
+    <li>Not overriding all abstract methods (compile error)</li>
+    <li>Using <code>extends</code> instead of <code>implements</code> for interfaces</li>
+    <li>Forgetting <code>super()</code> in child constructor when parent has a parameterized constructor</li>
+    <li>Using <code>final</code> or <code>static</code> on abstract methods</li>
+  </ul>
+</div>
+
+<br>
+<div style="text-align:center; color:#888; font-size:11px; border-top: 1px solid #ddd; padding-top:8px; margin-top:20px;">
+  CSE215L Lab Final Study Guide &nbsp;|&nbsp; North South University &nbsp;|&nbsp; Good luck!
+</div>
+
+</body>
+</html>

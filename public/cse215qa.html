@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CSE215L – Probable Exam Questions &amp; Answers</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #1a1a1a; background: #fff; padding: 28px 38px; line-height: 1.6; }
+  h1 { text-align: center; font-size: 20px; color: #fff; background: #1b5e20; padding: 10px; border-radius: 5px; margin-bottom: 5px; }
+  .subtitle { text-align: center; color: #555; font-size: 12px; margin-bottom: 22px; }
+  .question-block { border: 2px solid #1565c0; border-radius: 6px; margin-bottom: 28px; page-break-inside: avoid; }
+  .q-header { background: #1565c0; color: #fff; padding: 8px 16px; font-size: 14px; font-weight: bold; border-radius: 4px 4px 0 0; display: flex; justify-content: space-between; align-items: center; }
+  .q-tag { background: #ff8f00; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: bold; }
+  .q-body { padding: 14px 16px; }
+  .q-text { background: #e3f2fd; border-left: 4px solid #1565c0; padding: 10px 14px; margin-bottom: 12px; border-radius: 0 4px 4px 0; }
+  .q-text h3 { font-size: 13px; color: #0d47a1; margin-bottom: 6px; }
+  .q-text ul { margin-left: 18px; }
+  .q-text li { margin-bottom: 3px; }
+  .answer-label { font-size: 13px; font-weight: bold; color: #1b5e20; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  pre { background: #1e293b; color: #e2e8f0; font-family: 'Courier New', monospace; font-size: 11.5px; padding: 12px 14px; border-radius: 5px; margin: 6px 0; line-height: 1.5; overflow-x: auto; }
+  .note { background: #fff9c4; border-left: 3px solid #f9a825; padding: 6px 10px; margin: 8px 0; font-size: 12px; border-radius: 0 3px 3px 0; }
+  .tip { background: #e8f5e9; border-left: 3px solid #2e7d32; padding: 6px 10px; margin: 8px 0; font-size: 12px; border-radius: 0 3px 3px 0; }
+  .uml-box { background: #f8f9fa; border: 1px solid #90caf9; border-radius: 5px; padding: 10px 14px; margin-bottom: 10px; font-family: 'Courier New', monospace; font-size: 11.5px; line-height: 1.6; }
+  .toc { background: #f0f4ff; border: 1px solid #c5cae9; padding: 12px 18px; border-radius: 5px; margin-bottom: 20px; }
+  .toc a { color: #1565c0; text-decoration: none; }
+  .difficulty { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 10px; font-weight: bold; }
+  .hard { background: #ffcdd2; color: #b71c1c; }
+  .medium { background: #fff9c4; color: #e65100; }
+  .easy { background: #c8e6c9; color: #1b5e20; }
+  @media print {
+    body { padding: 15px 20px; font-size: 12px; }
+    .question-block { page-break-inside: avoid; margin-bottom: 20px; }
+    .pagebreak { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+
+<h1>CSE215L – Probable Lab Final Exam Questions &amp; Answers</h1>
+<div class="subtitle">North South University &nbsp;|&nbsp; Programming Language II Lab &nbsp;|&nbsp; Based on Labs 10–13</div>
+
+<div class="toc">
+  <strong>Questions List:</strong>&nbsp;
+  <a href="#q1">Q1: Abstract Classes (Book theme)</a> |
+  <a href="#q2">Q2: Abstract Classes + ArrayList</a> |
+  <a href="#q3">Q3: Interface (Pokemon-style)</a> |
+  <a href="#q4">Q4: File I/O</a> |
+  <a href="#q5">Q5: Mixed — Abstract + File I/O</a> |
+  <a href="#q6">Q6: Interface with Multiple Types</a>
+</div>
+
+<!-- ======================== Q1 ======================== -->
+<div class="question-block" id="q1">
+  <div class="q-header">
+    Question 1: Abstract Classes — Shape Hierarchy
+    <div>
+      <span class="q-tag">ABSTRACT CLASS</span>&nbsp;
+      <span class="difficulty medium">MEDIUM</span>
+    </div>
+  </div>
+  <div class="q-body">
+    <div class="q-text">
+      <h3>Problem Statement:</h3>
+      <p>Consider the UML diagram below. Implement the <strong>Shape</strong> (abstract), <strong>Circle</strong>, and <strong>Rectangle</strong> classes:</p>
+      <div class="uml-box">
+<em>Shape</em>
+─────────────────────────────────
+- color : String
+─────────────────────────────────
++ Shape()
++ Shape(color: String)
++ getColor(): String
++ setColor(color: String): void
++ <em>getArea(): double</em>
++ <em>displayInfo(): void</em>
+
+Circle                              Rectangle
+─────────────────────────────       ─────────────────────────────
+- radius : double                   - width : double
+─────────────────────────────       - height : double
++ Circle()                          ─────────────────────────────
++ Circle(color: String,             + Rectangle()
+         radius: double)            + Rectangle(color: String,
++ getRadius(): double                            width: double,
++ setRadius(r: double): void                     height: double)
++ getArea(): double                 + getWidth(): double
++ displayInfo(): void               + getHeight(): double
+                                    + getArea(): double
+                                    + displayInfo(): void
+      </div>
+      <p><strong>Notes:</strong></p>
+      <ul>
+        <li><code>getArea()</code> for Circle: π × radius²</li>
+        <li><code>getArea()</code> for Rectangle: width × height</li>
+        <li><code>displayInfo()</code> prints: Color, then Area (2 decimal places)</li>
+        <li>In main: create one Circle and one Rectangle, call displayInfo() on both. Take color and dimensions from user input.</li>
+      </ul>
+    </div>
+
+    <div class="answer-label">✅ Complete Answer:</div>
+<pre>import java.util.Scanner;
+
+abstract class Shape {
+    private String color;
+
+    public Shape() {}
+
+    public Shape(String color) {
+        this.color = color;
+    }
+
+    public String getColor() { return color; }
+    public void setColor(String color) { this.color = color; }
+
+    public abstract double getArea();
+    public abstract void displayInfo();
+}
+
+class Circle extends Shape {
+    private double radius;
+
+    public Circle() {}
+
+    public Circle(String color, double radius) {
+        super(color);
+        this.radius = radius;
+    }
+
+    public double getRadius() { return radius; }
+    public void setRadius(double radius) { this.radius = radius; }
+
+    @Override
+    public double getArea() {
+        return Math.PI * radius * radius;
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println("Color: " + getColor());
+        System.out.printf("Area: %.2f%n", getArea());
+    }
+}
+
+class Rectangle extends Shape {
+    private double width;
+    private double height;
+
+    public Rectangle() {}
+
+    public Rectangle(String color, double width, double height) {
+        super(color);
+        this.width = width;
+        this.height = height;
+    }
+
+    public double getWidth() { return width; }
+    public double getHeight() { return height; }
+
+    @Override
+    public double getArea() {
+        return width * height;
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println("Color: " + getColor());
+        System.out.printf("Area: %.2f%n", getArea());
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter circle color: ");
+        String c1 = sc.nextLine();
+        System.out.print("Enter circle radius: ");
+        double r = sc.nextDouble();
+        sc.nextLine();
+
+        System.out.print("Enter rectangle color: ");
+        String c2 = sc.nextLine();
+        System.out.print("Enter width: ");
+        double w = sc.nextDouble();
+        System.out.print("Enter height: ");
+        double h = sc.nextDouble();
+
+        Circle circle = new Circle(c1, r);
+        Rectangle rect = new Rectangle(c2, w, h);
+
+        System.out.println("--- Circle ---");
+        circle.displayInfo();
+
+        System.out.println("--- Rectangle ---");
+        rect.displayInfo();
+    }
+}</pre>
+    <div class="tip">This is the most likely exam question pattern — abstract class with two concrete subclasses, getters/setters, abstract methods overridden differently in each subclass.</div>
+  </div>
+</div>
+
+<!-- ======================== Q2 ======================== -->
+<div class="question-block" id="q2">
+  <div class="q-header">
+    Question 2: Abstract Classes + ArrayList (Lab Homework Pattern)
+    <div>
+      <span class="q-tag">ABSTRACT + ARRAYLIST</span>&nbsp;
+      <span class="difficulty hard">HIGH PROBABILITY</span>
+    </div>
+  </div>
+  <div class="q-body">
+    <div class="q-text">
+      <h3>Problem Statement:</h3>
+      <p>Using the Book, FictionBook, and NonFictionBook classes from the lab:</p>
+      <ul>
+        <li>Create an <code>ArrayList&lt;Book&gt;</code> in main.</li>
+        <li>Add 3 FictionBook objects and 3 NonFictionBook objects.</li>
+        <li>Iterate through the ArrayList: print each book's info, then print whether it is recommended for a <strong>16-year-old</strong>.</li>
+      </ul>
+    </div>
+
+    <div class="answer-label">✅ Complete Answer:</div>
+<pre>import java.util.ArrayList;
+
+abstract class Book {
+    private String name;
+    private String author;
+
+    public Book() {}
+    public Book(String name, String author) {
+        this.name = name;
+        this.author = author;
+    }
+
+    public void setName(String name) { this.name = name; }
+    public String getName() { return name; }
+    public void setAuthor(String author) { this.author = author; }
+    public String getAuthor() { return author; }
+
+    public abstract void displayInfo();
+    public abstract boolean isRecommendedForAge(int age);
+}
+
+class FictionBook extends Book {
+    private String genre;
+
+    public FictionBook() {}
+    public FictionBook(String name, String author, String genre) {
+        super(name, author);
+        this.genre = genre;
+    }
+
+    public void setGenre(String genre) { this.genre = genre; }
+    public String getGenre() { return genre; }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(getName());
+        System.out.println(getAuthor());
+        System.out.println(genre);
+    }
+
+    @Override
+    public boolean isRecommendedForAge(int age) {
+        return age >= 14;
+    }
+}
+
+class NonFictionBook extends Book {
+    private String subject;
+
+    public NonFictionBook() {}
+    public NonFictionBook(String name, String author, String subject) {
+        super(name, author);
+        this.subject = subject;
+    }
+
+    public void setSubject(String subject) { this.subject = subject; }
+    public String getSubject() { return subject; }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(getName());
+        System.out.println(getAuthor());
+        System.out.println(subject);
+    }
+
+    @Override
+    public boolean isRecommendedForAge(int age) {
+        return age >= 18;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        ArrayList&lt;Book&gt; library = new ArrayList&lt;Book&gt;();
+
+        // 3 Fiction Books
+        library.add(new FictionBook("Harry Potter", "J.K. Rowling", "Fantasy"));
+        library.add(new FictionBook("Dune", "Frank Herbert", "Sci-Fi"));
+        library.add(new FictionBook("1984", "George Orwell", "Dystopia"));
+
+        // 3 Non-Fiction Books
+        library.add(new NonFictionBook("Sapiens", "Yuval Noah Harari", "History"));
+        library.add(new NonFictionBook("Thinking Fast and Slow", "D. Kahneman", "Psychology"));
+        library.add(new NonFictionBook("A Brief History of Time", "S. Hawking", "Physics"));
+
+        for (Book b : library) {
+            b.displayInfo();
+            System.out.println("Recommended for 16: " + b.isRecommendedForAge(16));
+            System.out.println("---");
+        }
+    }
+}</pre>
+    <div class="note"><strong>Expected output snippet:</strong> FictionBooks print "Recommended for 16: true" (age 16 &ge; 14). NonFictionBooks print "Recommended for 16: false" (age 16 &lt; 18).</div>
+  </div>
+</div>
+
+<!-- ======================== Q3 ======================== -->
+<div class="pagebreak"></div>
+<div class="question-block" id="q3">
+  <div class="q-header">
+    Question 3: Interface — Pokemon Implementation
+    <div>
+      <span class="q-tag">INTERFACE</span>&nbsp;
+      <span class="difficulty hard">HIGH PROBABILITY</span>
+    </div>
+  </div>
+  <div class="q-body">
+    <div class="q-text">
+      <h3>Problem Statement:</h3>
+      <p>Implement the <strong>Pokemon</strong> interface and two classes: <strong>FirePokemon</strong> and <strong>WaterPokemon</strong>. The interface has:</p>
+      <ul>
+        <li><code>setName(String name): void</code>, <code>getName(): String</code></li>
+        <li><code>getLevel(): int</code>, <code>levelUp(): void</code></li>
+        <li><code>attack(): void</code>, <code>displayInfo(): void</code></li>
+      </ul>
+      <p>In main: create 2 FirePokemon and 2 WaterPokemon instances. Invoke <code>attack()</code> and <code>displayInfo()</code> on all four.</p>
+    </div>
+
+    <div class="answer-label">✅ Complete Answer (Classwork — 2 types):</div>
+<pre>public class Main {
+    public static void main(String[] args) {
+        FirePokemon fp1 = new FirePokemon("Charmander", 5);
+        FirePokemon fp2 = new FirePokemon("Charizard", 36);
+        WaterPokemon wp1 = new WaterPokemon("Squirtle", 5);
+        WaterPokemon wp2 = new WaterPokemon("Blastoise", 36);
+
+        fp1.attack();  fp1.displayInfo();  System.out.println("---");
+        fp2.attack();  fp2.displayInfo();  System.out.println("---");
+        wp1.attack();  wp1.displayInfo();  System.out.println("---");
+        wp2.attack();  wp2.displayInfo();  System.out.println("---");
+    }
+}
+
+interface Pokemon {
+    void setName(String name);
+    String getName();
+    int getLevel();
+    void levelUp();
+    void attack();
+    void displayInfo();
+}
+
+class FirePokemon implements Pokemon {
+    private String name;
+    private int level;
+
+    public FirePokemon() {}
+    public FirePokemon(String name, int level) {
+        this.name = name;
+        this.level = level;
+    }
+
+    @Override public void setName(String name) { this.name = name; }
+    @Override public String getName() { return name; }
+    @Override public int getLevel() { return level; }
+    @Override public void levelUp() { level++; }
+
+    @Override
+    public void attack() {
+        // Classwork version: fixed attack
+        System.out.println(name + " has used Ember");
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(name);
+        System.out.println("Fire");
+        System.out.println(level);
+    }
+}
+
+class WaterPokemon implements Pokemon {
+    private String name;
+    private int level;
+
+    public WaterPokemon() {}
+    public WaterPokemon(String name, int level) {
+        this.name = name;
+        this.level = level;
+    }
+
+    @Override public void setName(String name) { this.name = name; }
+    @Override public String getName() { return name; }
+    @Override public int getLevel() { return level; }
+    @Override public void levelUp() { level++; }
+
+    @Override
+    public void attack() {
+        // Classwork version: fixed attack
+        System.out.println(name + " has used Water Gun");
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(name);
+        System.out.println("Water");
+        System.out.println(level);
+    }
+}</pre>
+
+    <div class="answer-label">✅ Homework Version — Random attacks with all 6 types (GrassPokemon shown as example):</div>
+<pre>class GrassPokemon implements Pokemon {
+    private String name;
+    private int level;
+
+    public GrassPokemon() {}
+    public GrassPokemon(String name, int level) {
+        this.name = name;
+        this.level = level;
+    }
+
+    @Override public void setName(String name) { this.name = name; }
+    @Override public String getName() { return name; }
+    @Override public int getLevel() { return level; }
+    @Override public void levelUp() { level++; }
+
+    @Override
+    public void attack() {
+        int choice = (int) Math.ceil(3 * Math.random());
+        if (choice == 1)      System.out.println(name + " has used Vine Whip");
+        else if (choice == 2) System.out.println(name + " has used Razor Leaf");
+        else                  System.out.println(name + " has used Leech Seed");
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(name);
+        System.out.println("Grass");
+        System.out.println(level);
+    }
+}
+// Repeat same pattern for Electric (Thunder Shock/Shock Wave/Charge Beam),
+// Flying (Wing Attack/Gust/Drill Peck),
+// Fighting (Low Sweep/Mach Punch/Double Kick)</pre>
+    <div class="tip">Template for all 6 types: only the type name in displayInfo() and the 3 attack names change. Everything else is identical.</div>
+  </div>
+</div>
+
+<!-- ======================== Q4 ======================== -->
+<div class="question-block" id="q4">
+  <div class="q-header">
+    Question 4: File I/O — Write and Read
+    <div>
+      <span class="q-tag">FILE I/O</span>&nbsp;
+      <span class="difficulty medium">MEDIUM</span>
+    </div>
+  </div>
+  <div class="q-body">
+    <div class="q-text">
+      <h3>Problem Statement:</h3>
+      <p>Write a program that:</p>
+      <ul>
+        <li>Takes <strong>Name, Student ID, and Department</strong> from the user.</li>
+        <li>Writes the data to a file named <code>student.txt</code>.</li>
+        <li>Displays: <code>Student information saved successfully.</code></li>
+        <li>Then reads and displays all information from <code>student.txt</code>.</li>
+        <li>If the file cannot be read, display an appropriate error message.</li>
+      </ul>
+    </div>
+
+    <div class="answer-label">✅ Complete Answer:</div>
+<pre>import java.util.Scanner;
+import java.io.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter name: ");
+        String name = sc.nextLine();
+        System.out.print("Enter student ID: ");
+        String id = sc.nextLine();
+        System.out.print("Enter department: ");
+        String dept = sc.nextLine();
+
+        // Write to file
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("student.txt"));
+            writer.write("Name: " + name);
+            writer.newLine();
+            writer.write("ID: " + id);
+            writer.newLine();
+            writer.write("Department: " + dept);
+            writer.close();
+            System.out.println("Student information saved successfully.");
+        } catch (IOException e) {
+            System.out.println("Unable to save file.");
+        }
+
+        // Read from file
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("student.txt"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+            reader.close();
+        } catch (IOException e) {
+            System.out.println("Error reading file.");
+        }
+    }
+}</pre>
+    <div class="note"><strong>Key things examiners check:</strong> correct import, BufferedWriter/Reader wrapping FileWriter/Reader, <code>newLine()</code>, closing streams, proper try-catch.</div>
+  </div>
+</div>
+
+<!-- ======================== Q5 ======================== -->
+<div class="pagebreak"></div>
+<div class="question-block" id="q5">
+  <div class="q-header">
+    Question 5: File I/O — Static Methods (Homework Pattern)
+    <div>
+      <span class="q-tag">FILE I/O + METHODS</span>&nbsp;
+      <span class="difficulty medium">MEDIUM</span>
+    </div>
+  </div>
+  <div class="q-body">
+    <div class="q-text">
+      <h3>Problem Statement:</h3>
+      <p>Write a program with three <strong>static methods</strong> called from main:</p>
+      <ul>
+        <li><code>writeNames()</code> — takes 5 names from user and writes each to a new line in <code>names.txt</code></li>
+        <li><code>readNames()</code> — reads and displays all names from <code>names.txt</code>, preceded by <code>Names in the file:</code></li>
+        <li><code>countLines()</code> — counts and displays total number of lines: <code>Total lines: 5</code></li>
+      </ul>
+    </div>
+
+    <div class="answer-label">✅ Complete Answer:</div>
+<pre>import java.util.Scanner;
+import java.io.*;
+
+public class Main {
+
+    static void writeNames() throws IOException {
+        Scanner sc = new Scanner(System.in);
+        BufferedWriter writer = new BufferedWriter(new FileWriter("names.txt"));
+        System.out.println("Enter 5 names:");
+        for (int i = 0; i &lt; 5; i++) {
+            String name = sc.nextLine();
+            writer.write(name);
+            writer.newLine();
+        }
+        writer.close();
+    }
+
+    static void readNames() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader("names.txt"));
+        System.out.println("Names in the file:");
+        String line;
+        while ((line = reader.readLine()) != null) {
+            System.out.println(line);
+        }
+        reader.close();
+    }
+
+    static void countLines() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader("names.txt"));
+        int count = 0;
+        while (reader.readLine() != null) {
+            count++;
+        }
+        reader.close();
+        System.out.println("Total lines: " + count);
+    }
+
+    public static void main(String[] args) {
+        try {
+            writeNames();
+            readNames();
+            countLines();
+        } catch (IOException e) {
+            System.out.println("File error: " + e.getMessage());
+        }
+    }
+}</pre>
+    <div class="tip">When using <code>throws IOException</code> in a method, the caller (main) must wrap it in try-catch.</div>
+  </div>
+</div>
+
+<!-- ======================== Q6 ======================== -->
+<div class="question-block" id="q6">
+  <div class="q-header">
+    Question 6: Interface — Custom Domain (Most Likely Exam Variant)
+    <div>
+      <span class="q-tag">INTERFACE</span>&nbsp;
+      <span class="difficulty hard">VERY HIGH PROBABILITY</span>
+    </div>
+  </div>
+  <div class="q-body">
+    <div class="q-text">
+      <h3>Problem Statement:</h3>
+      <p>Consider the following interface and implement two classes from it:</p>
+      <div class="uml-box">
+&lt;&lt;interface&gt;&gt;
+Employee
+────────────────────────────────
++ setName(name: String): void
++ getName(): String
++ getSalary(): double
++ work(): void
++ displayInfo(): void
+
+FullTimeEmployee                  PartTimeEmployee
+────────────────────────           ────────────────────────
+- name : String                    - name : String
+- salary : double                  - hourlyRate : double
+────────────────────────           - hoursWorked : int
++ FullTimeEmployee()               ────────────────────────
++ FullTimeEmployee(                + PartTimeEmployee()
+    name: String,                  + PartTimeEmployee(
+    salary: double)                    name: String,
++ getSalary(): double                  hourlyRate: double,
++ work(): void                         hoursWorked: int)
++ displayInfo(): void              + getSalary(): double
+                                   + work(): void
+                                   + displayInfo(): void
+      </div>
+      <p><strong>Notes:</strong></p>
+      <ul>
+        <li>FullTimeEmployee <code>getSalary()</code>: returns fixed salary</li>
+        <li>PartTimeEmployee <code>getSalary()</code>: returns hourlyRate × hoursWorked</li>
+        <li><code>work()</code>: FullTime prints "[name] is working full time", PartTime prints "[name] is working part time"</li>
+        <li><code>displayInfo()</code>: prints name, type, salary (each on new line)</li>
+        <li>In main: create 2 of each, call work() and displayInfo() on all.</li>
+      </ul>
+    </div>
+
+    <div class="answer-label">✅ Complete Answer:</div>
+<pre>public class Main {
+    public static void main(String[] args) {
+        FullTimeEmployee fte1 = new FullTimeEmployee("Alice", 50000.0);
+        FullTimeEmployee fte2 = new FullTimeEmployee("Bob", 60000.0);
+        PartTimeEmployee pte1 = new PartTimeEmployee("Charlie", 15.0, 80);
+        PartTimeEmployee pte2 = new PartTimeEmployee("Diana", 20.0, 60);
+
+        fte1.work();  fte1.displayInfo();  System.out.println("---");
+        fte2.work();  fte2.displayInfo();  System.out.println("---");
+        pte1.work();  pte1.displayInfo();  System.out.println("---");
+        pte2.work();  pte2.displayInfo();  System.out.println("---");
+    }
+}
+
+interface Employee {
+    void setName(String name);
+    String getName();
+    double getSalary();
+    void work();
+    void displayInfo();
+}
+
+class FullTimeEmployee implements Employee {
+    private String name;
+    private double salary;
+
+    public FullTimeEmployee() {}
+    public FullTimeEmployee(String name, double salary) {
+        this.name = name;
+        this.salary = salary;
+    }
+
+    @Override public void setName(String name) { this.name = name; }
+    @Override public String getName() { return name; }
+    @Override public double getSalary() { return salary; }
+
+    @Override
+    public void work() {
+        System.out.println(name + " is working full time");
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(name);
+        System.out.println("Full Time");
+        System.out.println(salary);
+    }
+}
+
+class PartTimeEmployee implements Employee {
+    private String name;
+    private double hourlyRate;
+    private int hoursWorked;
+
+    public PartTimeEmployee() {}
+    public PartTimeEmployee(String name, double hourlyRate, int hoursWorked) {
+        this.name = name;
+        this.hourlyRate = hourlyRate;
+        this.hoursWorked = hoursWorked;
+    }
+
+    @Override public void setName(String name) { this.name = name; }
+    @Override public String getName() { return name; }
+    @Override public double getSalary() { return hourlyRate * hoursWorked; }
+
+    @Override
+    public void work() {
+        System.out.println(name + " is working part time");
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(name);
+        System.out.println("Part Time");
+        System.out.println(getSalary());
+    }
+}</pre>
+    <div class="tip">The examiner will change the theme (Employee, Vehicle, Appliance, Animal...) but the structure is ALWAYS the same. Master this template and adapt the field names and logic.</div>
+  </div>
+</div>
+
+<!-- ======================== Q BONUS ======================== -->
+<div class="question-block" style="border-color: #2e7d32;">
+  <div class="q-header" style="background: #2e7d32;">
+    Bonus: Abstract Class with Scanner Input (Mixed)
+    <div>
+      <span class="q-tag" style="background:#1b5e20;">BONUS PATTERN</span>
+    </div>
+  </div>
+  <div class="q-body">
+    <div class="q-text">
+      <h3>Quick Template for any Abstract-class + User Input question:</h3>
+    </div>
+<pre>import java.util.Scanner;
+
+abstract class Vehicle {
+    private String brand;
+    private int year;
+
+    public Vehicle() {}
+    public Vehicle(String brand, int year) {
+        this.brand = brand;
+        this.year = year;
+    }
+
+    public String getBrand() { return brand; }
+    public int getYear() { return year; }
+
+    public abstract double getFuelEfficiency();  // abstract
+    public abstract void displayInfo();           // abstract
+}
+
+class Car extends Vehicle {
+    private double kmPerLitre;
+
+    public Car(String brand, int year, double kmPerLitre) {
+        super(brand, year);
+        this.kmPerLitre = kmPerLitre;
+    }
+
+    @Override
+    public double getFuelEfficiency() { return kmPerLitre; }
+
+    @Override
+    public void displayInfo() {
+        System.out.println(getBrand());
+        System.out.println("Car - " + getYear());
+        System.out.printf("Fuel Efficiency: %.1f km/L%n", kmPerLitre);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Brand: "); String b = sc.nextLine();
+        System.out.print("Year: ");  int y = sc.nextInt();
+        System.out.print("KM/L: ");  double k = sc.nextDouble();
+
+        Car car = new Car(b, y, k);
+        car.displayInfo();
+    }
+}</pre>
+    <div class="note">
+      <strong>Exam Strategy:</strong> Read the UML first. Identify: (1) which class is abstract (italics), (2) which methods are abstract (italics/no body), (3) what the arrow direction is. Write all classes top-to-bottom: abstract parent first, then concrete children, then main.
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center; color:#888; font-size:11px; border-top: 1px solid #ddd; padding-top:10px; margin-top:20px;">
+  CSE215L Lab Final — Probable Questions &amp; Answers &nbsp;|&nbsp; North South University<br>
+  <strong>Tip: In the exam, write the interface/abstract class first, then implement. Always include imports. Always close streams.</strong>
+</div>
+
+</body>
+</html>

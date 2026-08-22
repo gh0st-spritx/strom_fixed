@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CSE215L – Last Minute Cheatsheet</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; font-size: 11px; color: #111; background: #fff; padding: 12px 14px; line-height: 1.4; }
+  h1 { text-align: center; font-size: 15px; color: #fff; background: #b71c1c; padding: 7px; border-radius: 4px; margin-bottom: 8px; letter-spacing: 1px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .box { border: 1.5px solid #1565c0; border-radius: 4px; padding: 7px 9px; }
+  .box h2 { font-size: 12px; color: #fff; background: #1565c0; padding: 3px 7px; margin: -7px -9px 6px -9px; border-radius: 2px 2px 0 0; letter-spacing: 0.5px; }
+  .box h3 { font-size: 11px; color: #0d47a1; margin: 6px 0 2px 0; border-bottom: 1px dotted #90caf9; padding-bottom: 1px; }
+  pre { background: #1a1a2e; color: #e2e8f0; font-family: 'Courier New', monospace; font-size: 10px; padding: 5px 7px; border-radius: 3px; margin: 3px 0; line-height: 1.4; overflow-x: hidden; white-space: pre-wrap; word-break: break-all; }
+  .kw { color: #93c5fd; font-weight: bold; }
+  .cm { color: #86efac; }
+  .st { color: #fcd34d; }
+  ul { margin-left: 12px; margin-bottom: 4px; }
+  li { margin-bottom: 1px; }
+  .red { color: #b91c1c; font-weight: bold; }
+  .green { color: #15803d; font-weight: bold; }
+  .blue { color: #1d4ed8; font-weight: bold; }
+  table { border-collapse: collapse; width: 100%; font-size: 10px; margin: 3px 0; }
+  th { background: #1565c0; color: #fff; padding: 3px 5px; }
+  td { border: 1px solid #ccc; padding: 2px 5px; }
+  .tag { display: inline-block; background: #dbeafe; color: #1e40af; padding: 0 4px; border-radius: 2px; font-weight: bold; font-size: 10px; }
+  .warn { background: #fef3c7; border-left: 3px solid #d97706; padding: 3px 6px; margin: 3px 0; font-size: 10px; }
+  .ok { background: #d1fae5; border-left: 3px solid #059669; padding: 3px 6px; margin: 3px 0; font-size: 10px; }
+  @media print {
+    body { padding: 8px 10px; }
+    .grid { gap: 6px; }
+    .box { page-break-inside: avoid; }
+    h1 { margin-bottom: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>CSE215L — LAST MINUTE CHEATSHEET &nbsp;|&nbsp; Lab Final &nbsp;|&nbsp; NSU</h1>
+
+<div class="grid">
+
+<!-- ============ ABSTRACT CLASS ============ -->
+<div class="box">
+<h2>ABSTRACT CLASS</h2>
+<h3>Rules</h3>
+<ul>
+  <li><span class="red">CANNOT instantiate</span> (no <code>new AbstractClass()</code>)</li>
+  <li>Must be <span class="blue">extended</span> by a subclass</li>
+  <li>Can have abstract + concrete methods</li>
+  <li>Can have constructors + fields</li>
+  <li>Abstract methods: <span class="red">no body</span>, end with <code>;</code></li>
+  <li>No <code>final</code>/<code>static</code> on abstract methods</li>
+  <li>UML: <em>italics</em> = abstract class/method</li>
+</ul>
+<h3>Syntax</h3>
+<pre><span class="kw">abstract class</span> Animal {
+  <span class="kw">private</span> String name;
+
+  <span class="kw">public</span> Animal() {}
+  <span class="kw">public</span> Animal(String name) { <span class="kw">this</span>.name = name; }
+
+  <span class="kw">public</span> String getName() { <span class="kw">return</span> name; }
+  <span class="kw">public void</span> setName(String n) { name = n; }
+
+  <span class="kw">public abstract void</span> makeSound();   <span class="cm">// NO body</span>
+  <span class="kw">public abstract</span> String getType();
+}
+
+<span class="kw">class</span> Dog <span class="kw">extends</span> Animal {
+  <span class="kw">public</span> Dog(String name) {
+    <span class="kw">super</span>(name);    <span class="cm">// call parent constructor</span>
+  }
+
+  @Override
+  <span class="kw">public void</span> makeSound() {
+    System.out.println(getName() + <span class="st">": Woof!"</span>);
+  }
+
+  @Override
+  <span class="kw">public</span> String getType() { <span class="kw">return</span> <span class="st">"Dog"</span>; }
+}</pre>
+<h3>Book Example Quick Reference</h3>
+<ul>
+  <li>FictionBook: <code>isRecommendedForAge()</code> → age &gt;= 14</li>
+  <li>NonFictionBook: <code>isRecommendedForAge()</code> → age &gt;= 18</li>
+  <li><code>displayInfo()</code> prints name, author, genre/subject (each on new line)</li>
+</ul>
+</div>
+
+<!-- ============ INTERFACE ============ -->
+<div class="box">
+<h2>INTERFACE</h2>
+<h3>Rules</h3>
+<ul>
+  <li><span class="red">CANNOT instantiate</span></li>
+  <li>Use <code>implements</code> (not extends) in class</li>
+  <li>Class <span class="green">CAN implement MULTIPLE</span> interfaces</li>
+  <li>All methods: <code>public abstract</code> by default</li>
+  <li>All variables: <code>public static final</code> by default</li>
+  <li>Implementing class MUST override ALL methods</li>
+</ul>
+<h3>Syntax</h3>
+<pre><span class="kw">interface</span> Playable {
+  <span class="kw">void</span> play();           <span class="cm">// public abstract by default</span>
+  <span class="kw">void</span> stop();
+  String getName();
+}
+
+<span class="kw">class</span> Guitar <span class="kw">implements</span> Playable {
+  <span class="kw">private</span> String name;
+
+  <span class="kw">public</span> Guitar(String name) { <span class="kw">this</span>.name = name; }
+
+  @Override
+  <span class="kw">public void</span> play() {
+    System.out.println(name + <span class="st">" is playing"</span>);
+  }
+  @Override
+  <span class="kw">public void</span> stop() {
+    System.out.println(name + <span class="st">" stopped"</span>);
+  }
+  @Override
+  <span class="kw">public</span> String getName() { <span class="kw">return</span> name; }
+}
+
+<span class="cm">// Multiple interfaces:</span>
+<span class="kw">class</span> Piano <span class="kw">implements</span> Playable, Tunable { ... }</pre>
+<h3>Pokemon Random Attack Formula</h3>
+<pre><span class="kw">int</span> choice = (<span class="kw">int</span>) Math.ceil(3 * Math.random());
+<span class="cm">// choice is 0, 1, 2, or 3 (0 is rare)</span>
+<span class="kw">if</span> (choice == 1) { <span class="cm">/* attack 1 */</span> }
+<span class="kw">else if</span> (choice == 2) { <span class="cm">/* attack 2 */</span> }
+<span class="kw">else</span> { <span class="cm">/* attack 3 (also handles 0) */</span> }</pre>
+<h3>Pokemon Attacks</h3>
+<table>
+  <tr><th>Type</th><th>1</th><th>2</th><th>3</th></tr>
+  <tr><td>Fire</td><td>Ember</td><td>Fire Spin</td><td>Flame Charge</td></tr>
+  <tr><td>Water</td><td>Water Gun</td><td>Bubble</td><td>Aqua Jet</td></tr>
+  <tr><td>Grass</td><td>Vine Whip</td><td>Razor Leaf</td><td>Leech Seed</td></tr>
+  <tr><td>Electric</td><td>Thunder Shock</td><td>Shock Wave</td><td>Charge Beam</td></tr>
+  <tr><td>Flying</td><td>Wing Attack</td><td>Gust</td><td>Drill Peck</td></tr>
+  <tr><td>Fighting</td><td>Low Sweep</td><td>Mach Punch</td><td>Double Kick</td></tr>
+</table>
+</div>
+
+<!-- ============ FILE I/O ============ -->
+<div class="box">
+<h2>FILE I/O</h2>
+<pre><span class="kw">import</span> java.io.*;   <span class="cm">// ALWAYS needed</span></pre>
+<h3>Write to File</h3>
+<pre><span class="kw">try</span> {
+  BufferedWriter writer = <span class="kw">new</span> BufferedWriter(
+      <span class="kw">new</span> FileWriter(<span class="st">"file.txt"</span>));   <span class="cm">// overwrites</span>
+  writer.write(<span class="st">"Hello"</span>);
+  writer.newLine();
+  writer.write(<span class="st">"World"</span>);
+  writer.close();   <span class="cm">// MUST close!</span>
+} <span class="kw">catch</span> (IOException e) {
+  System.out.println(<span class="st">"Error: "</span> + e.getMessage());
+}</pre>
+<h3>Append Mode</h3>
+<pre><span class="kw">new</span> BufferedWriter(<span class="kw">new</span> FileWriter(<span class="st">"file.txt"</span>, <span class="kw">true</span>))
+<span class="cm">// true = append, false/omit = overwrite</span></pre>
+<h3>Read from File</h3>
+<pre><span class="kw">try</span> {
+  BufferedReader reader = <span class="kw">new</span> BufferedReader(
+      <span class="kw">new</span> FileReader(<span class="st">"file.txt"</span>));
+  String line;
+  <span class="kw">while</span> ((line = reader.readLine()) != <span class="kw">null</span>) {
+    System.out.println(line);
+  }
+  reader.close();   <span class="cm">// MUST close!</span>
+} <span class="kw">catch</span> (IOException e) {
+  System.out.println(<span class="st">"Error reading."</span>);
+}</pre>
+<h3>Create File</h3>
+<pre>File f = <span class="kw">new</span> File(<span class="st">"file.txt"</span>);
+<span class="kw">if</span> (f.createNewFile()) System.out.println(<span class="st">"Created"</span>);
+<span class="kw">else</span> System.out.println(<span class="st">"Already exists"</span>);</pre>
+<h3>Count Lines</h3>
+<pre>BufferedReader r = <span class="kw">new</span> BufferedReader(<span class="kw">new</span> FileReader(<span class="st">"f.txt"</span>));
+<span class="kw">int</span> count = 0;
+<span class="kw">while</span> (r.readLine() != <span class="kw">null</span>) count++;
+r.close();
+System.out.println(<span class="st">"Total lines: "</span> + count);</pre>
+</div>
+
+<!-- ============ EXCEPTION HANDLING ============ -->
+<div class="box">
+<h2>EXCEPTION HANDLING</h2>
+<h3>try-catch-finally</h3>
+<pre><span class="kw">try</span> {
+  <span class="cm">// risky code here</span>
+  <span class="kw">int</span> x = 10 / 0;
+} <span class="kw">catch</span> (ArithmeticException e) {
+  System.out.println(e.getMessage());
+} <span class="kw">catch</span> (Exception e) {   <span class="cm">// catch-all</span>
+  System.out.println(<span class="st">"Error: "</span> + e.getMessage());
+} <span class="kw">finally</span> {
+  <span class="cm">// always runs (cleanup here)</span>
+}</pre>
+<h3>throws declaration</h3>
+<pre><span class="kw">void</span> readFile() <span class="kw">throws</span> IOException {
+  <span class="cm">// let caller handle the exception</span>
+}</pre>
+<h3>Common Exceptions</h3>
+<ul>
+  <li><code>IOException</code> — file errors</li>
+  <li><code>FileNotFoundException</code> — missing file</li>
+  <li><code>ArithmeticException</code> — divide by 0</li>
+  <li><code>NullPointerException</code> — null reference</li>
+  <li><code>NumberFormatException</code> — bad int parse</li>
+</ul>
+</div>
+
+<!-- ============ ARRAYLIST ============ -->
+<div class="box">
+<h2>ARRAYLIST WITH POLYMORPHISM</h2>
+<pre><span class="kw">import</span> java.util.ArrayList;</pre>
+<pre><span class="cm">// Parent-type ArrayList holding child objects</span>
+ArrayList&lt;Book&gt; books = <span class="kw">new</span> ArrayList&lt;Book&gt;();
+books.add(<span class="kw">new</span> FictionBook(<span class="st">"HP"</span>, <span class="st">"JKR"</span>, <span class="st">"Fantasy"</span>));
+books.add(<span class="kw">new</span> NonFictionBook(<span class="st">"Sapiens"</span>, <span class="st">"YNH"</span>, <span class="st">"History"</span>));
+
+<span class="cm">// for-each loop</span>
+<span class="kw">for</span> (Book b : books) {
+  b.displayInfo();
+  System.out.println(b.isRecommendedForAge(16));
+  System.out.println(<span class="st">"---"</span>);
+}
+
+<span class="cm">// check type inside loop</span>
+<span class="kw">if</span> (b <span class="kw">instanceof</span> FictionBook) { ... }
+
+<span class="cm">// other methods</span>
+books.size();       <span class="cm">// number of elements</span>
+books.get(i);       <span class="cm">// get element at index i</span>
+books.remove(i);    <span class="cm">// remove at index i</span></pre>
+</div>
+
+<!-- ============ POLYMORPHISM ============ -->
+<div class="box">
+<h2>POLYMORPHISM QUICK REFERENCE</h2>
+<h3>Method Overriding</h3>
+<pre><span class="kw">class</span> Parent {
+  <span class="kw">void</span> show() { System.out.println(<span class="st">"Parent"</span>); }
+}
+<span class="kw">class</span> Child <span class="kw">extends</span> Parent {
+  @Override
+  <span class="kw">void</span> show() { System.out.println(<span class="st">"Child"</span>); }
+}
+<span class="cm">// Parent reference, Child object</span>
+Parent p = <span class="kw">new</span> Child();
+p.show();  <span class="cm">// prints "Child" (runtime binding)</span></pre>
+<h3>super keyword</h3>
+<pre><span class="cm">// Call parent constructor</span>
+<span class="kw">super</span>(arg1, arg2);       <span class="cm">// must be FIRST line</span>
+
+<span class="cm">// Call parent method</span>
+<span class="kw">super</span>.methodName();</pre>
+<h3>Abstract vs Interface Summary</h3>
+<table>
+  <tr><th></th><th>Abstract</th><th>Interface</th></tr>
+  <tr><td>keyword</td><td>abstract class</td><td>interface</td></tr>
+  <tr><td>inherit</td><td>extends</td><td>implements</td></tr>
+  <tr><td>multiple?</td><td>NO</td><td>YES</td></tr>
+  <tr><td>constructor</td><td>YES</td><td>NO</td></tr>
+  <tr><td>concrete methods</td><td>YES</td><td>NO</td></tr>
+</table>
+</div>
+
+<!-- ============ CRITICAL REMINDERS ============ -->
+<div class="box" style="grid-column: 1 / -1;">
+<h2>⚠ CRITICAL EXAM REMINDERS — READ BEFORE SUBMITTING</h2>
+<div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px; margin-top:4px;">
+  <div>
+    <div class="warn">CANNOT do <code>new AbstractClass()</code></div>
+    <div class="warn">CANNOT do <code>new Interface()</code></div>
+    <div class="warn">Abstract method: NO body, ends with <code>;</code></div>
+    <div class="warn">Do NOT use <code>final</code>/<code>static</code> on abstract methods</div>
+  </div>
+  <div>
+    <div class="ok">Import <code>java.io.*</code> for File I/O</div>
+    <div class="ok">Import <code>java.util.ArrayList</code> for ArrayList</div>
+    <div class="ok">Always <code>close()</code> writer and reader</div>
+    <div class="ok">Use <code>super()</code> in child constructors</div>
+  </div>
+  <div>
+    <div class="ok">Class uses <code>extends</code> for abstract class</div>
+    <div class="ok">Class uses <code>implements</code> for interface</div>
+    <div class="ok">Override <strong>ALL</strong> abstract/interface methods</div>
+    <div class="ok">Fields in interface: <code>public static final</code></div>
+  </div>
+</div>
+<div style="margin-top:6px; font-size:10px; color:#555; text-align:center;">CSE215L Lab Final Cheatsheet &nbsp;|&nbsp; North South University &nbsp;|&nbsp; All the best!</div>
+</div>
+
+</div><!-- end grid -->
+</body>
+</html>
