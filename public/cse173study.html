@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSE 173 — Study Guide</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #222536;
+    --border: #2e3250;
+    --accent: #6c63ff;
+    --accent2: #ff6b9d;
+    --accent3: #43e97b;
+    --accent4: #f7971e;
+    --text: #e8eaf6;
+    --muted: #8b92b8;
+    --code-bg: #12141e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    padding: 0 0 60px;
+  }
+  header {
+    background: linear-gradient(135deg, #1a1d27 0%, #0f1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 24px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(108,99,255,0.15) 0%, transparent 70%);
+  }
+  header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(90deg, #6c63ff, #ff6b9d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  header p { color: var(--muted); margin-top: 8px; font-size: 0.95rem; }
+  .badge {
+    display: inline-block;
+    background: rgba(108,99,255,0.15);
+    border: 1px solid rgba(108,99,255,0.4);
+    color: #a09dff;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-top: 10px;
+  }
+
+  nav {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 20px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  nav a:hover {
+    background: rgba(108,99,255,0.12);
+    border-color: rgba(108,99,255,0.3);
+    color: #a09dff;
+  }
+
+  main { max-width: 860px; margin: 0 auto; padding: 32px 24px 0; }
+
+  .chapter {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .chapter-header {
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .chapter-number {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .ch5 .chapter-number { background: rgba(108,99,255,0.2); color: #a09dff; }
+  .ch6 .chapter-number { background: rgba(255,107,157,0.2); color: #ff9dbe; }
+  .ch9 .chapter-number { background: rgba(67,233,123,0.2); color: #7eeaaa; }
+  .chapter-header h2 { font-size: 1.1rem; font-weight: 700; }
+  .chapter-header span { color: var(--muted); font-size: 0.85rem; display: block; }
+
+  .chapter-body { padding: 24px; }
+
+  .section { margin-bottom: 28px; }
+  .section:last-child { margin-bottom: 0; }
+  .section-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .highlight-box {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.88rem;
+    line-height: 1.8;
+    white-space: pre-wrap;
+  }
+  .highlight-box.green { border-left-color: var(--accent3); }
+  .highlight-box.pink  { border-left-color: var(--accent2); }
+  .highlight-box.gold  { border-left-color: var(--accent4); }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-bottom: 14px; }
+  .card {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .card .label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .card .value { font-size: 0.92rem; color: var(--text); font-family: monospace; }
+  .card .value em { color: #a09dff; font-style: normal; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 14px;
+    font-size: 0.88rem;
+  }
+  th {
+    background: var(--code-bg);
+    color: var(--muted);
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  td {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+  .tag-purple { background: rgba(108,99,255,0.15); color: #a09dff; border: 1px solid rgba(108,99,255,0.3); }
+  .tag-green  { background: rgba(67,233,123,0.12); color: #7eeaaa; border: 1px solid rgba(67,233,123,0.25); }
+  .tag-pink   { background: rgba(255,107,157,0.12); color: #ff9dbe; border: 1px solid rgba(255,107,157,0.25); }
+  .tag-gold   { background: rgba(247,151,30,0.12);  color: #ffc06b; border: 1px solid rgba(247,151,30,0.25); }
+
+  .alert {
+    background: rgba(247,151,30,0.08);
+    border: 1px solid rgba(247,151,30,0.25);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.87rem;
+    color: #ffc06b;
+    margin-bottom: 14px;
+  }
+  .alert::before { content: '⚡ '; }
+
+  p { color: var(--text); margin-bottom: 10px; font-size: 0.92rem; }
+  strong { color: #c9cbff; }
+  code { background: var(--code-bg); border: 1px solid var(--border); padding: 2px 7px; border-radius: 5px; font-size: 0.85em; color: #a09dff; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>CSE 173 — Study Guide</h1>
+  <p>Discrete Mathematics · Chapters 5, 6, 9</p>
+  <div class="badge">Last-minute prep · 1-hour version</div>
+</header>
+
+<nav>
+  <a href="#ch5">Ch.5 Induction</a>
+  <a href="#ch6">Ch.6 Counting</a>
+  <a href="#ch9">Ch.9 Relations</a>
+</nav>
+
+<main>
+
+<!-- CHAPTER 5 -->
+<div class="chapter ch5" id="ch5">
+  <div class="chapter-header">
+    <div class="chapter-number">5</div>
+    <div>
+      <h2>Induction &amp; Recursion</h2>
+      <span>Mathematical Induction · Strong Induction · Recursive Definitions</span>
+    </div>
+  </div>
+  <div class="chapter-body">
+
+    <div class="section">
+      <div class="section-title">Mathematical Induction — The Template</div>
+      <div class="alert">This is the #1 exam topic — Quiz 3 SET C Q1 was entirely this. Memorize the structure.</div>
+      <div class="highlight-box">1. State P(n): what you're proving.
+2. Basis Step:   Show P(1) [or P(base)] is true.
+3. Inductive Hypothesis (IH): Assume P(k) is true for some arbitrary k.
+4. Inductive Step: Show P(k) → P(k+1) is true.
+5. Conclusion: Therefore P(n) holds for all n ≥ base.  □</div>
+      <table>
+        <tr><th>Proof Type</th><th>Key Manipulation</th></tr>
+        <tr>
+          <td><strong>Summation</strong><br><code>1+2+…+n = n(n+1)/2</code></td>
+          <td>Add the (k+1) term to both sides of IH, factor out (k+1)</td>
+        </tr>
+        <tr>
+          <td><strong>Divisibility</strong><br><code>6ⁿ−1 divisible by 5</code></td>
+          <td>Expand 6^(k+1)−1 = 6·6ᵏ−1, substitute IH, factor out 5</td>
+        </tr>
+        <tr>
+          <td><strong>Inequality</strong><br><code>n &lt; 2ⁿ</code></td>
+          <td>Use IH k &lt; 2ᵏ, then k+1 &lt; 2ᵏ+1 ≤ 2·2ᵏ = 2^(k+1)</td>
+        </tr>
+        <tr>
+          <td><strong>Geometric series</strong><br><code>1+2+…+2ⁿ = 2^(n+1)−1</code></td>
+          <td>Add 2^(k+1) to IH, simplify to 2^(k+2)−1</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Classic Divisibility Worked Example</div>
+      <div class="highlight-box green">Prove: 6ⁿ − 1 is divisible by 5 for all positive integers n.
+
+Basis: n=1 → 6¹−1 = 5 = 5·1 ✓
+
+IH: Assume 5 | (6ᵏ−1), so 6ᵏ−1 = 5m for some integer m.
+
+IS: 6^(k+1) − 1 = 6·6ᵏ − 1
+                 = 6(1 + 5m) − 1      [since 6ᵏ = 1+5m by IH]
+                 = 6 + 30m − 1
+                 = 5 + 30m
+                 = 5(1 + 6m)           ← divisible by 5 ✓
+
+Conclusion: P(n) holds for all n ≥ 1. □</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Strong Induction</div>
+      <p><strong>Difference:</strong> IH assumes P(1) ∧ P(2) ∧ … ∧ P(k) (all previous cases, not just k). Use when P(k+1) depends on more than just P(k).</p>
+      <div class="highlight-box">BASIS: Show P(1) [possibly P(1) through P(b)] true.
+IH:    Assume P(j) is true for ALL j with 1 ≤ j ≤ k.
+IS:    Show P(k+1) follows.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Recursive Definitions</div>
+      <p>A recursive function needs: <strong>(1) base case(s)</strong> + <strong>(2) recursive rule</strong>.</p>
+      <div class="card-grid">
+        <div class="card">
+          <div class="label">Fibonacci</div>
+          <div class="value">f₀=0, f₁=1<br>fₙ = fₙ₋₁ + fₙ₋₂<br><em>0,1,1,2,3,5,8,13,21…</em></div>
+        </div>
+        <div class="card">
+          <div class="label">Factorial</div>
+          <div class="value">f(0) = 1<br>f(n+1) = (n+1)·f(n)</div>
+        </div>
+        <div class="card">
+          <div class="label">Custom Example (Quiz)</div>
+          <div class="value">f(1)=2, f(2)=4<br>2f(n+1) = 3f(n)−2f(n−1)<br><em>→ f(3)=4, f(4)=2</em></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Key Summation Formulas</div>
+      <div class="highlight-box pink">Σᵢ₌₁ⁿ i        =  n(n+1)/2
+Σᵢ₌₁ⁿ i²       =  n(n+1)(2n+1)/6
+Σᵢ₌₁ⁿ c        =  cn
+Σᵢ₌₀ⁿ 2ⁱ       =  2^(n+1) − 1
+Σᵢ₌₁ⁿ (a + bi) =  an + b·n(n+1)/2</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CHAPTER 6 -->
+<div class="chapter ch6" id="ch6">
+  <div class="chapter-header">
+    <div class="chapter-number">6</div>
+    <div>
+      <h2>Counting</h2>
+      <span>Product/Sum Rules · Permutations · Combinations · Pigeonhole · Binomial Theorem</span>
+    </div>
+  </div>
+  <div class="chapter-body">
+
+    <div class="section">
+      <div class="section-title">Four Basic Counting Rules</div>
+      <table>
+        <tr><th>Rule</th><th>Formula</th><th>When to Use</th></tr>
+        <tr><td><span class="tag tag-purple">Product</span></td><td><code>n₁ × n₂ × …</code></td><td>Independent sequential choices</td></tr>
+        <tr><td><span class="tag tag-green">Sum</span></td><td><code>n₁ + n₂</code></td><td>Mutually exclusive choices</td></tr>
+        <tr><td><span class="tag tag-pink">Subtraction</span></td><td><code>|A∪B| = |A|+|B|−|A∩B|</code></td><td>Overlapping cases</td></tr>
+        <tr><td><span class="tag tag-gold">Division</span></td><td><code>n / d</code></td><td>Counting by groups (circular arrangements)</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Permutations vs. Combinations</div>
+      <div class="highlight-box">ORDER MATTERS (Permutations):
+  P(n,r) = n!/(n−r)!  =  n(n−1)(n−2)…(n−r+1)
+  With repetition: nʳ
+
+ORDER DOESN'T MATTER (Combinations):
+  C(n,r) = n! / (r! · (n−r)!)   ← also written as (n choose r)
+  C(n,r) = C(n, n−r)             ← symmetry property
+  With repetition: C(n+r−1, r)
+
+Indistinguishable objects (like letters in a word):
+  n! / (n₁! · n₂! · … · nₖ!)</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Pigeonhole Principle</div>
+      <div class="card-grid">
+        <div class="card">
+          <div class="label">Basic</div>
+          <div class="value">k+1 items in k boxes<br>→ ≥1 box has <em>≥ 2</em> items</div>
+        </div>
+        <div class="card">
+          <div class="label">Generalized</div>
+          <div class="value">N items in k boxes<br>→ ≥1 box has <em>≥ ⌈N/k⌉</em> items</div>
+        </div>
+        <div class="card">
+          <div class="label">Guarantee m in group</div>
+          <div class="value">N = (m−1)·k + 1<br><em>minimum N needed</em></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Binomial Theorem &amp; Pascal's Identity</div>
+      <div class="highlight-box green">(x+y)ⁿ = Σⱼ₌₀ⁿ C(n,j) · xⁿ⁻ʲ · yʲ
+
+Pascal's Identity:  C(n,k) = C(n−1,k−1) + C(n−1,k)
+Sum of a row:       Σⱼ₌₀ⁿ C(n,j) = 2ⁿ    [set x=y=1]
+Useful symmetry:    C(n,r) = C(n, n−r)</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Counting Relations &amp; Functions</div>
+      <div class="highlight-box pink">Relations from A to B     = 2^(|A| × |B|)
+Subsets of A              = 2^|A|
+Functions from A to B     = |B|^|A|
+One-to-one functions      = |B|(|B|−1)(|B|−2)…(|B|−|A|+1)  [need |B| ≥ |A|]</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CHAPTER 9 -->
+<div class="chapter ch9" id="ch9">
+  <div class="chapter-header">
+    <div class="chapter-number">9</div>
+    <div>
+      <h2>Relations</h2>
+      <span>Properties · Matrix Representation · Equivalence Relations · Partial Orders · Hasse Diagrams</span>
+    </div>
+  </div>
+  <div class="chapter-body">
+
+    <div class="section">
+      <div class="section-title">Four Properties — Quick Reference</div>
+      <div class="alert">Quiz 3 Spring 2019 Q2 was exactly this — check each property one by one and justify with examples.</div>
+      <table>
+        <tr><th>Property</th><th>Definition</th><th>Matrix check</th><th>How to disprove</th></tr>
+        <tr>
+          <td><span class="tag tag-purple">Reflexive</span></td>
+          <td>(a,a) ∈ R for ALL a ∈ A</td>
+          <td>All diagonal = 1</td>
+          <td>Find any a with (a,a) ∉ R</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-green">Symmetric</span></td>
+          <td>(a,b) ∈ R → (b,a) ∈ R</td>
+          <td>Matrix = transposeᵀ</td>
+          <td>Find (a,b) in R but (b,a) not</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-pink">Antisymmetric</span></td>
+          <td>(a,b) ∈ R and (b,a) ∈ R → a=b</td>
+          <td>mᵢⱼ=0 or mⱼᵢ=0 when i≠j</td>
+          <td>Find (a,b) and (b,a) where a≠b</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-gold">Transitive</span></td>
+          <td>(a,b) ∈ R and (b,c) ∈ R → (a,c) ∈ R</td>
+          <td>R² ⊆ R</td>
+          <td>Find (a,b),(b,c) in R but (a,c) not</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Named Relation Types</div>
+      <div class="highlight-box">EQUIVALENCE RELATION = Reflexive + Symmetric + Transitive
+  → Equivalence classes [a] partition the set
+  → [a] = {x ∈ A | (a,x) ∈ R}
+  → [a] = [b] ↔ aRb
+
+PARTIAL ORDER (POSET) = Reflexive + Antisymmetric + Transitive
+  → (S, R) is a "partially ordered set"
+  → Total order: every two elements are comparable
+  → Well-order: total order where every nonempty subset has a least element</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Worked Example — Testing Properties</div>
+      <div class="highlight-box green">A = {a,b,c},  R = {(a,a),(b,b),(c,c),(a,b),(b,a)}
+
+Reflexive?    YES — (a,a),(b,b),(c,c) all in R ✓
+Symmetric?    YES — (a,b) ∈ R and (b,a) ∈ R ✓ (and self-loops are trivially symmetric)
+Antisymmetric? NO — (a,b) and (b,a) both in R but a ≠ b ✗
+Transitive?   YES — (a,b)+(b,a)→need(a,a)✓, (b,a)+(a,b)→need(b,b)✓ ✓
+
+→ This is an EQUIVALENCE RELATION.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Hasse Diagrams</div>
+      <div class="highlight-box pink">To draw a Hasse diagram from a partial order:
+1. Start with the digraph of the relation
+2. Remove all loops (reflexive property)
+3. Remove edges implied by transitivity (if a→b→c, remove a→c)
+4. Arrange so lower elements are physically below higher ones
+5. Remove arrowheads (all edges point upward implicitly)</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Counting Relations Formula</div>
+      <div class="highlight-box gold"># relations from A to B = 2^(|A| × |B|)
+
+Example: |A|=5, |B|=6  →  2^(5×6) = 2^30 relations from A to B
+                         →  2^(6×5) = 2^30 relations from B to A</div>
+    </div>
+
+  </div>
+</div>
+
+</main>
+</body>
+</html>

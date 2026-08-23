@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSE 173 — Practice Questions</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #1e2132;
+    --border: #2e3250;
+    --accent: #6c63ff;
+    --accent2: #ff6b9d;
+    --accent3: #43e97b;
+    --accent4: #f7971e;
+    --text: #e8eaf6;
+    --muted: #8b92b8;
+    --code-bg: #12141e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    padding: 0 0 80px;
+  }
+
+  header {
+    background: linear-gradient(135deg, #1a1d27 0%, #0f1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 24px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,107,157,0.12) 0%, transparent 70%);
+  }
+  header h1 {
+    font-size: 2rem; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(90deg, #ff6b9d, #6c63ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  header p { color: var(--muted); margin-top: 8px; font-size: 0.95rem; }
+
+  .controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 16px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .btn {
+    padding: 8px 20px;
+    border-radius: 22px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    font-size: 0.83rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .btn:hover { background: rgba(108,99,255,0.1); border-color: rgba(108,99,255,0.4); color: #a09dff; }
+  .btn.active { background: rgba(108,99,255,0.18); border-color: #6c63ff; color: #a09dff; }
+  .btn-expand { background: rgba(67,233,123,0.08); border-color: rgba(67,233,123,0.3); color: #7eeaaa; }
+  .btn-expand:hover { background: rgba(67,233,123,0.15); }
+  .btn-collapse { background: rgba(255,107,157,0.08); border-color: rgba(255,107,157,0.3); color: #ff9dbe; }
+  .btn-collapse:hover { background: rgba(255,107,157,0.15); }
+
+  main { max-width: 820px; margin: 0 auto; padding: 32px 24px 0; }
+
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .q-card:hover { border-color: rgba(108,99,255,0.35); }
+
+  .q-header {
+    padding: 18px 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    user-select: none;
+    transition: background 0.2s;
+  }
+  .q-header:hover { background: rgba(255,255,255,0.025); }
+
+  .q-num {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.85rem;
+  }
+
+  /* topic color bands */
+  .topic-induction .q-num   { background: rgba(108,99,255,0.2); color: #a09dff; }
+  .topic-recursive .q-num   { background: rgba(247,151,30,0.2); color: #ffc06b; }
+  .topic-relations .q-num   { background: rgba(67,233,123,0.2); color: #7eeaaa; }
+  .topic-counting .q-num    { background: rgba(255,107,157,0.2); color: #ff9dbe; }
+  .topic-equivalence .q-num { background: rgba(56,189,248,0.2); color: #7dd3fc; }
+
+  .q-meta { flex: 1; min-width: 0; }
+  .q-title { font-size: 0.97rem; font-weight: 700; color: var(--text); line-height: 1.4; }
+  .q-subtitle { font-size: 0.8rem; color: var(--muted); margin-top: 3px; }
+
+  .q-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .tag {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 0.73rem;
+    font-weight: 600;
+  }
+  .tag-purple { background: rgba(108,99,255,0.15); color: #a09dff; border: 1px solid rgba(108,99,255,0.3); }
+  .tag-gold   { background: rgba(247,151,30,0.12);  color: #ffc06b; border: 1px solid rgba(247,151,30,0.25); }
+  .tag-green  { background: rgba(67,233,123,0.12);  color: #7eeaaa; border: 1px solid rgba(67,233,123,0.25); }
+  .tag-pink   { background: rgba(255,107,157,0.12); color: #ff9dbe; border: 1px solid rgba(255,107,157,0.25); }
+  .tag-blue   { background: rgba(56,189,248,0.12);  color: #7dd3fc; border: 1px solid rgba(56,189,248,0.25); }
+
+  .toggle-icon {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+    transition: all 0.25s;
+    margin-top: 4px;
+    color: var(--muted);
+  }
+  .q-card.open .toggle-icon {
+    background: rgba(108,99,255,0.15);
+    border-color: rgba(108,99,255,0.4);
+    color: #a09dff;
+    transform: rotate(180deg);
+  }
+
+  .q-question {
+    padding: 0 22px 18px 72px;
+    border-top: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+    font-size: 0.93rem;
+    padding-top: 16px;
+  }
+  .q-question p { margin-bottom: 8px; }
+
+  .answer-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: 1px dashed rgba(108,99,255,0.4);
+    color: #a09dff;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 14px;
+    transition: all 0.2s;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .answer-toggle-btn:hover {
+    background: rgba(108,99,255,0.1);
+    border-color: rgba(108,99,255,0.6);
+  }
+  .answer-toggle-btn.revealed {
+    background: rgba(67,233,123,0.07);
+    border-color: rgba(67,233,123,0.35);
+    color: #7eeaaa;
+  }
+  .answer-toggle-btn .btn-label { flex: 1; text-align: left; }
+  .answer-toggle-btn .btn-icon { font-size: 0.85rem; }
+
+  .answer-box {
+    display: none;
+    background: var(--code-bg);
+    border: 1px solid rgba(67,233,123,0.2);
+    border-radius: 10px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+  .answer-box.visible { display: block; animation: slideDown 0.25s ease; }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .answer-header {
+    background: rgba(67,233,123,0.08);
+    border-bottom: 1px solid rgba(67,233,123,0.15);
+    padding: 8px 16px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: #7eeaaa;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .answer-content {
+    padding: 16px 18px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.86rem;
+    line-height: 1.85;
+    color: #c8cde8;
+    white-space: pre-wrap;
+  }
+  .answer-content .step-label {
+    color: #a09dff;
+    font-weight: bold;
+  }
+
+  .difficulty {
+    display: inline-flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dot.filled { background: var(--accent4); }
+  .dot.empty  { background: var(--border); }
+
+  .stats-bar {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 14px 24px;
+    font-size: 0.82rem;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .stats-bar span strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Practice Questions</h1>
+  <p>CSE 173 Discrete Mathematics · 10 High-Probability Questions with Answers</p>
+</header>
+
+<div class="stats-bar">
+  <span>Total: <strong>10 questions</strong></span>
+  <span>Topics: <strong>Induction, Recursion, Relations, Counting</strong></span>
+  <span>Based on: <strong>3 past quiz papers</strong></span>
+</div>
+
+<div class="controls">
+  <button class="btn btn-expand" onclick="expandAll()">▼ Show All Answers</button>
+  <button class="btn btn-collapse" onclick="collapseAll()">▲ Hide All Answers</button>
+  <button class="btn" onclick="filterTopic('all')" id="btn-all">All Topics</button>
+  <button class="btn" onclick="filterTopic('induction')" id="btn-induction">Induction</button>
+  <button class="btn" onclick="filterTopic('counting')" id="btn-counting">Counting</button>
+  <button class="btn" onclick="filterTopic('relations')" id="btn-relations">Relations</button>
+</div>
+
+<main>
+
+<!-- Q1 -->
+<div class="q-card topic-induction" data-topic="induction">
+  <div class="q-header" onclick="toggleCard(this.parentElement)">
+    <div class="q-num">1</div>
+    <div class="q-meta">
+      <div class="q-title">Mathematical Induction — Divisibility</div>
+      <div class="q-subtitle">Prove n³ − n is divisible by 3</div>
+      <div class="q-tags">
+        <span class="tag tag-purple">Induction</span>
+        <span class="tag tag-gold">⚡ High Probability</span>
+        <span class="difficulty"><span class="dot filled"></span><span class="dot filled"></span><span class="dot empty"></span></span>
+      </div>
+    </div>
+    <div class="toggle-icon">▾</div>
+  </div>
+  <div class="q-question">
+    <p><strong>Question:</strong> Use mathematical induction to prove that n³ − n is divisible by 3 for every positive integer n.</p>
+    <button class="answer-toggle-btn" onclick="toggleAnswer(this)">
+      <span class="btn-label">👁 Reveal Answer</span>
+      <span class="btn-icon">▾</span>
+    </button>
+    <div class="answer-box">
+      <div class="answer-header">✓ Full Solution</div>
+      <div class="answer-content"><span class="step-label">P(n):</span> n³ − n is divisible by 3.
+
+<span class="step-label">Basis Step (n=1):</span> 1³ − 1 = 0 = 3·0. Divisible by 3. ✓
+
+<span class="step-label">Inductive Hypothesis (IH):</span> Assume 3 | (k³ − k) for some positive integer k.
+So k³ − k = 3m for some integer m.
+
+<span class="step-label">Inductive Step:</span> Show (k+1)³ − (k+1) is divisible by 3.
+
+  (k+1)³ − (k+1)
+= (k³ + 3k² + 3k + 1) − (k + 1)
+= k³ + 3k² + 3k + 1 − k − 1
+= (k³ − k) + 3k² + 3k
+= (k³ − k) + 3(k² + k)
+
+By IH, (k³ − k) is divisible by 3.
+3(k² + k) is clearly divisible by 3.
+∴ Their sum is divisible by 3. ✓
+
+<span class="step-label">Conclusion:</span> By mathematical induction, P(n) holds for all n ≥ 1. □</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q2 -->
+<div class="q-card topic-induction" data-topic="induction">
+  <div class="q-header" onclick="toggleCard(this.parentElement)">
+    <div class="q-num">2</div>
+    <div class="q-meta">
+      <div class="q-title">Mathematical Induction — Summation Formula</div>
+      <div class="q-subtitle">Prove 1 + 2 + … + n = n(n+1)/2</div>
+      <div class="q-tags">
+        <span class="tag tag-purple">Induction</span>
+        <span class="tag tag-gold">⚡ High Probability</span>
+        <span class="difficulty"><span class="dot filled"></span><span class="dot filled"></span><span class="dot empty"></span></span>
+      </div>
+    </div>
+    <div class="toggle-icon">▾</div>
+  </div>
+  <div class="q-question">
+    <p><strong>Question:</strong> Use mathematical induction to prove that 1 + 2 + 3 + … + n = n(n+1)/2 for all positive integers n.</p>
+    <button class="answer-toggle-btn" onclick="toggleAnswer(this)">
+      <span class="btn-label">👁 Reveal Answer</span>
+      <span class="btn-icon">▾</span>
+    </button>
+    <div class="answer-box">
+      <div class="answer-header">✓ Full Solution</div>
+      <div class="answer-content"><span class="step-label">Basis Step (n=1):</span> LHS = 1.  RHS = 1(2)/2 = 1. ✓
+
+<span class="step-label">Inductive Hypothesis (IH):</span> Assume 1+2+…+k = k(k+1)/2.
+
+<span class="step-label">Inductive Step:</span> Show 1+2+…+k+(k+1) = (k+1)(k+2)/2.
+
+  LHS = [1+2+…+k] + (k+1)
+      = k(k+1)/2 + (k+1)        [by IH]
+      = (k+1)[k/2 + 1]
+      = (k+1)(k+2)/2
+      = RHS ✓
+
+<span class="step-label">Conclusion:</span> Holds for all positive integers n. □</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q3 -->
+<div class="q-card topic-induction" data-topic="induction">
+  <div class="q-header" onclick="toggleCard(this.parentElement)">
+    <div class="q-num">3</div>
+    <div class="q-meta">
+      <div class="q-title">Mathematical Induction — Geometric Series</div>
+      <div class="q-subtitle">Prove 1 + 2¹ + 2² + … + 2ⁿ = 2ⁿ⁺¹ − 1</div>
+      <div class="q-tags">
+        <span class="tag tag-purple">Induction</span>
+        <span class="tag tag-gold">⚡ Appeared in Quiz 3 SET C</span>
+        <span class="difficulty"><span class="dot filled"></span><span class="dot filled"></span><span class="dot empty"></span></span>
+      </div>
+    </div>
+    <div class="toggle-icon">▾</div>
+  </div>
+  <div class="q-question">
+    <p><strong>Question:</strong> Use mathematical induction to show that 1 + 2¹ + 2² + 2³ + … + 2ⁿ = 2ⁿ⁺¹ − 1.</p>
+    <button class="answer-toggle-btn" onclick="toggleAnswer(this)">
+      <span class="btn-label">👁 Reveal Answer</span>
+      <span class="btn-icon">▾</span>
+    </button>
+    <div class="answer-box">
+      <div class="answer-header">✓ Full Solution</div>
+      <div class="answer-content"><span class="step-label">Basis Step (n=0):</span> LHS = 1.  RHS = 2¹ − 1 = 1. ✓
+
+<span class="step-label">Inductive Hypothesis (IH):</span> Assume 1+2+4+…+2ᵏ = 2^(k+1) − 1.
+
+<span class="step-label">Inductive Step:</span> Show 1+2+…+2ᵏ+2^(k+1) = 2^(k+2) − 1.
+
+  LHS = [1+2+4+…+2ᵏ] + 2^(k+1)
+      = (2^(k+1) − 1) + 2^(k+1)    [by IH]
+      = 2 · 2^(k+1) − 1
+      = 2^(k+2) − 1
+      = RHS ✓
+
+<span class="step-label">Conclusion:</span> Holds for all n ≥ 0. □</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q4 -->
+<div class="q-card topic-recursive" data-topic="induction">
+  <div class="q-header" onclick="toggleCard(this.parentElement)">
+    <div class="q-num">4</div>
+    <div class="q-meta">
+      <div class="q-title">Recursive Function Evaluation</div>
+      <div class="q-subtitle">Compute f(3), f(4) and identify recursion</div>
+      <div class="q-tags">
+        <span class="tag tag-gold">Recursion</span>
+        <span class="tag tag-gold">⚡ Appeared in Quiz 3 Spring 2019</span>
+        <span class="difficulty"><span class="dot filled"></span><span class="dot empty"></span><span class="dot empty"></span></span>
+      </div>
+    </div>
+    <div class="toggle-icon">▾</div>
+  </div>
+  <div class="q-question">
+    <p><strong>Question:</strong> A function f is defined as: f(1) = 3, f(2) = 6, and 2f(n+1) = 4f(n) − 2f(n−1).</p>
+    <p>Find f(3) and f(4). Is this function recursive?</p>
+    <button class="answer-toggle-btn" onclick="toggleAnswer(this)">
+      <span class="btn-label">👁 Reveal Answer</span>
+      <span class="btn-icon">▾</span>
+    </button>
+    <div class="answer-box">
+      <div class="answer-header">✓ Full Solution</div>
+      <div class="answer-content"><span class="step-label">Finding f(3):</span>
+  2f(3) = 4f(2) − 2f(1)
+        = 4(6) − 2(3)
+        = 24 − 6 = 18
+  ∴ f(3) = 9
+
+<span class="step-label">Finding f(4):</span>
+  2f(4) = 4f(3) − 2f(2)
+        = 4(9) − 2(6)
+        = 36 − 12 = 24
+  ∴ f(4) = 12
+
+<span class="step-label">Is it recursive?</span> YES.
+Reason:
+  1. Has explicit base cases: f(1) = 3 and f(2) = 6 are defined directly.
+  2. Has a recursive rule: f(n+1) is defined in terms of f(n) and f(n−1),
+     which are smaller inputs.
+Both components of a recursive definition are present. ✓</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q5 -->
+<div class="q-card topic-relations" data-topic="relations">
+  <div class="q-header" onclick="toggleCard(this.parentElement)">
+    <div class="q-num">5</div>
+    <div class="q-meta">
+      <div class="q-title">Relation Properties</div>
+      <div class="q-subtitle">Test Reflexive, Symmetric, Antisymmetric, Transitive</div>
+      <div class="q-tags">
+        <span class="tag tag-green">Relations</span>
+        <span class="tag tag-gold">⚡ Appeared in Quiz 3 Spring 2019</span>
+        <span class="difficulty"><span class="dot filled"></span><span class="dot filled"></span><span class="dot empty"></span></span>
+      </div>
+    </div>
+    <div class="toggle-icon">▾</div>
+  </div>
+  <div class="q-question">
+    <p><strong>Question:</strong> Given A = {a, b, c} and R = {(a,a), (b,b), (c,c), (a,b), (b,a)}. Determine (with justification) if R is Reflexive, Symmetric, Antisymmetric, and Transitive.</p>
+    <button class="answer-toggle-btn" onclick="toggleAnswer(this)">
+      <span class="btn-label">👁 Reveal Answer</span>
+      <span class="btn-icon">▾</span>
+    </button>
+    <div class="answer-box">
+      <div class="answer-header">✓ Full Solution</div>
+      <div class="answer-content"><span class="step-label">Reflexive?</span>   YES ✓
+  Need (a,a),(b,b),(c,c) ∈ R.
+  All three are present. ✓
+
+<span class="step-label">Symmetric?</span>   YES ✓
+  For every (x,y) ∈ R, check (y,x) ∈ R:
+  (a,b) ∈ R and (b,a) ∈ R ✓
+  Self-loops (a,a),(b,b),(c,c) trivially satisfy symmetry. ✓
+
+<span class="step-label">Antisymmetric?</span> NO ✗
+  (a,b) ∈ R and (b,a) ∈ R, but a ≠ b. Violates antisymmetry.
+
+<span class="step-label">Transitive?</span>   YES ✓
+  Check all pairs: (a,b)+(b,a) → need (a,a) ∈ R ✓
+                  (b,a)+(a,b) → need (b,b) ∈ R ✓
+  All other paths use self-loops which trivially hold. ✓
+
+<span class="step-label">Conclusion:</span>
+  R is an EQUIVALENCE RELATION (Reflexive + Symmetric + Transitive).</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q6 -->
+<div class="q-card topic-relations" data-topic="relations">
+  <div class="q-header" onclick="toggleCard(this.parentElement)">
+    <div class="q-num">6</div>
+    <div class="q-meta">
+      <div class="q-title">Counting Relations</div>
+      <div class="q-subtitle">How many relations from A to B and B to A?</div>
+      <div class="q-tags">
+        <span class="tag tag-green">Relations</span>
+        <span class="tag tag-gold">⚡ Appeared in Quiz 3 Spring 2019</span>
+        <span class="difficulty"><span class="dot filled"></span><span class="dot empty"></span><span class="dot empty"></span></span>
+      </div>
+    </div>
+    <div class="toggle-icon">▾</div>
+  </div>
+  <div class="q-question">
+    <p><strong>Question:</strong> Given A = {a, b, c, d, e} and B = {1, 2, 3, p, q, r}. How many relations are possible from A to B? From B to A? Show your calculation.</p>
+    <button class="answer-toggle-btn" onclick="toggleAnswer(this)">
+      <span class="btn-label">👁 Reveal Answer</span>
+      <span class="btn-icon">▾</span>
+    </button>
+    <div class="answer-box">
+      <div class="answer-header">✓ Full Solution</div>
+      <div class="answer-content"><span class="step-label">Key formula:</span> Relations from A to B = 2^(|A| × |B|)
+Reason: A relation is any subset of A × B.
+        |A × B| = |A| · |B|, and a set with n elements has 2ⁿ subsets.
+
+<span class="step-label">Given:</span> |A| = 5, |B| = 6
+
+<span class="step-label">Relations from A to B:</span>
+  |A × B| = 5 × 6 = 30
+  Number of relations = 2^30 = 1,073,741,824
+
+<span class="step-label">Relations from B to A:</span>
+  |B × A| = 6 × 5 = 30
+  Number of relations = 2^30 = 1,073,741,824
+
+Both are the same here because |A|×|B| = |B|×|A|.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q7 -->
+<div class="q-card topic-counting" data-topic="counting">
+  <div class="q-header" onclick="toggleCard(this.parentElement)">
+    <div class="q-num">7</div>
+    <div class="q-meta">
+      <div class="q-title">Permutations &amp; Combinations</div>
+      <div class="q-subtitle">Committee selection and word arrangements</div>
+      <div class="q-tags">
+        <span class="tag tag-pink">Counting</span>
+        <span class="difficulty"><span class="dot filled"></span><span class="dot filled"></span><span class="dot empty"></span></span>
+      </div>
+    </div>
+    <div class="toggle-icon">▾</div>
+  </div>
+  <div class="q-question">
+    <p><strong>Question (a):</strong> A committee of 4 must be chosen from 10 people. How many ways are there?</p>
+    <p><strong>Question (b):</strong> In how many ways can the letters of the word BANANA be arranged?</p>
+    <button class="answer-toggle-btn" onclick="toggleAnswer(this)">
+      <span class="btn-label">👁 Reveal Answer</span>
+      <span class="btn-icon">▾</span>
+    </button>
+    <div class="answer-box">
+      <div class="answer-header">✓ Full Solution</div>
+      <div class="answer-content"><span class="step-label">Part (a) — Committee (order doesn't matter → Combination):</span>
+
+  C(10,4) = 10! / (4! · 6!)
+          = (10 × 9 × 8 × 7) / (4 × 3 × 2 × 1)
+          = 5040 / 24
+          = 210 ways
+
+<span class="step-label">Part (b) — BANANA arrangements (indistinguishable objects):</span>
+
+  BANANA has 6 letters: B=1, A=3, N=2
+
+  Formula: n! / (n₁! · n₂! · … · nₖ!)
+         = 6! / (1! · 3! · 2!)
+         = 720 / (1 × 6 × 2)
+         = 720 / 12
+         = 60 arrangements</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q8 -->
+<div class="q-card topic-counting" data-topic="counting">
+  <div class="q-header" onclick="toggleCard(this.parentElement)">
+    <div class="q-num">8</div>
+    <div class="q-meta">
+      <div class="q-title">Pigeonhole Principle</div>
+      <div class="q-subtitle">Guarantee same birthday month</div>
+      <div class="q-tags">
+        <span class="tag tag-pink">Counting</span>
+        <span class="difficulty"><span class="dot filled"></span><span class="dot empty"></span><span class="dot empty"></span></span>
+      </div>
+    </div>
+    <div class="toggle-icon">▾</div>
+  </div>
+  <div class="q-question">
+    <p><strong>Question:</strong> How many students must be in a class to guarantee that at least 4 have birthdays in the same month?</p>
+    <button class="answer-toggle-btn" onclick="toggleAnswer(this)">
+      <span class="btn-label">👁 Reveal Answer</span>
+      <span class="btn-icon">▾</span>
+    </button>
+    <div class="answer-box">
+      <div class="answer-header">✓ Full Solution</div>
+      <div class="answer-content"><span class="step-label">Setup:</span>
+  "Boxes" = 12 months
+  "Objects" = students
+  We want: at least one box has ≥ 4 objects.
+
+<span class="step-label">Using Generalized Pigeonhole Principle:</span>
+  We need ⌈N/12⌉ ≥ 4
+  The smallest N satisfying this: N = 3 × 12 + 1 = 37
+
+<span class="step-label">Verification:</span>
+  With 36 students: worst case = exactly 3 per month (3×12=36). Not guaranteed.
+  With 37 students: by pigeonhole, at least one month has ⌈37/12⌉ = ⌈3.08⌉ = 4. ✓
+
+<span class="step-label">Answer:</span> 37 students</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q9 -->
+<div class="q-card topic-counting" data-topic="counting">
+  <div class="q-header" onclick="toggleCard(this.parentElement)">
+    <div class="q-num">9</div>
+    <div class="q-meta">
+      <div class="q-title">Summation Computation</div>
+      <div class="q-subtitle">Compute Σᵢ₌₁⁵ (2 + 3i)</div>
+      <div class="q-tags">
+        <span class="tag tag-purple">Induction</span>
+        <span class="tag tag-gold">⚡ Appeared in Quiz 3 SET C</span>
+        <span class="difficulty"><span class="dot filled"></span><span class="dot empty"></span><span class="dot empty"></span></span>
+      </div>
+    </div>
+    <div class="toggle-icon">▾</div>
+  </div>
+  <div class="q-question">
+    <p><strong>Question:</strong> Find Σᵢ₌₁⁵ (2 + 3i) = ?</p>
+    <button class="answer-toggle-btn" onclick="toggleAnswer(this)">
+      <span class="btn-label">👁 Reveal Answer</span>
+      <span class="btn-icon">▾</span>
+    </button>
+    <div class="answer-box">
+      <div class="answer-header">✓ Full Solution</div>
+      <div class="answer-content"><span class="step-label">Method 1 — Using summation formulas:</span>
+
+  Σᵢ₌₁⁵ (2 + 3i) = Σᵢ₌₁⁵ 2  +  3 · Σᵢ₌₁⁵ i
+                  = 5(2) + 3 · (5·6/2)
+                  = 10 + 3 · 15
+                  = 10 + 45
+                  = 55
+
+<span class="step-label">Method 2 — Direct computation (verify):</span>
+  i=1: 2+3(1) = 5
+  i=2: 2+3(2) = 8
+  i=3: 2+3(3) = 11
+  i=4: 2+3(4) = 14
+  i=5: 2+3(5) = 17
+  Sum = 5+8+11+14+17 = 55 ✓</div>
+    </div>
+  </div>
+</div>
+
+<!-- Q10 -->
+<div class="q-card topic-equivalence" data-topic="relations">
+  <div class="q-header" onclick="toggleCard(this.parentElement)">
+    <div class="q-num">10</div>
+    <div class="q-meta">
+      <div class="q-title">Equivalence Relation — Modulo</div>
+      <div class="q-subtitle">Prove congruence mod 3 is an equivalence relation</div>
+      <div class="q-tags">
+        <span class="tag tag-blue">Equivalence</span>
+        <span class="difficulty"><span class="dot filled"></span><span class="dot filled"></span><span class="dot empty"></span></span>
+      </div>
+    </div>
+    <div class="toggle-icon">▾</div>
+  </div>
+  <div class="q-question">
+    <p><strong>Question:</strong> Show that R = {(a,b) | a ≡ b (mod 3)} on the set of integers is an equivalence relation. List its equivalence classes.</p>
+    <button class="answer-toggle-btn" onclick="toggleAnswer(this)">
+      <span class="btn-label">👁 Reveal Answer</span>
+      <span class="btn-icon">▾</span>
+    </button>
+    <div class="answer-box">
+      <div class="answer-header">✓ Full Solution</div>
+      <div class="answer-content">Recall: a ≡ b (mod 3) means 3 divides (a − b).
+
+<span class="step-label">Reflexive:</span>
+  a ≡ a (mod 3) since a − a = 0 = 3·0. ✓
+
+<span class="step-label">Symmetric:</span>
+  Assume a ≡ b (mod 3). Then a − b = 3k for some integer k.
+  So b − a = −3k = 3(−k), meaning 3 | (b−a).
+  Therefore b ≡ a (mod 3). ✓
+
+<span class="step-label">Transitive:</span>
+  Assume a ≡ b (mod 3) and b ≡ c (mod 3).
+  Then a − b = 3k and b − c = 3m.
+  Adding: a − c = 3k + 3m = 3(k+m).
+  Therefore a ≡ c (mod 3). ✓
+
+<span class="step-label">Conclusion:</span> R is an equivalence relation. □
+
+<span class="step-label">Equivalence classes:</span>
+  [0] = {…, −6, −3, 0, 3, 6, 9, …}   (multiples of 3)
+  [1] = {…, −5, −2, 1, 4, 7, 10, …}  (remainder 1 when divided by 3)
+  [2] = {…, −4, −1, 2, 5, 8, 11, …}  (remainder 2 when divided by 3)
+
+These 3 classes partition the integers.</div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+function toggleCard(card) {
+  card.classList.toggle('open');
+}
+
+function toggleAnswer(btn) {
+  const box = btn.nextElementSibling;
+  const isVisible = box.classList.contains('visible');
+  box.classList.toggle('visible');
+  btn.classList.toggle('revealed', !isVisible);
+  const label = btn.querySelector('.btn-label');
+  const icon = btn.querySelector('.btn-icon');
+  if (!isVisible) {
+    label.textContent = '🙈 Hide Answer';
+    icon.textContent = '▴';
+  } else {
+    label.textContent = '👁 Reveal Answer';
+    icon.textContent = '▾';
+  }
+}
+
+function expandAll() {
+  document.querySelectorAll('.answer-box').forEach(box => {
+    box.classList.add('visible');
+  });
+  document.querySelectorAll('.answer-toggle-btn').forEach(btn => {
+    btn.classList.add('revealed');
+    btn.querySelector('.btn-label').textContent = '🙈 Hide Answer';
+    btn.querySelector('.btn-icon').textContent = '▴';
+  });
+  document.querySelectorAll('.q-card').forEach(c => c.classList.add('open'));
+}
+
+function collapseAll() {
+  document.querySelectorAll('.answer-box').forEach(box => {
+    box.classList.remove('visible');
+  });
+  document.querySelectorAll('.answer-toggle-btn').forEach(btn => {
+    btn.classList.remove('revealed');
+    btn.querySelector('.btn-label').textContent = '👁 Reveal Answer';
+    btn.querySelector('.btn-icon').textContent = '▾';
+  });
+  document.querySelectorAll('.q-card').forEach(c => c.classList.remove('open'));
+}
+
+function filterTopic(topic) {
+  document.querySelectorAll('.btn[onclick^="filterTopic"]').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + topic)?.classList.add('active');
+
+  document.querySelectorAll('.q-card').forEach(card => {
+    if (topic === 'all') {
+      card.style.display = '';
+    } else {
+      card.style.display = card.dataset.topic === topic ? '' : 'none';
+    }
+  });
+}
+
+// init — set All Topics as active
+document.getElementById('btn-all').classList.add('active');
+</script>
+</body>
+</html>

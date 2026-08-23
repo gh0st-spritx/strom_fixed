@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSE 173 — Cheat Sheet</title>
+<style>
+  :root {
+    --bg: #0a0c12;
+    --surface: #121520;
+    --surface2: #181b26;
+    --border: #252840;
+    --accent: #6c63ff;
+    --accent2: #ff6b9d;
+    --accent3: #43e97b;
+    --accent4: #f7971e;
+    --accent5: #38bdf8;
+    --text: #e8eaf6;
+    --muted: #7b82a8;
+    --code: #a09dff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 13.5px;
+    line-height: 1.6;
+    padding-bottom: 60px;
+  }
+
+  header {
+    background: linear-gradient(135deg, #121520, #0a0c12);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 20px 22px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(67,233,123,0.1) 0%, transparent 65%);
+  }
+  header h1 {
+    font-size: 1.7rem; font-weight: 900; letter-spacing: -1px;
+    background: linear-gradient(90deg, #43e97b, #6c63ff, #ff6b9d);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  header p { color: var(--muted); font-size: 0.82rem; margin-top: 5px; }
+  .warning {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(247,151,30,0.12);
+    border: 1px solid rgba(247,151,30,0.3);
+    color: #ffc06b;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.78rem; font-weight: 600;
+    margin-top: 10px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 16px;
+  }
+
+  .tile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .tile.wide { grid-column: 1 / -1; }
+  .tile.span2 { grid-column: span 2; }
+
+  .tile-header {
+    padding: 10px 14px 9px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tile-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 800; flex-shrink: 0;
+  }
+  .purple .tile-icon { background: rgba(108,99,255,0.2); color: #a09dff; }
+  .green  .tile-icon { background: rgba(67,233,123,0.2); color: #7eeaaa; }
+  .pink   .tile-icon { background: rgba(255,107,157,0.2); color: #ff9dbe; }
+  .gold   .tile-icon { background: rgba(247,151,30,0.2);  color: #ffc06b; }
+  .blue   .tile-icon { background: rgba(56,189,248,0.2);  color: #7dd3fc; }
+  .red    .tile-icon { background: rgba(239,68,68,0.2);   color: #fca5a5; }
+
+  .tile-title { font-size: 0.83rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .purple .tile-title { color: #a09dff; }
+  .green  .tile-title { color: #7eeaaa; }
+  .pink   .tile-title { color: #ff9dbe; }
+  .gold   .tile-title { color: #ffc06b; }
+  .blue   .tile-title { color: #7dd3fc; }
+  .red    .tile-title { color: #fca5a5; }
+
+  .tile-body {
+    padding: 12px 14px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.83rem;
+    line-height: 1.9;
+    white-space: pre-wrap;
+    color: #c5c8e8;
+  }
+  .tile-body .kw  { color: #a09dff; font-weight: 700; }
+  .tile-body .val { color: #7eeaaa; }
+  .tile-body .op  { color: #ff9dbe; }
+  .tile-body .dim { color: #5a607a; }
+  .tile-body .hi  { color: #ffc06b; font-weight: 700; }
+  .tile-body .note { color: #5a607a; font-style: italic; }
+
+  table.cs {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  table.cs th {
+    background: rgba(255,255,255,0.04);
+    color: var(--muted);
+    padding: 7px 10px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border-bottom: 1px solid var(--border);
+  }
+  table.cs td {
+    padding: 7px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+    line-height: 1.5;
+    font-size: 0.82rem;
+  }
+  table.cs tr:last-child td { border-bottom: none; }
+  table.cs code {
+    background: rgba(108,99,255,0.12);
+    border: 1px solid rgba(108,99,255,0.2);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    color: #a09dff;
+    font-family: 'Consolas','Monaco',monospace;
+  }
+
+  .divider {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; gap: 12px;
+    padding: 4px 0;
+  }
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider-label { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; font-weight: 600; }
+
+  .badge-row { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 14px; }
+  .badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+  .b-purple { background: rgba(108,99,255,0.15); color: #a09dff; border: 1px solid rgba(108,99,255,0.3); }
+  .b-green  { background: rgba(67,233,123,0.12); color: #7eeaaa; border: 1px solid rgba(67,233,123,0.25); }
+  .b-pink   { background: rgba(255,107,157,0.12); color: #ff9dbe; border: 1px solid rgba(255,107,157,0.25); }
+  .b-gold   { background: rgba(247,151,30,0.12);  color: #ffc06b; border: 1px solid rgba(247,151,30,0.25); }
+  .b-blue   { background: rgba(56,189,248,0.12);  color: #7dd3fc; border: 1px solid rgba(56,189,248,0.25); }
+
+  @media (max-width: 600px) {
+    .tile.span2 { grid-column: 1 / -1; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>CSE 173 — Cheat Sheet</h1>
+  <p>Discrete Mathematics · Chapters 5, 6, 9 · Everything on one page</p>
+  <div class="warning">⚡ Last-minute cram — review this before entering the exam room</div>
+</header>
+
+<div class="grid">
+
+  <!-- INDUCTION TEMPLATE -->
+  <div class="tile purple span2">
+    <div class="tile-header">
+      <div class="tile-icon">∀</div>
+      <div class="tile-title">Mathematical Induction — The Template (memorize this!)</div>
+    </div>
+    <div class="tile-body"><span class="kw">1. P(n):</span>    State what you're proving.
+<span class="kw">2. Basis:</span>   Show P(1) [or P(base)] is true. <span class="note">← don't skip, even if obvious</span>
+<span class="kw">3. IH:</span>      Assume P(k) is true for some arbitrary positive integer k.
+<span class="kw">4. IS:</span>      Using the IH, show P(k+1) is true.
+<span class="kw">5. Conclude:</span> Therefore P(n) holds for all n ≥ base.  <span class="hi">□</span></div>
+  </div>
+
+  <!-- SUMMATION FORMULAS -->
+  <div class="tile green">
+    <div class="tile-header">
+      <div class="tile-icon">Σ</div>
+      <div class="tile-title">Summation Formulas</div>
+    </div>
+    <div class="tile-body"><span class="kw">Σi</span>        =  <span class="val">n(n+1)/2</span>
+<span class="kw">Σi²</span>       =  <span class="val">n(n+1)(2n+1)/6</span>
+<span class="kw">Σc</span>        =  <span class="val">cn</span>
+<span class="kw">Σ 2ⁱ</span> (i=0→n) = <span class="val">2^(n+1) − 1</span>
+<span class="kw">Σ(a+bi)</span>   =  <span class="val">an + b·n(n+1)/2</span></div>
+  </div>
+
+  <!-- RECURSION -->
+  <div class="tile gold">
+    <div class="tile-header">
+      <div class="tile-icon">f</div>
+      <div class="tile-title">Recursive Definitions</div>
+    </div>
+    <div class="tile-body"><span class="kw">Needs TWO parts:</span>
+  <span class="val">1.</span> Base case(s):  explicit value(s)
+  <span class="val">2.</span> Recursive step: rule using smaller input
+
+<span class="kw">Fibonacci:</span> f₀=0, f₁=1, fₙ=fₙ₋₁+fₙ₋₂
+  <span class="val">0,1,1,2,3,5,8,13,21…</span>
+
+<span class="kw">Factorial:</span> f(0)=1, f(n+1)=(n+1)·f(n)</div>
+  </div>
+
+  <!-- DIVISOR -->
+  <div class="tile divider">
+    <div class="divider-line"></div>
+    <div class="divider-label">Chapter 6 — Counting</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- COUNTING RULES -->
+  <div class="tile pink">
+    <div class="tile-header">
+      <div class="tile-icon">#</div>
+      <div class="tile-title">Four Counting Rules</div>
+    </div>
+    <div class="tile-body"><span class="kw">Product:</span>   n₁ × n₂  <span class="note">← sequential choices</span>
+<span class="kw">Sum:</span>       n₁ + n₂  <span class="note">← exclusive choices</span>
+<span class="kw">Subtraction:</span>
+  |A∪B| = |A|+|B|−|A∩B|
+<span class="kw">Division:</span>  n/d     <span class="note">← circular / grouped</span></div>
+  </div>
+
+  <!-- PERMUTATIONS & COMBINATIONS -->
+  <div class="tile purple span2">
+    <div class="tile-header">
+      <div class="tile-icon">nCr</div>
+      <div class="tile-title">Permutations vs. Combinations</div>
+    </div>
+    <div class="tile-body">
+<table class="cs">
+<tr><th>Type</th><th>Formula</th><th>Order?</th><th>Repeat?</th></tr>
+<tr><td>Permutation</td><td><code>P(n,r) = n!/(n−r)!</code></td><td>YES</td><td>NO</td></tr>
+<tr><td>Permutation</td><td><code>nʳ</code></td><td>YES</td><td>YES</td></tr>
+<tr><td>Combination</td><td><code>C(n,r) = n!/(r!(n−r)!)</code></td><td>NO</td><td>NO</td></tr>
+<tr><td>Combination</td><td><code>C(n+r−1, r)</code></td><td>NO</td><td>YES</td></tr>
+<tr><td>Indistinguishable</td><td><code>n!/(n₁!·n₂!·…·nₖ!)</code></td><td>—</td><td>—</td></tr>
+</table>
+<span class="hi">Symmetry: C(n,r) = C(n, n−r)</span></div>
+  </div>
+
+  <!-- PIGEONHOLE -->
+  <div class="tile blue">
+    <div class="tile-header">
+      <div class="tile-icon">🐦</div>
+      <div class="tile-title">Pigeonhole Principle</div>
+    </div>
+    <div class="tile-body"><span class="kw">Basic:</span>
+  k+1 items in k boxes
+  → ≥1 box has <span class="val">≥ 2</span> items
+
+<span class="kw">Generalized:</span>
+  N items in k boxes
+  → ≥1 box has <span class="val">≥ ⌈N/k⌉</span> items
+
+<span class="kw">Guarantee m in group of k:</span>
+  Need N = <span class="val">(m−1)·k + 1</span></div>
+  </div>
+
+  <!-- BINOMIAL -->
+  <div class="tile green">
+    <div class="tile-header">
+      <div class="tile-icon">Bₙ</div>
+      <div class="tile-title">Binomial Theorem</div>
+    </div>
+    <div class="tile-body"><span class="kw">(x+y)ⁿ</span> = Σⱼ₌₀ⁿ C(n,j)·xⁿ⁻ʲ·yʲ
+
+<span class="kw">Pascal:</span>  C(n,k) = C(n−1,k−1)+C(n−1,k)
+<span class="kw">Sum row:</span> Σⱼ₌₀ⁿ C(n,j) = <span class="val">2ⁿ</span>
+<span class="kw">Key nums:</span> C(n,0)=C(n,n)=1, C(n,1)=n</div>
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="tile divider">
+    <div class="divider-line"></div>
+    <div class="divider-label">Chapter 9 — Relations</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- RELATION PROPERTIES -->
+  <div class="tile purple span2">
+    <div class="tile-header">
+      <div class="tile-icon">R</div>
+      <div class="tile-title">Relation Properties — Quick Reference</div>
+    </div>
+    <div class="tile-body">
+<table class="cs">
+<tr><th>Property</th><th>Definition</th><th>Disprove by finding…</th></tr>
+<tr><td><span style="color:#a09dff;font-weight:700">Reflexive</span></td><td>(a,a) ∈ R for ALL a ∈ A</td><td>any a where (a,a) ∉ R</td></tr>
+<tr><td><span style="color:#7eeaaa;font-weight:700">Symmetric</span></td><td>(a,b) ∈ R → (b,a) ∈ R</td><td>(a,b) in R but (b,a) not</td></tr>
+<tr><td><span style="color:#ff9dbe;font-weight:700">Antisymmetric</span></td><td>(a,b)+(b,a) in R → a=b</td><td>(a,b) and (b,a) both in R, a≠b</td></tr>
+<tr><td><span style="color:#ffc06b;font-weight:700">Transitive</span></td><td>(a,b)+(b,c) in R → (a,c) in R</td><td>(a,b),(b,c) in R but (a,c) not</td></tr>
+</table></div>
+  </div>
+
+  <!-- NAMED RELATIONS -->
+  <div class="tile gold">
+    <div class="tile-header">
+      <div class="tile-icon">=</div>
+      <div class="tile-title">Named Relation Types</div>
+    </div>
+    <div class="tile-body"><span class="kw">Equivalence Relation:</span>
+  <span class="val">Reflexive + Symmetric + Transitive</span>
+  → Classes [a] partition the set
+  → [a] = [b] ↔ aRb
+
+<span class="kw">Partial Order (Poset):</span>
+  <span class="val">Reflexive + Antisymmetric + Transitive</span>
+  → Not all elements need to be comparable</div>
+  </div>
+
+  <!-- COUNTING RELATIONS -->
+  <div class="tile pink">
+    <div class="tile-header">
+      <div class="tile-icon">2ⁿ</div>
+      <div class="tile-title">Counting Relations</div>
+    </div>
+    <div class="tile-body"><span class="kw">Relations from A to B</span>
+  = <span class="val">2^(|A| × |B|)</span>
+
+<span class="kw">Subsets of a set with n elements</span>
+  = <span class="val">2ⁿ</span>
+
+<span class="kw">Example:</span> |A|=5, |B|=6
+  → 2^(5×6) = <span class="val">2^30</span></div>
+  </div>
+
+  <!-- HASSE -->
+  <div class="tile blue">
+    <div class="tile-header">
+      <div class="tile-icon">⬡</div>
+      <div class="tile-title">Hasse Diagrams</div>
+    </div>
+    <div class="tile-body"><span class="kw">Steps to draw:</span>
+<span class="val">1.</span> Start with digraph of partial order
+<span class="val">2.</span> Remove loops (reflexive edges)
+<span class="val">3.</span> Remove edges implied by transitivity
+   (if a→b→c exists, remove a→c)
+<span class="val">4.</span> Arrange lower elements below higher
+<span class="val">5.</span> Remove all arrowheads</div>
+  </div>
+
+  <!-- EXAM STRATEGY -->
+  <div class="tile red wide">
+    <div class="tile-header">
+      <div class="tile-icon">⚡</div>
+      <div class="tile-title">Exam Attack Strategy</div>
+    </div>
+    <div class="badge-row">
+      <span class="badge b-purple">1 — Induction: write template first, fill mechanically</span>
+      <span class="badge b-green">2 — Relation props: check each one, give explicit example/counterexample</span>
+      <span class="badge b-pink">3 — Counting: ask "ordered or not? repeated or not?"</span>
+      <span class="badge b-gold">4 — Recursive function: just plug in the rule step by step</span>
+      <span class="badge b-blue">5 — SHOW WORK — partial credit exists. Never leave blank.</span>
+    </div>
+  </div>
+
+  <!-- DIVISIBILITY EXAMPLE -->
+  <div class="tile green span2">
+    <div class="tile-header">
+      <div class="tile-icon">3|</div>
+      <div class="tile-title">Worked: 6ⁿ − 1 divisible by 5 (most likely exam question)</div>
+    </div>
+    <div class="tile-body"><span class="kw">Basis (n=1):</span>  6¹−1 = 5 = 5·1 ✓
+<span class="kw">IH:</span>           Assume 5 | (6ᵏ−1),  so 6ᵏ−1 = 5m  →  6ᵏ = 1+5m
+<span class="kw">IS:</span>           6^(k+1) − 1  =  6·6ᵏ − 1  =  6(1+5m) − 1  =  5 + 30m  =  <span class="val">5(1+6m)</span>  ✓
+<span class="kw">Conclude:</span>     P(n) holds for all n ≥ 1. □</div>
+  </div>
+
+</div>
+</body>
+</html>
