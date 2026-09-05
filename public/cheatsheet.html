@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSE173 Final Cheatsheet</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#EEF2EF; --surface:#FFFFFF; --surface-2:#E3E9E4; --line:#C7D0C9;
+  --ink:#172420; --ink-soft:#4B5850;
+  --accent:#1F6F5C; --accent-ink:#0E3D31; --accent-soft:#DCEBE6;
+  --amber:#B9781F; --amber-soft:#F4E4C6;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1613; --surface:#16211D; --surface-2:#1D2A25; --line:#2C3A34;
+    --ink:#E7EFEA; --ink-soft:#A8B8B0;
+    --accent:#4FB89A; --accent-ink:#9FE0CB; --accent-soft:#16302A;
+    --amber:#E0A94B; --amber-soft:#3A2E17;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1613; --surface:#16211D; --surface-2:#1D2A25; --line:#2C3A34;
+  --ink:#E7EFEA; --ink-soft:#A8B8B0;
+  --accent:#4FB89A; --accent-ink:#9FE0CB; --accent-soft:#16302A;
+  --amber:#E0A94B; --amber-soft:#3A2E17;
+}
+*{box-sizing:border-box;}
+body{background:var(--bg); color:var(--ink); font-family:"Source Serif 4",Georgia,serif; font-size:12.3px; line-height:1.42;}
+.mono, code{font-family:"IBM Plex Mono",monospace;}
+h1{font-family:"Fraunces"; font-weight:700;}
+h2{font-family:"Fraunces"; font-weight:700; font-size:12.5px; margin:0 0 6px; color:#fff; background:var(--accent);
+   padding:4px 8px; border-radius:5px 5px 0 0; letter-spacing:.01em;}
+*{box-sizing:border-box;}
+
+.bar{background:var(--accent); color:#fff; padding:10px 22px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;}
+.bar h1{font-size:17px; margin:0;}
+.bar span{font-family:"IBM Plex Mono"; font-size:11px; opacity:.9;}
+.print-btn{font-family:"IBM Plex Mono"; font-size:11px; border:1px solid rgba(255,255,255,.5); background:transparent; color:#fff; border-radius:6px; padding:5px 10px; cursor:pointer;}
+.print-btn:hover{background:rgba(255,255,255,.15);}
+
+.sheet{max-width:1500px; margin:14px auto 40px; padding:0 14px;}
+.cols{column-count:4; column-gap:12px;}
+@media (max-width:1300px){ .cols{column-count:3;} }
+@media (max-width:980px){ .cols{column-count:2;} }
+@media (max-width:600px){ .cols{column-count:1;} }
+
+.card{break-inside:avoid; background:var(--surface); border:1px solid var(--line); border-radius:7px; margin:0 0 12px; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,.05);}
+.card .body{padding:8px 9px;}
+.card.def h2{background:var(--amber);}
+.card p{margin:3px 0;}
+.card ul{margin:3px 0; padding-left:14px;}
+.card li{margin:2px 0;}
+
+table{width:100%; border-collapse:collapse; margin:3px 0 5px; font-size:11.6px;}
+td,th{padding:2px 4px; text-align:left; vertical-align:top;}
+th{font-family:"IBM Plex Mono"; font-size:10px; text-transform:uppercase; color:var(--ink-soft); border-bottom:1px solid var(--line);}
+td{border-bottom:1px dotted var(--line);}
+tr:last-child td{border-bottom:none;}
+
+.f{font-family:"IBM Plex Mono"; background:var(--surface-2); padding:1px 4px; border-radius:3px; font-size:11.3px;}
+.row{display:flex; justify-content:space-between; gap:6px; border-bottom:1px dotted var(--line); padding:2px 0;}
+.row:last-child{border-bottom:none;}
+.hint{color:var(--ink-soft); font-size:10.8px; font-style:italic;}
+.topictag{font-family:"IBM Plex Mono"; font-size:9.5px; color:var(--accent-ink); text-transform:uppercase; letter-spacing:.06em;}
+
+@media print{
+  .bar .print-btn{display:none;}
+  body{font-size:9.5px; background:#fff;}
+  .cols{column-count:4;}
+  .card{box-shadow:none; border:1px solid #999;}
+  h2{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div><h1>CSE173 Final — One-Page Cheatsheet</h1><span>Discrete Mathematics · North South University</span></div>
+  <button class="print-btn" onclick="window.print()">Print (fits 2 pages)</button>
+</div>
+
+<div class="sheet"><div class="cols">
+
+<div class="card def"><h2>1 · Connectives</h2><div class="body">
+<table><tr><th>Sym</th><th>Name</th><th>T when</th></tr>
+<tr><td class="f">¬p</td><td>not</td><td>p=F</td></tr>
+<tr><td class="f">p∧q</td><td>and</td><td>both T</td></tr>
+<tr><td class="f">p∨q</td><td>or</td><td>≥1 T</td></tr>
+<tr><td class="f">p⊕q</td><td>xor</td><td>exactly 1 T</td></tr>
+<tr><td class="f">p→q</td><td>if..then</td><td>F only if p=T,q=F</td></tr>
+<tr><td class="f">p↔q</td><td>iff</td><td>match</td></tr>
+</table>
+<p class="hint">precedence: ¬ &gt; ∧ &gt; ∨ &gt; → &gt; ↔</p>
+<p><b>Converse</b> q→p · <b>Inverse</b> ¬p→¬q · <b>Contrapositive</b> ¬q→¬p ≡ original</p>
+</div></div>
+
+<div class="card"><h2>1 · Equivalences</h2><div class="body">
+<div class="row"><span class="f">p∧T≡p, p∨F≡p</span><span class="hint">identity</span></div>
+<div class="row"><span class="f">p∨T≡T, p∧F≡F</span><span class="hint">domination</span></div>
+<div class="row"><span class="f">¬(¬p)≡p</span><span class="hint">double neg</span></div>
+<div class="row"><span class="f">¬(p∧q)≡¬p∨¬q</span><span class="hint">De Morgan</span></div>
+<div class="row"><span class="f">¬(p∨q)≡¬p∧¬q</span><span class="hint">De Morgan</span></div>
+<div class="row"><span class="f">p∨(q∧r)≡(p∨q)∧(p∨r)</span><span class="hint">distrib</span></div>
+<div class="row"><span class="f">p∨(p∧q)≡p</span><span class="hint">absorption</span></div>
+<div class="row"><span class="f">p→q ≡ ¬p∨q</span><span class="hint">→ elim</span></div>
+<div class="row"><span class="f">p↔q≡(p→q)∧(q→p)</span><span class="hint">iff</span></div>
+</div></div>
+
+<div class="card"><h2>1 · Quantifiers</h2><div class="body">
+<div class="row"><span class="f">∀x P(x)</span><span>every x</span></div>
+<div class="row"><span class="f">∃x P(x)</span><span>some x</span></div>
+<div class="row"><span class="f">¬∀xP(x)≡∃x¬P(x)</span></div>
+<div class="row"><span class="f">¬∃xP(x)≡∀x¬P(x)</span></div>
+<p class="hint">∀x∃y ≠ ∃y∀x in general. Same-type quantifiers commute.</p>
+<p>quantifiers bind tighter than connectives</p>
+</div></div>
+
+<div class="card"><h2>1 · Inference rules</h2><div class="body">
+<table><tr><th>Name</th><th>Form</th></tr>
+<tr><td>Modus Ponens</td><td class="f">p,p→q⊢q</td></tr>
+<tr><td>Modus Tollens</td><td class="f">¬q,p→q⊢¬p</td></tr>
+<tr><td>Hyp. Syllogism</td><td class="f">p→q,q→r⊢p→r</td></tr>
+<tr><td>Disj. Syllogism</td><td class="f">p∨q,¬p⊢q</td></tr>
+<tr><td>Addition</td><td class="f">p⊢p∨q</td></tr>
+<tr><td>Simplification</td><td class="f">p∧q⊢p</td></tr>
+<tr><td>Conjunction</td><td class="f">p,q⊢p∧q</td></tr>
+<tr><td>Resolution</td><td class="f">p∨q,¬p∨r⊢q∨r</td></tr>
+<tr><td>Univ. Instant.</td><td class="f">∀xP(x)⊢P(c)</td></tr>
+<tr><td>Univ. General.</td><td class="f">P(c)arb.⊢∀xP(x)</td></tr>
+<tr><td>Exist. Instant.</td><td class="f">∃xP(x)⊢P(c)some</td></tr>
+<tr><td>Exist. General.</td><td class="f">P(c)⊢∃xP(x)</td></tr>
+</table>
+</div></div>
+
+<div class="card"><h2>2 · Proof techniques</h2><div class="body">
+<div class="row"><span><b>Direct</b></span><span class="hint">assume p, derive q</span></div>
+<div class="row"><span><b>Contrapositive</b></span><span class="hint">assume ¬q, derive ¬p</span></div>
+<div class="row"><span><b>Contradiction</b></span><span class="hint">assume ¬p, derive F</span></div>
+<div class="row"><span><b>Vacuous</b></span><span class="hint">p is false</span></div>
+<div class="row"><span><b>Trivial</b></span><span class="hint">q is true</span></div>
+<div class="row"><span><b>Cases</b></span><span class="hint">split p1∨..∨pn, prove each→q</span></div>
+<div class="row"><span><b>WLOG</b></span><span class="hint">skip symmetric case</span></div>
+<div class="row"><span><b>Constructive ∃</b></span><span class="hint">exhibit c</span></div>
+<div class="row"><span><b>Nonconstructive ∃</b></span><span class="hint">show c exists, no name</span></div>
+<div class="row"><span><b>Counterexample</b></span><span class="hint">disprove ∀x</span></div>
+<div class="row"><span><b>Uniqueness</b></span><span class="hint">exist + (y also works⟹y=x)</span></div>
+<div class="row"><span><b>Biconditional</b></span><span class="hint">prove p→q AND q→p</span></div>
+</div></div>
+
+<div class="card"><h2>3 · Functions</h2><div class="body">
+<table><tr><th>Property</th><th>Test</th></tr>
+<tr><td>Injective</td><td class="f">f(a)=f(b)⟹a=b</td></tr>
+<tr><td>Surjective</td><td class="f">∀b∃a: f(a)=b</td></tr>
+<tr><td>Bijective</td><td>inj + surj → has f⁻¹</td></tr>
+</table>
+<p class="f">(f∘g)(x)=f(g(x))</p>
+<p class="f">⌊x⌋ ≤ x &lt; ⌊x⌋+1&nbsp;&nbsp;⌈x⌉−1&lt;x≤⌈x⌉</p>
+</div></div>
+
+<div class="card"><h2>3 · Cardinality</h2><div class="body">
+<div class="row"><span class="f">|A|=|B|</span><span class="hint">bijection exists</span></div>
+<div class="row"><span class="f">|A|≤|B|</span><span class="hint">injection exists</span></div>
+<p>Countable = finite or bijects with ℤ⁺ (ℵ₀). ℤ, ℚ countable. ℝ uncountable (Cantor diagonalization, proof by contradiction).</p>
+<p class="f">|P(A)|=2ⁿ&nbsp;&nbsp;|A×B|=|A||B|</p>
+</div></div>
+
+<div class="card"><h2>4 · Sequences &amp; sums</h2><div class="body">
+<table><tr><th>Type</th><th>Formula</th></tr>
+<tr><td>Geometric</td><td class="f">aₙ=a·rⁿ</td></tr>
+<tr><td>Arithmetic</td><td class="f">aₙ=a+nd</td></tr>
+<tr><td>Σ 1..n</td><td class="f">n(n+1)/2</td></tr>
+<tr><td>Σ i² 1..n</td><td class="f">n(n+1)(2n+1)/6</td></tr>
+<tr><td>Geo. series r≠1</td><td class="f">(rⁿ⁺¹−1)/(r−1)</td></tr>
+<tr><td>Geo. series r=1</td><td class="f">n+1</td></tr>
+<tr><td>Infinite |r|&lt;1</td><td class="f">1/(1−r)</td></tr>
+</table>
+</div></div>
+
+<div class="card"><h2>5 · Induction</h2><div class="body">
+<p><b>Weak:</b> basis P(n₀); step P(k)→P(k+1).</p>
+<p><b>Strong:</b> basis P(n₀); step [P(n₀)∧..∧P(k)]→P(k+1).</p>
+<p><b>Structural:</b> basis-step elements ✓; recursive step: pieces true ⟹ built element true.</p>
+<p class="hint">well-ordering ⟺ induction ⟺ strong induction</p>
+<p>Recursive defn = basis value + recursive rule (+ implicit exclusion).</p>
+</div></div>
+
+<div class="card"><h2>6 · Relation properties</h2><div class="body">
+<table><tr><th>Prop.</th><th>Test</th></tr>
+<tr><td>Reflexive</td><td class="f">∀x:(x,x)∈R</td></tr>
+<tr><td>Symmetric</td><td class="f">(a,b)∈R→(b,a)∈R</td></tr>
+<tr><td>Antisymmetric</td><td class="f">(a,b),(b,a)∈R→a=b</td></tr>
+<tr><td>Transitive</td><td class="f">(a,b),(b,c)∈R→(a,c)∈R</td></tr>
+</table>
+<p class="hint">matrix: reflexive=diag all 1; symmetric=M=Mᵀ. Not opposites: sym &amp; antisym can both hold (=).</p>
+<p>#relations on |A|=n: <span class="f">2ⁿ²</span></p>
+</div></div>
+
+<div class="card"><h2>6 · Equiv. &amp; order</h2><div class="body">
+<p><b>Equivalence</b> = reflexive+symmetric+transitive.</p>
+<p class="f">[a]=[b] ⟺ aRb ⟺ [a]∩[b]≠∅</p>
+<p>classes always partition the set (and vice versa).</p>
+<p><b>Partial order (poset)</b> = reflexive+antisym+transitive.</p>
+<p>Hasse diagram: drop loops, drop transitive edges, arrows point up.</p>
+</div></div>
+
+<div class="card"><h2>7 · Counting rules</h2><div class="body">
+<div class="row"><span><b>Product</b></span><span class="hint">sequential indep. tasks → ×</span></div>
+<div class="row"><span><b>Sum</b></span><span class="hint">disjoint alternatives → +</span></div>
+<div class="row"><span><b>Subtraction</b></span><span class="f">|A∪B|=|A|+|B|−|A∩B|</span></div>
+<div class="row"><span><b>Division</b></span><span class="hint">each outcome ctd d× → ÷d</span></div>
+<div class="row"><span><b>Pigeonhole</b></span><span class="hint">k+1 in k boxes → some box ≥2</span></div>
+<div class="row"><span><b>Gen. pigeonhole</b></span><span class="f">≥⌈N/k⌉ in some box</span></div>
+</div></div>
+
+<div class="card"><h2>7 · Perm. &amp; comb.</h2><div class="body">
+<table><tr><th></th><th>order</th><th>rep</th><th>formula</th></tr>
+<tr><td>P(n,r)</td><td>yes</td><td>no</td><td class="f">n!/(n−r)!</td></tr>
+<tr><td>C(n,r)</td><td>no</td><td>no</td><td class="f">n!/(r!(n−r)!)</td></tr>
+<tr><td>perm w/rep</td><td>yes</td><td>yes</td><td class="f">nʳ</td></tr>
+<tr><td>comb w/rep</td><td>no</td><td>yes</td><td class="f">C(n+r−1,r)</td></tr>
+</table>
+<p class="f">indistinguishable perms: n!/(n₁!⋯nₖ!)</p>
+</div></div>
+
+<div class="card"><h2>7 · Binomial identities</h2><div class="body">
+<p><b>Binomial thm</b> <span class="f">(x+y)ⁿ=Σⱼ C(n,j)xⁿ⁻ʲyʲ</span></p>
+<p><b>Pascal's</b> <span class="f">C(n+1,k)=C(n,k−1)+C(n,k)</span></p>
+<p><b>Symmetry</b> <span class="f">C(n,r)=C(n,n−r)</span></p>
+<p><b>Vandermonde</b> <span class="f">C(m+n,r)=Σₖ C(m,k)C(n,r−k)</span></p>
+</div></div>
+
+<div class="card"><h2>8 · Graph basics</h2><div class="body">
+<p><b>Handshake:</b> <span class="f">Σdeg(v)=2|E|</span> → even # of odd-degree vertices.</p>
+<p>digraph: <span class="f">Σdeg⁻=Σdeg⁺=|E|</span></p>
+<table><tr><th>Graph</th><th>What</th></tr>
+<tr><td class="f">Kₙ</td><td>complete</td></tr>
+<tr><td class="f">Cₙ</td><td>cycle</td></tr>
+<tr><td class="f">Wₙ</td><td>wheel</td></tr>
+<tr><td class="f">Qₙ</td><td>n-cube, 2ⁿ vtx</td></tr>
+<tr><td class="f">Kₘ,ₙ</td><td>complete bipartite</td></tr>
+</table>
+</div></div>
+
+<div class="card"><h2>8 · Graph theorems</h2><div class="body">
+<p><b>Isomorphism invariants:</b> #V, #E, degree sequence — mismatch ⟹ not isomorphic.</p>
+<p><b>Aʳ</b>(i,j) = # length-r walks vᵢ→vⱼ.</p>
+<p><b>Euler circuit</b> ⟺ connected + all even degree.<br><b>Euler path</b> ⟺ connected + exactly 2 odd-degree.</p>
+<p><b>Hamilton</b> (visits every vertex once) — no iff known.<br>Dirac: deg(v)≥n/2 ∀v ⟹ circuit.<br>Ore: deg(u)+deg(v)≥n ∀ nonadj. pair ⟹ circuit.</p>
+</div></div>
+
+</div>
+<p class="hint" style="text-align:center; margin-top:10px;">CSE173 Discrete Mathematics · Final Exam Cheatsheet · pair with the full Study Guide for worked examples</p>
+</div>
+</body>
+</html>

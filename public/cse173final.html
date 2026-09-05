@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSE173 Final Exam Kit</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#EEF2EF; --surface:#FFFFFF; --surface-2:#E3E9E4; --line:#C7D0C9;
+  --ink:#172420; --ink-soft:#4B5850;
+  --accent:#1F6F5C; --accent-ink:#0E3D31; --accent-soft:#DCEBE6;
+  --amber:#B9781F; --amber-soft:#F4E4C6;
+  --shadow: 0 1px 2px rgba(23,36,32,.06), 0 10px 24px rgba(23,36,32,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1613; --surface:#16211D; --surface-2:#1D2A25; --line:#2C3A34;
+    --ink:#E7EFEA; --ink-soft:#A8B8B0;
+    --accent:#4FB89A; --accent-ink:#9FE0CB; --accent-soft:#16302A;
+    --amber:#E0A94B; --amber-soft:#3A2E17;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 24px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1613; --surface:#16211D; --surface-2:#1D2A25; --line:#2C3A34;
+  --ink:#E7EFEA; --ink-soft:#A8B8B0;
+  --accent:#4FB89A; --accent-ink:#9FE0CB; --accent-soft:#16302A;
+  --amber:#E0A94B; --amber-soft:#3A2E17;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 24px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0; padding:0;}
+body{background:var(--bg); color:var(--ink); font-family:"Source Serif 4",Georgia,serif; line-height:1.6;}
+h1,h2{font-family:"Fraunces",Georgia,serif; font-weight:700; text-wrap:balance; margin:0;}
+.mono{font-family:"IBM Plex Mono",monospace;}
+a{color:inherit;}
+
+.wrap{max-width:920px; margin:0 auto; padding:64px 20px 60px;}
+
+.eyebrow{font-family:"IBM Plex Mono"; font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-ink); font-weight:600;}
+h1{font-size:clamp(28px,4.4vw,40px); margin-top:8px; letter-spacing:-.01em;}
+.lede{color:var(--ink-soft); max-width:60ch; margin-top:12px; font-size:16.5px;}
+
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:38px;}
+@media (max-width:640px){ .grid{grid-template-columns:1fr;} }
+
+.card{display:flex; gap:14px; align-items:flex-start; background:var(--surface); border:1px solid var(--line);
+  border-radius:12px; padding:20px; text-decoration:none; box-shadow:var(--shadow); transition:transform .12s ease, box-shadow .12s ease;}
+.card:hover, .card:focus-visible{transform:translateY(-2px); box-shadow:0 4px 8px rgba(23,36,32,.1), 0 16px 30px rgba(23,36,32,.1);}
+.card:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+.badge{flex:none; width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+  font-family:"IBM Plex Mono"; font-weight:600; font-size:18px; color:#fff;}
+.badge.teal{background:var(--accent);}
+.badge.amber{background:var(--amber);}
+
+.card h2{font-size:18px; color:var(--ink);}
+.card p{margin:5px 0 0; color:var(--ink-soft); font-size:14.3px;}
+.card .go{display:block; margin-top:10px; font-family:"IBM Plex Mono"; font-size:12px; color:var(--accent-ink); font-weight:600;}
+
+.pairnote{grid-column:1/-1; font-family:"IBM Plex Mono"; font-size:12px; color:var(--ink-soft); text-align:center; padding-top:2px;}
+
+footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font-family:"IBM Plex Mono"; font-size:12px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="eyebrow">CSE173 · Discrete Mathematics</span>
+  <h1>Final Exam Kit</h1>
+  <p class="lede">Four documents built from the semester's lectures and the final syllabus. Pick one to open.</p>
+
+  <div class="grid">
+    <a class="card" href="study-guide.html">
+      <span class="badge teal">📘</span>
+      <span>
+        <h2>Study Guide</h2>
+        <p>All eight topics — definitions, theorems, and worked examples.</p>
+        <span class="go">Open →</span>
+      </span>
+    </a>
+
+    <a class="card" href="cheatsheet.html">
+      <span class="badge teal">🗒️</span>
+      <span>
+        <h2>Cheatsheet</h2>
+        <p>Dense one-page reference, formatted to print in two pages.</p>
+        <span class="go">Open →</span>
+      </span>
+    </a>
+
+    <a class="card" href="practice-exam.html">
+      <span class="badge amber">✏️</span>
+      <span>
+        <h2>Practice Exam</h2>
+        <p>104-point rehearsal exam, one question per topic.</p>
+        <span class="go">Open →</span>
+      </span>
+    </a>
+
+    <a class="card" href="answer-key.html">
+      <span class="badge amber">✅</span>
+      <span>
+        <h2>Answer Key</h2>
+        <p>Full worked solutions, numbered to match the practice exam.</p>
+        <span class="go">Open →</span>
+      </span>
+    </a>
+
+    <p class="pairnote">Attempt the practice exam closed-book before opening the answer key.</p>
+
+    <a class="card" href="practice-exam-harder.html">
+      <span class="badge amber">🔥</span>
+      <span>
+        <h2>Practice Exam — Harder</h2>
+        <p>136-point rehearsal, 14 questions: general proofs, strong &amp; structural induction, explicit isomorphism.</p>
+        <span class="go">Open →</span>
+      </span>
+    </a>
+
+    <a class="card" href="answer-key-harder.html">
+      <span class="badge amber">✅</span>
+      <span>
+        <h2>Answer Key — Harder</h2>
+        <p>Full worked solutions for the harder practice exam.</p>
+        <span class="go">Open →</span>
+      </span>
+    </a>
+
+    <p class="pairnote">Attempt the harder exam closed-book before opening its answer key.</p>
+  </div>
+
+  <footer>CSE173 Discrete Mathematics · Final Exam Kit</footer>
+</div>
+</body>
+</html>

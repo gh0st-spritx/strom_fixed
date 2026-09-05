@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSE173 Final Study Guide</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#EEF2EF; --surface:#FFFFFF; --surface-2:#E3E9E4; --line:#C7D0C9;
+  --ink:#172420; --ink-soft:#4B5850;
+  --accent:#1F6F5C; --accent-ink:#0E3D31; --accent-soft:#DCEBE6;
+  --amber:#B9781F; --amber-soft:#F4E4C6;
+  --shadow: 0 1px 2px rgba(23,36,32,.06), 0 6px 16px rgba(23,36,32,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1613; --surface:#16211D; --surface-2:#1D2A25; --line:#2C3A34;
+    --ink:#E7EFEA; --ink-soft:#A8B8B0;
+    --accent:#4FB89A; --accent-ink:#9FE0CB; --accent-soft:#16302A;
+    --amber:#E0A94B; --amber-soft:#3A2E17;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 20px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1613; --surface:#16211D; --surface-2:#1D2A25; --line:#2C3A34;
+  --ink:#E7EFEA; --ink-soft:#A8B8B0;
+  --accent:#4FB89A; --accent-ink:#9FE0CB; --accent-soft:#16302A;
+  --amber:#E0A94B; --amber-soft:#3A2E17;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 20px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;}
+body{background:var(--bg); color:var(--ink); font-family:"Source Serif 4",Georgia,serif; line-height:1.6; font-size:16.5px;}
+h1,h2,h3,h4{font-family:"Fraunces",Georgia,serif; text-wrap:balance; color:var(--ink); font-weight:700; margin:0;}
+code, .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;}
+::selection{background:var(--accent); color:#fff;}
+a{color:var(--accent-ink);}
+table{font-variant-numeric:tabular-nums;}
+
+.wrap{max-width:1180px; margin:0 auto; padding:0 20px 80px;}
+
+/* header */
+.hero{padding:38px 20px 26px; border-bottom:1px solid var(--line); background:
+  radial-gradient(700px 220px at 85% -40%, var(--accent-soft), transparent 60%);}
+.hero-inner{max-width:1180px; margin:0 auto;}
+.eyebrow{font-family:"IBM Plex Mono"; font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-ink); font-weight:600;}
+.hero h1{font-size:clamp(28px,4vw,42px); margin-top:6px; letter-spacing:-.01em;}
+.hero p{color:var(--ink-soft); max-width:62ch; margin-top:10px; font-size:16px;}
+.hero-meta{display:flex; flex-wrap:wrap; gap:10px 22px; margin-top:18px; font-family:"IBM Plex Mono"; font-size:12.5px; color:var(--ink-soft);}
+.hero-meta b{color:var(--ink); font-weight:600;}
+
+/* layout */
+.layout{display:grid; grid-template-columns:210px minmax(0,1fr); gap:36px; margin-top:34px;}
+@media (max-width:880px){ .layout{grid-template-columns:1fr;} .rail{position:static; display:flex; overflow-x:auto; gap:6px; padding-bottom:8px; border-bottom:1px solid var(--line);} .rail a{white-space:nowrap;} }
+
+.rail{position:sticky; top:16px; align-self:start; display:flex; flex-direction:column; gap:2px;}
+.rail a{font-family:"IBM Plex Mono"; font-size:12.5px; color:var(--ink-soft); text-decoration:none; padding:7px 10px; border-radius:7px; border-left:2px solid transparent;}
+.rail a span{color:var(--ink-soft); opacity:.6; margin-right:6px;}
+.rail a:hover{background:var(--surface-2); color:var(--ink);}
+.rail a.current{border-left-color:var(--accent); color:var(--accent-ink); background:var(--accent-soft); font-weight:600;}
+
+/* topics */
+.topic{scroll-margin-top:16px; padding:30px 0; border-bottom:1px solid var(--line);}
+.topic:last-child{border-bottom:none;}
+.topic-head{display:flex; align-items:baseline; gap:14px; margin-bottom:14px;}
+.topic-num{font-family:"IBM Plex Mono"; font-size:13px; color:var(--surface); background:var(--accent); border-radius:6px; padding:3px 8px; font-weight:600;}
+.topic h2{font-size:24px;}
+.topic-sub{color:var(--ink-soft); font-size:14.5px; margin:-8px 0 18px 0;}
+
+h3.sec{font-size:16.5px; margin:26px 0 10px; padding-top:2px; color:var(--accent-ink); font-family:"Fraunces"; font-weight:600;}
+h3.sec:first-of-type{margin-top:6px;}
+p{margin:10px 0;}
+ul,ol{margin:8px 0; padding-left:22px;}
+li{margin:4px 0;}
+
+.def, .thm, .ex, .note{border-radius:10px; padding:14px 16px; margin:12px 0; box-shadow:var(--shadow); background:var(--surface);}
+.def{border-left:3px solid var(--amber);}
+.thm{border-left:3px solid var(--accent);}
+.ex{border-left:3px solid var(--line); background:var(--surface-2);}
+.note{border-left:3px solid var(--ink-soft); font-size:14px; color:var(--ink-soft);}
+.tag{font-family:"IBM Plex Mono"; font-size:11px; text-transform:uppercase; letter-spacing:.08em; font-weight:600; display:block; margin-bottom:5px;}
+.def .tag{color:var(--amber);}
+.thm .tag{color:var(--accent-ink);}
+.ex .tag{color:var(--ink-soft);}
+.ex .steps{font-family:"IBM Plex Mono"; font-size:13.5px; line-height:1.75; white-space:pre-wrap;}
+
+table.tbl{width:100%; border-collapse:collapse; margin:12px 0; font-size:14px; box-shadow:var(--shadow); border-radius:10px; overflow:hidden;}
+table.tbl th{background:var(--accent); color:#fff; text-align:left; padding:8px 10px; font-family:"IBM Plex Mono"; font-weight:600; font-size:12.5px;}
+table.tbl td{padding:8px 10px; border-bottom:1px solid var(--line); background:var(--surface);}
+table.tbl tr:last-child td{border-bottom:none;}
+table.tbl td.m, table.tbl th.m{font-family:"IBM Plex Mono";}
+
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+@media(max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+.chip{display:inline-block; font-family:"IBM Plex Mono"; font-size:11.5px; background:var(--surface-2); border:1px solid var(--line); border-radius:999px; padding:2px 9px; margin:2px 4px 2px 0; color:var(--ink-soft);}
+
+.print-btn{font-family:"IBM Plex Mono"; font-size:12.5px; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:8px; padding:8px 12px; cursor:pointer;}
+.print-btn:hover{background:var(--surface-2);}
+@media print{ .rail,.print-row{display:none !important;} .layout{grid-template-columns:1fr; display:block;} .hero{background:none;} body{font-size:12px;} .topic{break-inside:avoid-page;} }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">CSE173 · Discrete Mathematics</span>
+    <h1>Final Exam Study Guide</h1>
+    <p>A working reference for all eight final-syllabus topics, built from the semester's lecture decks — definitions in amber, theorems &amp; rules in teal, worked examples in mono.</p>
+    <div class="hero-meta">
+      <span>Text: <b>Rosen, Discrete Mathematics &amp; Its Applications, 8e</b></span>
+      <span>Final weight: <b>35%</b> of course grade</span>
+      <span>Topics: <b>8</b> + 2 midterm-bonus areas</span>
+    </div>
+    <div class="print-row" style="margin-top:16px;"><button class="print-btn" onclick="window.print()">Print / Save as PDF</button></div>
+  </div>
+</header>
+
+<div class="wrap">
+<div class="layout">
+  <nav class="rail" id="rail">
+    <a href="#t1" class="current"><span>01</span>Inference</a>
+    <a href="#t2"><span>02</span>Proof Techniques</a>
+    <a href="#t3"><span>03</span>Functions &amp; Countability</a>
+    <a href="#t4"><span>04</span>Sequences &amp; Sums</a>
+    <a href="#t5"><span>05</span>Induction &amp; Recursion</a>
+    <a href="#t6"><span>06</span>Relations</a>
+    <a href="#t7"><span>07</span>Counting</a>
+    <a href="#t8"><span>08</span>Graphs</a>
+  </nav>
+
+  <main>
+
+  <section class="topic" id="t1">
+    <div class="topic-head"><span class="topic-num">01</span><h2>Inference — Propositional &amp; Predicate Logic</h2></div>
+    <p class="topic-sub">Also the midterm-bonus area — know this cold.</p>
+
+    <h3 class="sec">Propositions &amp; connectives</h3>
+    <div class="def"><span class="tag">Definition</span>A <b>proposition</b> is a declarative sentence that is either true or false, never both.</div>
+    <table class="tbl">
+      <tr><th>Connective</th><th class="m">Symbol</th><th>Reads as</th><th class="m">True when</th></tr>
+      <tr><td>Negation</td><td class="m">¬p</td><td>not p</td><td class="m">p is F</td></tr>
+      <tr><td>Conjunction</td><td class="m">p ∧ q</td><td>p and q</td><td class="m">both T</td></tr>
+      <tr><td>Disjunction</td><td class="m">p ∨ q</td><td>p or q (inclusive)</td><td class="m">at least one T</td></tr>
+      <tr><td>Exclusive or</td><td class="m">p ⊕ q</td><td>p xor q</td><td class="m">exactly one T</td></tr>
+      <tr><td>Conditional</td><td class="m">p → q</td><td>if p then q</td><td class="m">F only when p=T,q=F</td></tr>
+      <tr><td>Biconditional</td><td class="m">p ↔ q</td><td>p iff q</td><td class="m">p and q match</td></tr>
+    </table>
+    <div class="note">Precedence (high→low): <span class="mono">¬, ∧, ∨, →, ↔</span>. Add parentheses whenever in doubt.</div>
+
+    <h3 class="sec">Conditional variants</h3>
+    <div class="grid2">
+      <div class="thm"><span class="tag">p → q</span>original</div>
+      <div class="thm"><span class="tag">Converse</span><span class="mono">q → p</span></div>
+      <div class="thm"><span class="tag">Inverse</span><span class="mono">¬p → ¬q</span></div>
+      <div class="thm"><span class="tag">Contrapositive</span><span class="mono">¬q → ¬p</span> — <b>equivalent</b> to the original</div>
+    </div>
+
+    <h3 class="sec">Key logical equivalences</h3>
+    <table class="tbl">
+      <tr><th>Law</th><th class="m">Form</th></tr>
+      <tr><td>Identity</td><td class="m">p∧T≡p&nbsp;&nbsp;p∨F≡p</td></tr>
+      <tr><td>Domination</td><td class="m">p∨T≡T&nbsp;&nbsp;p∧F≡F</td></tr>
+      <tr><td>Idempotent</td><td class="m">p∨p≡p&nbsp;&nbsp;p∧p≡p</td></tr>
+      <tr><td>Double negation</td><td class="m">¬(¬p)≡p</td></tr>
+      <tr><td>Commutative</td><td class="m">p∧q≡q∧p&nbsp;&nbsp;p∨q≡q∨p</td></tr>
+      <tr><td>Associative</td><td class="m">(p∧q)∧r≡p∧(q∧r)</td></tr>
+      <tr><td>Distributive</td><td class="m">p∨(q∧r)≡(p∨q)∧(p∨r)</td></tr>
+      <tr><td>De Morgan's</td><td class="m">¬(p∧q)≡¬p∨¬q&nbsp;&nbsp;¬(p∨q)≡¬p∧¬q</td></tr>
+      <tr><td>Absorption</td><td class="m">p∨(p∧q)≡p&nbsp;&nbsp;p∧(p∨q)≡p</td></tr>
+      <tr><td>Conditional&nbsp;→&nbsp;or/not</td><td class="m">p→q ≡ ¬p∨q</td></tr>
+      <tr><td>Biconditional</td><td class="m">p↔q ≡ (p→q)∧(q→p)</td></tr>
+    </table>
+    <div class="ex"><span class="tag">Tautology / contradiction / contingency</span>Always T = tautology (e.g. <span class="mono">p∨¬p</span>). Always F = contradiction (<span class="mono">p∧¬p</span>). Neither = contingency. Show by truth table <b>or</b> a chain of equivalences.</div>
+
+    <h3 class="sec">Predicate logic &amp; quantifiers</h3>
+    <div class="def"><span class="tag">Definition</span><span class="mono">P(x)</span> is a propositional function — becomes a proposition once <span class="mono">x</span> is bound by a quantifier or replaced with a domain value.</div>
+    <table class="tbl">
+      <tr><th>Quantifier</th><th class="m">Symbol</th><th>True when</th></tr>
+      <tr><td>Universal</td><td class="m">∀x P(x)</td><td>P(x) holds for <i>every</i> x in the domain</td></tr>
+      <tr><td>Existential</td><td class="m">∃x P(x)</td><td>P(x) holds for <i>some</i> x</td></tr>
+      <tr><td>Uniqueness</td><td class="m">∃!x P(x)</td><td>exactly one x works</td></tr>
+    </table>
+    <div class="thm"><span class="tag">De Morgan's for quantifiers</span><span class="mono">¬∀x P(x) ≡ ∃x ¬P(x)</span>&nbsp;&nbsp;&nbsp;<span class="mono">¬∃x P(x) ≡ ∀x ¬P(x)</span></div>
+    <div class="note"><b>Nested quantifiers:</b> order matters between unlike quantifiers. <span class="mono">∀x∃y P(x,y)</span> ≠ <span class="mono">∃y∀x P(x,y)</span> in general (e.g. P(x,y): x+y=0 over ℝ — the first is true, the second false). Same-type quantifiers commute freely: <span class="mono">∀x∀y ≡ ∀y∀x</span>, <span class="mono">∃x∃y ≡ ∃y∃x</span>.</div>
+
+    <h3 class="sec">Rules of inference (propositional)</h3>
+    <table class="tbl">
+      <tr><th>Rule</th><th class="m">Premises → Conclusion</th></tr>
+      <tr><td>Modus Ponens</td><td class="m">p, p→q ⊢ q</td></tr>
+      <tr><td>Modus Tollens</td><td class="m">¬q, p→q ⊢ ¬p</td></tr>
+      <tr><td>Hypothetical Syllogism</td><td class="m">p→q, q→r ⊢ p→r</td></tr>
+      <tr><td>Disjunctive Syllogism</td><td class="m">p∨q, ¬p ⊢ q</td></tr>
+      <tr><td>Addition</td><td class="m">p ⊢ p∨q</td></tr>
+      <tr><td>Simplification</td><td class="m">p∧q ⊢ p</td></tr>
+      <tr><td>Conjunction</td><td class="m">p, q ⊢ p∧q</td></tr>
+      <tr><td>Resolution</td><td class="m">p∨q, ¬p∨r ⊢ q∨r</td></tr>
+    </table>
+    <h3 class="sec">Rules of inference (quantified)</h3>
+    <table class="tbl">
+      <tr><th>Rule</th><th class="m">Form</th></tr>
+      <tr><td>Universal Instantiation (UI)</td><td class="m">∀x P(x) ⊢ P(c)</td></tr>
+      <tr><td>Universal Generalization (UG)</td><td class="m">P(c) for arbitrary c ⊢ ∀x P(x)</td></tr>
+      <tr><td>Existential Instantiation (EI)</td><td class="m">∃x P(x) ⊢ P(c) for some element c</td></tr>
+      <tr><td>Existential Generalization (EG)</td><td class="m">P(c) ⊢ ∃x P(x)</td></tr>
+    </table>
+    <div class="ex"><span class="tag">Worked example — argument construction</span>
+<div class="steps">Premises: "All men are mortal", "Socrates is a man"
+Let M(x): x is a man, R(x): x is mortal.
+1. ∀x(M(x)→R(x))     premise
+2. M(Socrates)        premise
+3. M(Socrates)→R(Socrates)   UI on 1
+4. R(Socrates)        Modus Ponens on 2,3</div></div>
+  </section>
+
+  <section class="topic" id="t2">
+    <div class="topic-head"><span class="topic-num">02</span><h2>Proof Techniques</h2></div>
+    <p class="topic-sub">Also the second midterm-bonus area.</p>
+    <table class="tbl">
+      <tr><th>Term</th><th>Meaning</th></tr>
+      <tr><td>Theorem</td><td>statement proved true from definitions/axioms/other theorems</td></tr>
+      <tr><td>Lemma</td><td>a "helper" theorem used to prove a bigger theorem</td></tr>
+      <tr><td>Corollary</td><td>result that follows directly from a theorem</td></tr>
+      <tr><td>Conjecture</td><td>statement believed true but not yet proved</td></tr>
+    </table>
+
+    <h3 class="sec">Proving p → q</h3>
+    <div class="grid2">
+      <div class="thm"><span class="tag">Trivial</span>Show q is true outright — p→q holds regardless of p.</div>
+      <div class="thm"><span class="tag">Vacuous</span>Show p is false — p→q holds automatically.</div>
+      <div class="thm"><span class="tag">Direct</span>Assume p true, chain reasoning to show q true.</div>
+      <div class="thm"><span class="tag">Contraposition (indirect)</span>Assume ¬q, show ¬p. Valid since ¬q→¬p ≡ p→q.</div>
+    </div>
+    <div class="thm"><span class="tag">Contradiction</span>To prove statement p: assume ¬p, derive something false (often r∧¬r). Since ¬p⇒F is a tautology only if ¬p is false, p must hold.</div>
+    <div class="ex"><span class="tag">Worked — contraposition</span>
+<div class="steps">Claim: if 3n+2 is odd, n is odd.
+Contrapositive: if n is even, 3n+2 is even.
+Assume n=2k. Then 3n+2 = 6k+2 = 2(3k+1) — even. ∎
+Since ¬q→¬p is proved, p→q holds.</div></div>
+    <div class="ex"><span class="tag">Worked — contradiction (√2 irrational)</span>
+<div class="steps">Suppose √2 = a/b in lowest terms (gcd(a,b)=1).
+Then a² = 2b² ⟹ a² even ⟹ a even ⟹ a=2c.
+So 4c² = 2b² ⟹ b² = 2c² ⟹ b even.
+Both a,b even contradicts gcd(a,b)=1. So √2 is irrational. ∎</div></div>
+
+    <h3 class="sec">Other proof strategies</h3>
+    <div class="grid2">
+      <div class="thm"><span class="tag">Proof by cases</span>Split p1∨p2∨…∨pn → q into cases pi → q. Every case must be covered.</div>
+      <div class="thm"><span class="tag">WLOG</span>"Without loss of generality" — skip a case that is symmetric/identical in structure to one already done.</div>
+      <div class="thm"><span class="tag">Constructive existence</span>Exhibit a specific c with P(c) true.</div>
+      <div class="thm"><span class="tag">Nonconstructive existence</span>Prove some c must exist without naming it (often via contradiction).</div>
+      <div class="thm"><span class="tag">Counterexample</span>To disprove ∀x P(x), exhibit one c with P(c) false.</div>
+      <div class="thm"><span class="tag">Uniqueness (∃!x P(x))</span>Two parts: <b>existence</b> (find one x that works) + <b>uniqueness</b> (assume y also works, show y=x).</div>
+    </div>
+    <div class="thm"><span class="tag">Biconditional p ↔ q</span>Prove <b>both</b> p→q and q→p (or chain "iff" equivalences directly).</div>
+    <div class="note"><b>Strategy order:</b> try direct first → then contrapositive → then contradiction. Within a method, try forward reasoning (start from hypothesis) before backward reasoning (work back from goal).</div>
+  </section>
+
+  <section class="topic" id="t3">
+    <div class="topic-head"><span class="topic-num">03</span><h2>Functions &amp; Countability of Sets</h2></div>
+
+    <h3 class="sec">Set basics (prerequisite)</h3>
+    <div class="grid2">
+      <div class="thm"><span class="tag">Subset</span><span class="mono">A⊆B</span> iff ∀x(x∈A→x∈B). ∅⊆S always.</div>
+      <div class="thm"><span class="tag">Power set</span><span class="mono">|P(A)| = 2|A|</span></div>
+      <div class="thm"><span class="tag">Cartesian product</span><span class="mono">A×B = {(a,b) | a∈A, b∈B}</span>, <span class="mono">|A×B|=|A||B|</span></div>
+      <div class="thm"><span class="tag">Cardinality</span><span class="mono">|A∪B| = |A|+|B|−|A∩B|</span></div>
+    </div>
+
+    <h3 class="sec">Functions</h3>
+    <div class="def"><span class="tag">Definition</span><span class="mono">f: A→B</span> assigns <b>exactly one</b> element of B to each element of A. A = domain, B = codomain, f(A) = range (⊆ codomain).</div>
+    <table class="tbl">
+      <tr><th>Property</th><th>Definition</th><th>To prove</th></tr>
+      <tr><td>Injective (1-1)</td><td class="m">f(a)=f(b) ⟹ a=b</td><td>assume f(a)=f(b), derive a=b algebraically</td></tr>
+      <tr><td>Surjective (onto)</td><td class="m">∀b∈B ∃a∈A: f(a)=b</td><td>pick arbitrary b, exhibit a in terms of b</td></tr>
+      <tr><td>Bijective</td><td>injective <i>and</i> surjective</td><td>show both; only bijections have inverses</td></tr>
+    </table>
+    <div class="ex"><span class="tag">Worked — is f(x)=x² onto ℤ→ℤ?</span>
+<div class="steps">No: −1 has no preimage since x² ≥ 0 for all integers x.
+Counterexample suffices to disprove "onto."</div></div>
+    <div class="thm"><span class="tag">Composition</span>(f∘g)(x) = f(g(x)); domain requires range(g) ⊆ domain(f).</div>
+    <div class="thm"><span class="tag">Floor / ceiling</span><span class="mono">⌊x⌋</span> = largest integer ≤ x. <span class="mono">⌈x⌉</span> = smallest integer ≥ x.</div>
+
+    <h3 class="sec">Cardinality &amp; countability</h3>
+    <table class="tbl">
+      <tr><th>Notation</th><th>Meaning</th></tr>
+      <tr><td class="m">|A|=|B|</td><td>a bijection A→B exists</td></tr>
+      <tr><td class="m">|A|≤|B|</td><td>an injection A→B exists</td></tr>
+      <tr><td class="m">|A|&lt;|B|</td><td>|A|≤|B| but not |A|=|B|</td></tr>
+    </table>
+    <div class="def"><span class="tag">Definition</span>A set is <b>countable</b> if finite, or in bijection with ℤ⁺ (countably infinite, cardinality <span class="mono">ℵ₀</span>). Otherwise <b>uncountable</b>.</div>
+    <div class="thm"><span class="tag">To show countable</span>Exhibit a bijection with ℕ, <i>or</i> list all elements in a sequence a₁,a₂,a₃,… <br><span class="chip">ℤ is countable</span><span class="chip">ℚ⁺ is countable</span><span class="chip">finite strings over a finite alphabet are countable</span></div>
+    <div class="thm"><span class="tag">Cantor diagonalization</span>Proves ℝ (even just (0,1)) is uncountable — proof by contradiction. Assume a listing r₁,r₂,… of all reals in (0,1); build a new real that differs from rᵢ in the i-th decimal digit for every i ⟹ it's missing from the list ⟹ contradiction.</div>
+    <div class="note">Hilbert's Grand Hotel: a countably-infinite hotel, fully booked, can still seat one more guest (shift everyone from room n to n+1) — intuition-builder for "countably infinite ≠ finite" arithmetic.</div>
+  </section>
+
+  <section class="topic" id="t4">
+    <div class="topic-head"><span class="topic-num">04</span><h2>Sequences &amp; Summations</h2></div>
+    <div class="def"><span class="tag">Definition</span>A sequence is a function from a subset of ℤ (usually ℕ or ℤ⁺) to a set S. Notation: <span class="mono">aₙ</span> is the n-th term.</div>
+    <div class="grid2">
+      <div class="thm"><span class="tag">Geometric progression</span><span class="mono">aₙ = a·rⁿ</span> (a=initial term, r=common ratio)</div>
+      <div class="thm"><span class="tag">Arithmetic progression</span><span class="mono">aₙ = a + n·d</span> (d=common difference)</div>
+    </div>
+
+    <h3 class="sec">Recurrence relations</h3>
+    <div class="def"><span class="tag">Definition</span>Expresses aₙ in terms of earlier terms (a₀,…,aₙ₋₁), plus initial condition(s). Example: Fibonacci — <span class="mono">f₀=0, f₁=1, fₙ=fₙ₋₁+fₙ₋₂</span>.</div>
+    <div class="ex"><span class="tag">Worked — forward substitution</span>
+<div class="steps">aₙ = aₙ₋₁ + 3,  a₁ = 2
+a₂ = 2+3
+a₃ = 2+3·2
+a₄ = 2+3·3
+…pattern: aₙ = 2 + 3(n−1)</div></div>
+    <div class="ex"><span class="tag">Worked — backward substitution</span>
+<div class="steps">aₙ = aₙ₋₁+3 = (aₙ₋₂+3)+3 = aₙ₋₂+3·2 = … = a₁+3(n−1) = 2+3(n−1)</div></div>
+    <div class="note">Guess a closed form from the pattern, then <b>confirm it with induction</b> (Topic 5) — this is the standard exam combo.</div>
+
+    <h3 class="sec">Summation notation</h3>
+    <table class="tbl">
+      <tr><th>Formula</th><th class="m">Value</th></tr>
+      <tr><td>Sum 1..n</td><td class="m">Σᵢ₌₁ⁿ i = n(n+1)/2</td></tr>
+      <tr><td>Sum of squares</td><td class="m">Σᵢ₌₁ⁿ i² = n(n+1)(2n+1)/6</td></tr>
+      <tr><td>Geometric series (r≠1)</td><td class="m">Σⱼ₌₀ⁿ rʲ = (rⁿ⁺¹−1)/(r−1)</td></tr>
+      <tr><td>Geometric series (r=1)</td><td class="m">Σⱼ₌₀ⁿ rʲ = n+1</td></tr>
+      <tr><td>Infinite geometric (|r|&lt;1)</td><td class="m">Σⱼ₌₀^∞ rʲ = 1/(1−r)</td></tr>
+    </table>
+    <div class="note">Index shifting: <span class="mono">Σᵢ₌₀ⁿ f(i) = Σₖ₌₁ⁿ⁺¹ f(k−1)</span> (substitute k=i+1). Useful for deriving the geometric-series formula and for telescoping sums.</div>
+  </section>
+
+  <section class="topic" id="t5">
+    <div class="topic-head"><span class="topic-num">05</span><h2>Induction &amp; Recursion</h2></div>
+
+    <h3 class="sec">Mathematical induction</h3>
+    <div class="thm"><span class="tag">Template</span>To prove ∀n≥n₀ P(n):
+      <ol>
+        <li><b>Basis step</b>: verify P(n₀).</li>
+        <li><b>Inductive step</b>: assume P(k) (the "inductive hypothesis") for arbitrary k≥n₀; prove P(k+1) follows.</li>
+      </ol>
+      Conclude ∀n≥n₀ P(n) holds (rule of inference: <span class="mono">(P(1)∧∀k(P(k)→P(k+1))) → ∀n P(n)</span>).</div>
+    <div class="ex"><span class="tag">Worked — Σi = n(n+1)/2</span>
+<div class="steps">Basis: n=1: 1 = 1·2/2 ✓
+Inductive step: assume Σᵢ₌₁ᵏ i = k(k+1)/2.
+Σᵢ₌₁ᵏ⁺¹ i = k(k+1)/2 + (k+1) = (k+1)(k+2)/2 = (k+1)((k+1)+1)/2 ✓</div></div>
+    <div class="note">Inequalities/divisibility follow the same template — just algebra differs. For <span class="mono">n &lt; 2ⁿ</span>: assume k&lt;2ᵏ, then k+1 &lt; 2ᵏ+1 ≤ 2ᵏ+2ᵏ = 2ᵏ⁺¹.</div>
+
+    <h3 class="sec">Strong induction</h3>
+    <div class="thm"><span class="tag">Template</span>Basis: P(n₀). Inductive step: assume <b>P(n₀)∧…∧P(k)</b> all hold, prove P(k+1). Use when P(k+1) may depend on <i>any</i> earlier term, not just P(k) (e.g. postage-stamp problems, "every integer &gt;1 is a product of primes").</div>
+    <div class="note">Math induction, strong induction, and the <b>well-ordering property</b> (every nonempty subset of ℤ⁺ has a least element) are logically equivalent — use whichever is easiest to set up.</div>
+
+    <h3 class="sec">Recursive definitions</h3>
+    <div class="def"><span class="tag">Definition</span>Two parts: <b>basis step</b> (seed value/element) + <b>recursive step</b> (build new values/elements from existing ones). An implicit <b>exclusion rule</b> says nothing else is in the set.</div>
+    <div class="grid2">
+      <div class="ex"><span class="tag">Recursive function</span><div class="steps">f(0)=3
+f(n+1)=2f(n)+3</div></div>
+      <div class="ex"><span class="tag">Recursive set</span><div class="steps">Basis: 3∈S
+Recursive: x,y∈S ⟹ x+y∈S
+(this S = positive multiples of 3)</div></div>
+    </div>
+
+    <h3 class="sec">Structural induction</h3>
+    <div class="thm"><span class="tag">Template</span>To prove a property over a recursively-defined set/structure: (1) verify it for every basis-step element, (2) assume it for the pieces used in the recursive step, prove it for the newly built element. Standard use: full binary trees, well-formed formulas, strings over Σ*.</div>
+  </section>
+
+  <section class="topic" id="t6">
+    <div class="topic-head"><span class="topic-num">06</span><h2>Relations</h2></div>
+    <div class="def"><span class="tag">Definition</span>A binary relation R from A to B is any subset of <span class="mono">A×B</span>. A relation <i>on</i> A is a subset of <span class="mono">A×A</span>. There are <span class="mono">2ⁿ²</span> relations on a set of size n.</div>
+
+    <h3 class="sec">Properties (the exam staple)</h3>
+    <table class="tbl">
+      <tr><th>Property</th><th class="m">Symbolic test</th><th>How to disprove</th></tr>
+      <tr><td>Reflexive</td><td class="m">∀x∈A: (x,x)∈R</td><td>find one a with (a,a)∉R</td></tr>
+      <tr><td>Symmetric</td><td class="m">(a,b)∈R → (b,a)∈R</td><td>find (a,b)∈R with (b,a)∉R</td></tr>
+      <tr><td>Antisymmetric</td><td class="m">(a,b)∈R∧(b,a)∈R → a=b</td><td>find a≠b with both (a,b),(b,a)∈R</td></tr>
+      <tr><td>Transitive</td><td class="m">(a,b)∈R∧(b,c)∈R → (a,c)∈R</td><td>find a,b,c with (a,b),(b,c)∈R but (a,c)∉R</td></tr>
+    </table>
+    <div class="note">Symmetric and antisymmetric are <b>not</b> opposites — a relation can be both (e.g. equality) or neither.</div>
+    <div class="thm"><span class="tag">From a matrix M<sub>R</sub></span>Reflexive: all-1 diagonal. Symmetric: M=Mᵀ. Antisymmetric: mᵢⱼ=1 ⟹ mⱼᵢ=0 for i≠j.</div>
+    <div class="thm"><span class="tag">From a digraph</span>Reflexive: loop at every vertex. Symmetric: every edge has a matching reverse edge. Antisymmetric: no reverse-edge pairs. Transitive: edges x→y, y→z force an edge x→z.</div>
+    <div class="thm"><span class="tag">Composition &amp; powers</span><span class="mono">R∘S</span>: (x,z) if ∃y with (x,y)∈S,(y,z)∈R. <span class="mono">Rⁿ</span> defined inductively (R¹=R, Rⁿ⁺¹=Rⁿ∘R). R transitive ⟺ Rⁿ⊆R for all n≥1.</div>
+
+    <h3 class="sec">Equivalence relations</h3>
+    <div class="def"><span class="tag">Definition</span>Reflexive + symmetric + transitive. Classic example: congruence mod m.</div>
+    <div class="thm"><span class="tag">Equivalence classes</span><span class="mono">[a]ᴿ = {x | (a,x)∈R}</span>. Key theorem: <span class="mono">aRb ⟺ [a]=[b] ⟺ [a]∩[b]≠∅</span>. The equivalence classes always <b>partition</b> the set (disjoint, nonempty, union = whole set) — and conversely, every partition defines an equivalence relation.</div>
+
+    <h3 class="sec">Partial orderings</h3>
+    <div class="def"><span class="tag">Definition</span>Reflexive + antisymmetric + transitive. <span class="mono">(S,R)</span> is called a poset. Symbol <span class="mono">≼</span> used generically.</div>
+    <div class="grid2">
+      <div class="thm"><span class="tag">Comparable</span>a,b comparable if a≼b or b≼a.</div>
+      <div class="thm"><span class="tag">Total order</span>every pair comparable → "chain."</div>
+    </div>
+    <div class="note">Hasse diagram = digraph of a poset with reflexive loops removed, transitive edges removed, and edges drawn pointing upward (arrowheads dropped).</div>
+  </section>
+
+  <section class="topic" id="t7">
+    <div class="topic-head"><span class="topic-num">07</span><h2>Counting Techniques</h2></div>
+    <p class="topic-sub">Through Vandermonde's Identity.</p>
+    <table class="tbl">
+      <tr><th>Rule</th><th>When to use</th></tr>
+      <tr><td>Product rule</td><td>task = sequence of independent sub-tasks → multiply choice counts</td></tr>
+      <tr><td>Sum rule</td><td>task done one way <i>or</i> another, disjoint ways → add counts</td></tr>
+      <tr><td>Subtraction rule</td><td class="m">|A∪B| = |A|+|B|−|A∩B|</td></tr>
+      <tr><td>Division rule</td><td>each outcome counted d times → divide by d</td></tr>
+    </table>
+
+    <h3 class="sec">Pigeonhole principle</h3>
+    <div class="thm"><span class="tag">Basic</span>k+1 objects into k boxes ⟹ some box has ≥2 objects.</div>
+    <div class="thm"><span class="tag">Generalized</span>N objects into k boxes ⟹ some box has ≥ <span class="mono">⌈N/k⌉</span> objects.</div>
+
+    <h3 class="sec">Permutations &amp; combinations</h3>
+    <table class="tbl">
+      <tr><th></th><th>Order matters?</th><th>Repeats?</th><th class="m">Formula</th></tr>
+      <tr><td>r-permutation</td><td>yes</td><td>no</td><td class="m">P(n,r) = n!/(n−r)!</td></tr>
+      <tr><td>r-combination</td><td>no</td><td>no</td><td class="m">C(n,r) = n!/(r!(n−r)!)</td></tr>
+      <tr><td>Permutation w/ repetition</td><td>yes</td><td>yes</td><td class="m">nʳ</td></tr>
+      <tr><td>Combination w/ repetition</td><td>no</td><td>yes</td><td class="m">C(n+r−1, r)</td></tr>
+    </table>
+    <div class="thm"><span class="tag">Indistinguishable objects</span>Permutations of n objects with n₁,…,nₖ of each type: <span class="mono">n! / (n₁!n₂!⋯nₖ!)</span></div>
+    <div class="grid2">
+      <div class="thm"><span class="tag">Distributing objects → boxes</span>Distinguishable objects, distinguishable boxes: multinomial above. Indistinguishable objects, distinguishable boxes: <span class="mono">C(n+r−1, r)</span> (stars &amp; bars).</div>
+      <div class="thm"><span class="tag">Combinatorial proof</span>Double counting: show both sides of an identity count the same set two ways. Bijective: exhibit a bijection between the two counted sets.</div>
+    </div>
+
+    <h3 class="sec">Binomial theorem &amp; identities</h3>
+    <div class="thm"><span class="tag">Binomial theorem</span><span class="mono">(x+y)ⁿ = Σⱼ₌₀ⁿ C(n,j) xⁿ⁻ʲ yʲ</span></div>
+    <div class="thm"><span class="tag">Pascal's identity</span><span class="mono">C(n+1,k) = C(n,k−1) + C(n,k)</span> — generates Pascal's triangle.</div>
+    <div class="thm"><span class="tag">Symmetry</span><span class="mono">C(n,r) = C(n,n−r)</span></div>
+    <div class="thm"><span class="tag">Vandermonde's Identity</span><span class="mono">C(m+n, r) = Σₖ₌₀ʳ C(m,k)·C(n,r−k)</span>
+      <div class="steps" style="margin-top:6px;">Combinatorial proof: choosing r people from a pool of m men + n women
+      = sum over k of (choose k men AND r−k women), for every possible split k.</div></div>
+  </section>
+
+  <section class="topic" id="t8">
+    <div class="topic-head"><span class="topic-num">08</span><h2>Basics of Graphs</h2></div>
+    <div class="def"><span class="tag">Definition</span>Graph <span class="mono">G=(V,E)</span>: nonempty vertex set V, edge set E. <span class="chip">simple graph</span>no loops/multi-edges <span class="chip">multigraph</span>multi-edges ok <span class="chip">pseudograph</span>loops + multi-edges ok <span class="chip">digraph</span>ordered-pair (directed) edges</div>
+
+    <h3 class="sec">Degree &amp; the Handshaking Theorem</h3>
+    <div class="thm"><span class="tag">Handshaking theorem</span><span class="mono">Σᵥ deg(v) = 2|E|</span> — so the sum of degrees is always even, and any graph has an <b>even</b> number of odd-degree vertices.</div>
+    <div class="note">Directed graphs: <span class="mono">Σ deg⁻(v) = Σ deg⁺(v) = |E|</span> (in-degree sum = out-degree sum = edge count).</div>
+
+    <h3 class="sec">Special graphs</h3>
+    <table class="tbl">
+      <tr><th>Name</th><th>Description</th></tr>
+      <tr><td class="m">Kₙ</td><td>complete graph — every pair of n vertices joined</td></tr>
+      <tr><td class="m">Cₙ</td><td>cycle on n vertices (n≥3)</td></tr>
+      <tr><td class="m">Wₙ</td><td>wheel — Cₙ plus a hub connected to all n rim vertices</td></tr>
+      <tr><td class="m">Qₙ</td><td>n-cube — 2ⁿ vertices (bit strings), edges between strings differing in 1 bit</td></tr>
+      <tr><td>Bipartite</td><td>V splits into V₁,V₂ with every edge crossing between them (2-colorable)</td></tr>
+      <tr><td class="m">Kₘ,ₙ</td><td>complete bipartite — every V₁ vertex joined to every V₂ vertex</td></tr>
+    </table>
+
+    <h3 class="sec">Representing graphs</h3>
+    <div class="grid2">
+      <div class="thm"><span class="tag">Adjacency matrix</span>n×n zero-one matrix, 1 at (i,j) iff vᵢ~vⱼ. Symmetric for undirected simple graphs; not necessarily for digraphs.</div>
+      <div class="thm"><span class="tag">Adjacency list</span>each vertex → list of neighbors. Better for sparse graphs.</div>
+    </div>
+    <div class="thm"><span class="tag">Counting paths</span>The (i,j) entry of <span class="mono">Aʳ</span> = number of length-r walks from vᵢ to vⱼ.</div>
+
+    <h3 class="sec">Isomorphism</h3>
+    <div class="def"><span class="tag">Definition</span>G₁≅G₂ if a bijection f:V₁→V₂ exists preserving adjacency both ways.</div>
+    <div class="thm"><span class="tag">Invariants to check first</span>same # vertices, same # edges, same degree sequence (sorted). If any differ, <b>not</b> isomorphic — no need to search for a mapping.</div>
+
+    <h3 class="sec">Connectivity</h3>
+    <table class="tbl">
+      <tr><th>Term</th><th>Meaning</th></tr>
+      <tr><td>Connected (undirected)</td><td>a path exists between every pair of vertices</td></tr>
+      <tr><td>Connected component</td><td>maximal connected subgraph</td></tr>
+      <tr><td>Strongly connected (digraph)</td><td>directed path a→b <i>and</i> b→a for every pair</td></tr>
+      <tr><td>Weakly connected (digraph)</td><td>connected once directions are ignored</td></tr>
+    </table>
+
+    <h3 class="sec">Euler &amp; Hamilton</h3>
+    <div class="grid2">
+      <div class="thm"><span class="tag">Euler circuit/path</span>traverses every <b>edge</b> exactly once. Circuit exists ⟺ connected &amp; every vertex has even degree. Path (not circuit) exists ⟺ connected &amp; exactly 2 vertices of odd degree.</div>
+      <div class="thm"><span class="tag">Hamilton circuit/path</span>visits every <b>vertex</b> exactly once. No simple iff-condition known. Sufficient (not necessary): <b>Dirac</b> — n≥3 and deg(v)≥n/2 ∀v ⟹ Hamilton circuit exists. <b>Ore</b> — deg(u)+deg(v)≥n for every nonadjacent pair ⟹ circuit exists.</div>
+    </div>
+  </section>
+
+  </main>
+</div>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+  var sections = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  function onScroll(){
+    var pos = window.scrollY + 120;
+    var idx = 0;
+    for (var i=0;i<sections.length;i++){ if (sections[i] && sections[i].offsetTop <= pos) idx = i; }
+    links.forEach(function(a,i){ a.classList.toggle('current', i===idx); });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+</body>
+</html>

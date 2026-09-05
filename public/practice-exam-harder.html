@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSE173 Practice Final — Harder</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#EEF2EF; --surface:#FFFFFF; --surface-2:#E3E9E4; --line:#C7D0C9;
+  --ink:#172420; --ink-soft:#4B5850;
+  --accent:#1F6F5C; --accent-ink:#0E3D31; --accent-soft:#DCEBE6;
+  --amber:#B9781F; --amber-soft:#F4E4C6;
+  --danger:#A6432D; --danger-soft:#F5DFD8;
+  --shadow: 0 1px 2px rgba(23,36,32,.06), 0 6px 16px rgba(23,36,32,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1613; --surface:#16211D; --surface-2:#1D2A25; --line:#2C3A34;
+    --ink:#E7EFEA; --ink-soft:#A8B8B0;
+    --accent:#4FB89A; --accent-ink:#9FE0CB; --accent-soft:#16302A;
+    --amber:#E0A94B; --amber-soft:#3A2E17;
+    --danger:#E28065; --danger-soft:#3A211A;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 20px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1613; --surface:#16211D; --surface-2:#1D2A25; --line:#2C3A34;
+  --ink:#E7EFEA; --ink-soft:#A8B8B0;
+  --accent:#4FB89A; --accent-ink:#9FE0CB; --accent-soft:#16302A;
+  --amber:#E0A94B; --amber-soft:#3A2E17;
+  --danger:#E28065; --danger-soft:#3A211A;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 20px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;}
+body{background:var(--bg); color:var(--ink); font-family:"Source Serif 4",Georgia,serif; line-height:1.65; font-size:16px; margin:0;}
+h1,h2,h3{font-family:"Fraunces",Georgia,serif; font-weight:700; text-wrap:balance; margin:0;}
+.mono,code{font-family:"IBM Plex Mono",monospace;}
+table{font-variant-numeric:tabular-nums;}
+
+.bar{background:var(--danger); color:#fff; padding:10px 22px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;}
+.bar span{font-family:"IBM Plex Mono"; font-size:11.5px; opacity:.9;}
+.print-btn{font-family:"IBM Plex Mono"; font-size:11px; border:1px solid rgba(255,255,255,.5); background:transparent; color:#fff; border-radius:6px; padding:5px 10px; cursor:pointer;}
+.print-btn:hover{background:rgba(255,255,255,.15);}
+
+.paper{max-width:780px; margin:26px auto 70px; background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); padding:44px 52px;}
+@media (max-width:820px){.paper{padding:30px 22px; margin:14px 10px;}}
+
+.head{text-align:center; border-bottom:2px solid var(--ink); padding-bottom:18px; margin-bottom:20px;}
+.head .uni{font-family:"IBM Plex Mono"; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft);}
+.head h1{font-size:24px; margin-top:6px;}
+.head .sub{color:var(--ink-soft); font-size:14px; margin-top:4px;}
+.difficulty{display:inline-block; margin-top:10px; font-family:"IBM Plex Mono"; font-size:11px; text-transform:uppercase; letter-spacing:.08em; background:var(--danger-soft); color:var(--danger); padding:3px 10px; border-radius:999px; font-weight:600;}
+
+.idlines{display:grid; grid-template-columns:1fr 1fr; gap:10px 26px; margin:18px 0 22px; font-size:14.5px;}
+.idlines div{border-bottom:1px dotted var(--ink-soft); padding-bottom:5px; display:flex; justify-content:space-between;}
+.idlines b{font-weight:600;}
+
+.instructions{background:var(--surface-2); border-radius:8px; padding:14px 18px; font-size:14px; margin-bottom:26px;}
+.instructions h3{font-size:13px; font-family:"IBM Plex Mono"; text-transform:uppercase; letter-spacing:.06em; color:var(--accent-ink); margin-bottom:8px;}
+.instructions ol{margin:0; padding-left:20px;}
+.instructions li{margin:3px 0;}
+.honor{margin-top:12px; padding-top:10px; border-top:1px dotted var(--ink-soft); font-style:italic; font-size:13.5px;}
+.sig{margin-top:10px; display:flex; gap:8px; align-items:baseline; font-size:14px;}
+.sig .line{flex:1; border-bottom:1px solid var(--ink-soft); height:1px;}
+
+.section-divider{margin:38px 0 6px; font-family:"IBM Plex Mono"; font-size:11.5px; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-soft); border-bottom:1px solid var(--line); padding-bottom:6px;}
+
+.q{margin:26px 0; padding-top:20px; border-top:1px solid var(--line); break-inside:avoid-page;}
+.qhead{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:10px;}
+.qhead h2{font-size:19px;}
+.pts{font-family:"IBM Plex Mono"; font-size:12.5px; background:var(--accent-soft); color:var(--accent-ink); padding:3px 9px; border-radius:999px; white-space:nowrap; font-weight:600;}
+.topic-pill{font-family:"IBM Plex Mono"; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft);}
+.qbody p{margin:8px 0;}
+.qbody{font-size:15.5px;}
+.part{margin:14px 0 14px 4px; padding-left:16px; border-left:2px solid var(--line);}
+.part .plabel{font-family:"IBM Plex Mono"; font-weight:600; color:var(--accent-ink); margin-right:6px;}
+.part .ppts{font-family:"IBM Plex Mono"; font-size:12px; color:var(--ink-soft);}
+.blank{border-bottom:1px dotted var(--ink-soft); display:inline-block; min-width:60px;}
+.def-inline{font-family:"IBM Plex Mono"; font-size:14px; background:var(--surface-2); padding:1px 5px; border-radius:4px;}
+.answer-space{border:1px dashed var(--line); border-radius:6px; padding:10px 12px; margin-top:8px; font-family:"IBM Plex Mono"; font-size:13.5px; color:var(--ink-soft);}
+.total{text-align:right; font-family:"IBM Plex Mono"; font-weight:600; margin-top:36px; padding-top:14px; border-top:2px solid var(--ink); font-size:15px;}
+
+@media print{
+  body{background:#fff;}
+  .bar .print-btn{display:none;}
+  .paper{box-shadow:none; border:none; margin:0 auto; max-width:100%;}
+  .q{break-inside:avoid-page;}
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div><b style="font-family:'Fraunces';">CSE173 · Practice Final — Harder Set</b> <span style="margin-left:10px;">Questions only — see companion Answer Key (Harder)</span></div>
+  <button class="print-btn" onclick="window.print()">Print</button>
+</div>
+
+<div class="paper">
+  <div class="head">
+    <div class="uni">North South University · Dept. of ECE</div>
+    <h1>CSE173 Discrete Mathematics — Practice Final Exam</h1>
+    <div class="sub">Full syllabus rehearsal, second sheet · not an official department document</div>
+    <span class="difficulty">Harder set · multi-step &amp; combined problems</span>
+  </div>
+
+  <div class="idlines">
+    <div><b>Name</b><span class="blank"></span></div>
+    <div><b>Student ID</b><span class="blank"></span></div>
+    <div><b>Marks Obtained</b><span class="blank"></span></div>
+    <div><b>Total Marks</b><span>136</span></div>
+  </div>
+
+  <div class="instructions">
+    <h3>Instructions</h3>
+    <ol>
+      <li>Closed notes, closed books.</li>
+      <li>Suggested time: 150 minutes.</li>
+      <li>A calculator is permitted; no other electronic device.</li>
+      <li>This set is deliberately harder than the first practice exam: general proofs instead of numeric checks, strong/structural induction, explicit isomorphism constructions, and multi-part combined questions — the profile most likely to match the actual final.</li>
+      <li>Answer every part; show all work for partial credit.</li>
+    </ol>
+    <div class="honor">In recognition of and in the spirit of the North South University code of conduct, I certify that I will neither give nor receive unpermitted aid on this examination.</div>
+    <div class="sig">Signature: <span class="line"></span></div>
+  </div>
+
+  <div class="section-divider">Inference — propositional &amp; predicate</div>
+
+  <div class="q">
+    <div class="qhead"><h2>Question 1</h2><span class="pts">10 points</span></div>
+    <div class="qbody">
+      <div class="part"><span class="plabel">(a)</span><span class="ppts">[4]</span> Translate into predicate logic: "Every user who trusts a website that is not secure will eventually be scammed." Use <span class="def-inline">U(x)</span>: x is a user, <span class="def-inline">W(y)</span>: y is a website, <span class="def-inline">Trusts(x,y)</span>, <span class="def-inline">Secure(y)</span>, <span class="def-inline">Scammed(x)</span>, over a shared domain of people and websites.</div>
+      <div class="part"><span class="plabel">(b)</span><span class="ppts">[6]</span> Use a chain of logical equivalences — <b>naming every law</b> — to simplify <span class="def-inline">¬((p → q) ∧ (¬p → r))</span> down to a disjunction of two conjunctions of literals.</div>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead"><h2>Question 2</h2><span class="pts">8 points</span></div>
+    <div class="qbody">
+      <p>Given the premises below, derive <span class="def-inline">s</span>. Label the rule used at every step — your derivation must use <b>Resolution</b> at least once.</p>
+      <div class="answer-space">1. p ∨ r&nbsp;&nbsp;&nbsp;2. ¬p ∨ q&nbsp;&nbsp;&nbsp;3. ¬r&nbsp;&nbsp;&nbsp;4. ¬q ∨ s</div>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead"><h2>Question 3</h2><span class="pts">6 points</span></div>
+    <div class="qbody">
+      <p>Negate the statement below and use De Morgan's laws for quantifiers to push the negation all the way inward, past all three quantifiers and the conditional:</p>
+      <p style="text-align:center;" class="def-inline">∀x ∃y ∀z ( P(x,y) → Q(y,z) )</p>
+    </div>
+  </div>
+
+  <div class="section-divider">Proof techniques</div>
+
+  <div class="q">
+    <div class="qhead"><h2>Question 4</h2><span class="pts">8 points</span></div>
+    <div class="qbody">
+      <p>Prove: for integers a and b, if <span class="def-inline">a²(b² − 2b)</span> is odd, then both a and b are odd. (Choose whichever proof method is most efficient — state which method you're using.)</p>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead"><h2>Question 5</h2><span class="pts">8 points</span></div>
+    <div class="qbody">
+      <p>Prove the biconditional: for an integer n, <span class="def-inline">n is even ⟺ n² − 2n is even</span>. You will need two different proof techniques, one per direction — name each.</p>
+    </div>
+  </div>
+
+  <div class="section-divider">Functions &amp; countability of sets</div>
+
+  <div class="q">
+    <div class="qhead"><h2>Question 6</h2><span class="pts">8 points</span></div>
+    <div class="qbody">
+      <p>Prove: if A and B are both countably infinite sets, then <span class="def-inline">A ∪ B</span> is countable. (General proof — do not assume a specific A or B.)</p>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead"><h2>Question 7</h2><span class="pts">6 points</span></div>
+    <div class="qbody">
+      <p>Let <span class="def-inline">f: A → B</span> and <span class="def-inline">g: B → C</span> both be injective. Prove that <span class="def-inline">g ∘ f</span> is injective.</p>
+    </div>
+  </div>
+
+  <div class="section-divider">Sequences &amp; summations</div>
+
+  <div class="q">
+    <div class="qhead"><h2>Question 8</h2><span class="pts">10 points</span></div>
+    <div class="qbody">
+      <p>A sequence satisfies <span class="def-inline">a₁ = 3</span>, <span class="def-inline">aₙ = 2aₙ₋₁ + 1</span> for n ≥ 2. Find a closed formula for aₙ. (Hint: consider the substitution <span class="def-inline">bₙ = aₙ + 1</span> before iterating.)</p>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead"><h2>Question 9</h2><span class="pts">6 points</span></div>
+    <div class="qbody">
+      <p>Evaluate <span class="def-inline">Σ (k=2 to n) 1 / (k(k−1))</span> in closed form. (Hint: rewrite each term as a difference of two fractions, then telescope.)</p>
+    </div>
+  </div>
+
+  <div class="section-divider">Induction &amp; recursion</div>
+
+  <div class="q">
+    <div class="qhead"><h2>Question 10</h2><span class="pts">14 points</span></div>
+    <div class="qbody">
+      <p>Use <b>strong induction</b> to prove that every integer <span class="def-inline">n ≥ 8</span> can be written as <span class="def-inline">n = 3a + 5b</span> for some nonnegative integers a, b. State the basis step, inductive hypothesis, and inductive step explicitly.</p>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead"><h2>Question 11</h2><span class="pts">10 points</span></div>
+    <div class="qbody">
+      <p>The set P of balanced-parenthesis strings is defined recursively:</p>
+      <div class="answer-space">Basis: () ∈ P.<br>Recursive: if w ∈ P, then ()w ∈ P, (w) ∈ P, and w() ∈ P.</div>
+      <p>Use <b>structural induction</b> to prove that every string in P has even length.</p>
+    </div>
+  </div>
+
+  <div class="section-divider">Relations</div>
+
+  <div class="q">
+    <div class="qhead"><h2>Question 12</h2><span class="pts">12 points</span></div>
+    <div class="qbody">
+      <div class="part"><span class="plabel">(a)</span><span class="ppts">[6]</span> Let <span class="def-inline">R = {(a,b) ∈ ℤ×ℤ : 4 | (a − b)}</span>. Prove, in general (not by listing pairs), that R is an equivalence relation on ℤ.</div>
+      <div class="part"><span class="plabel">(b)</span><span class="ppts">[3]</span> List the equivalence classes of R.</div>
+      <div class="part"><span class="plabel">(c)</span><span class="ppts">[3]</span> Let <span class="def-inline">B = {1, 2, 3, 6, 12}</span> ordered by "divides." List every covering relation (i.e. every edge that would appear in the Hasse diagram of this poset).</div>
+    </div>
+  </div>
+
+  <div class="section-divider">Counting techniques</div>
+
+  <div class="q">
+    <div class="qhead"><h2>Question 13</h2><span class="pts">14 points</span></div>
+    <div class="qbody">
+      <div class="part"><span class="plabel">(a)</span><span class="ppts">[5]</span> Give a <b>combinatorial</b> (not algebraic) proof of Pascal's Identity: <span class="def-inline">C(n,r) = C(n−1,r−1) + C(n−1,r)</span>, for general n and r.</div>
+      <div class="part"><span class="plabel">(b)</span><span class="ppts">[5]</span> How many ways can 10 identical candies be distributed among 4 distinct children so that <b>every</b> child gets at least one candy?</div>
+      <div class="part"><span class="plabel">(c)</span><span class="ppts">[4]</span> Show that among any 100 integers, there exist two whose difference is divisible by 11. Name the principle you use.</div>
+    </div>
+  </div>
+
+  <div class="section-divider">Basics of graphs</div>
+
+  <div class="q">
+    <div class="qhead"><h2>Question 14</h2><span class="pts">16 points</span></div>
+    <div class="qbody">
+      <div class="part"><span class="plabel">(a)</span><span class="ppts">[4]</span> A connected simple graph has 7 vertices with degree sequence (4,4,3,3,2,2,2). Find the number of edges, and state whether the graph has an Euler circuit, an Euler path, or neither — justify by counting odd-degree vertices.</div>
+      <div class="part"><span class="plabel">(b)</span><span class="ppts">[6]</span> Determine whether G and H below are isomorphic. If yes, exhibit an explicit vertex bijection and verify it preserves every edge; if no, name an invariant that rules it out.
+        <div class="answer-space">G: vertices {1,2,3,4,5}, edges {(1,2),(2,3),(3,4),(4,5),(5,1),(1,3)}<br>H: vertices {a,b,c,d,e}, edges {(a,b),(b,c),(c,d),(d,e),(e,a),(b,d)}</div>
+      </div>
+      <div class="part"><span class="plabel">(c)</span><span class="ppts">[6]</span> For graph G in part (b): compute every vertex's degree. Does G have an Euler circuit? Does G have a Hamilton circuit — if so, exhibit one.</div>
+    </div>
+  </div>
+
+  <div class="total">Total — 136 points</div>
+</div>
+</body>
+</html>
