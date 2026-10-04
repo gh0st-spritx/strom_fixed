@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BIO103 Quiz 1 practice paper</title>
+<style>
+  :root {
+    --desk: #e7e1d4;
+    --paper: #f7f4ee;
+    --ink: #17241c;
+    --green: #1b4332;
+    --green-soft: #e4eee8;
+    --brass: #6b4f2a;
+    --brass-mark: #8c6d3f;
+    --brass-soft: #e9dfcf;
+    --miss: #8f3d32;
+    --miss-soft: #f6e8e4;
+    --rule: #d9d0c0;
+    --head: 4.6rem;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: auto; }
+  body {
+    margin: 0;
+    background: var(--desk);
+    color: var(--ink);
+    font-family: Lato, "DejaVu Sans", sans-serif;
+    font-size: 1.02rem;
+    line-height: 1.45;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+  .skip {
+    position: absolute;
+    left: 0.6rem;
+    top: -3rem;
+    background: var(--green);
+    color: var(--paper);
+    padding: 0.4rem 0.7rem;
+    z-index: 20;
+  }
+  .skip:focus { top: 0.5rem; }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    background: var(--desk);
+    border-bottom: 1px solid var(--rule);
+    padding: 0.7rem 1.25rem 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.7rem 1.4rem;
+  }
+  .course {
+    margin: 0;
+    color: var(--brass);
+    font-size: 0.86rem;
+  }
+  h1 {
+    margin: 0;
+    font-family: "DejaVu Serif", Palatino, Georgia, serif;
+    font-size: 1.7rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.7rem 1rem;
+  }
+  label.field { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.82rem; color: var(--brass); }
+  select, button {
+    font: 600 0.95rem/1.2 Lato, "DejaVu Sans", sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid #c9bfae;
+    padding: 0.48rem 0.65rem;
+    min-height: 2.4rem;
+  }
+  button { cursor: pointer; }
+  button:hover { border-color: var(--green); }
+  button:disabled { cursor: default; opacity: 0.45; }
+  button.primary { background: var(--green); color: var(--paper); border-color: var(--green); }
+  button.quiet { background: transparent; }
+  button:focus-visible, select:focus-visible, .cell:focus-visible, .opt:focus-within {
+    outline: 2px solid var(--green);
+    outline-offset: 2px;
+  }
+  .toggle { display: flex; align-items: center; gap: 0.45rem; font-size: 0.92rem; color: var(--ink); min-height: 2.4rem; }
+  .toggle input { width: 1rem; height: 1rem; accent-color: var(--green); }
+  #score { margin: 0; min-width: 9rem; font-weight: 700; }
+  #score small { display: block; font-weight: 500; color: #3d4a42; }
+  #clock { margin: 0; font-variant-numeric: tabular-nums; font-weight: 700; font-size: 1.25rem; min-width: 3.2rem; }
+  #clock:empty, #clock[hidden] { display: none; }
+  #clock.warn { color: var(--miss); }
+
+  .shell {
+    display: grid;
+    grid-template-columns: 16.5rem minmax(0, 42rem);
+    gap: 1.4rem;
+    justify-content: center;
+    align-items: start;
+    padding: 1rem 1.1rem 4rem;
+  }
+  .rail {
+    position: sticky;
+    top: calc(var(--head) + 0.6rem);
+    max-height: calc(100vh - var(--head) - 1.2rem);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding-right: 0.2rem;
+  }
+  .rail-sticky {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    min-height: 0;
+    flex: 1;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.28rem;
+    overflow: auto;
+    min-height: 0;
+    padding-right: 0.15rem;
+  }
+  .cell {
+    height: 1.7rem;
+    padding: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: transparent;
+    color: var(--ink);
+    border-color: #cfc5b4;
+  }
+  .cell.marked { background: var(--brass-soft); border-color: var(--brass-mark); }
+  .cell.correct { background: var(--green); color: var(--paper); border-color: var(--green); }
+  .cell.wrong { background: var(--miss); color: var(--paper); border-color: var(--miss); }
+  .cell.current { outline: 2px solid var(--green); outline-offset: 1px; }
+  .cell.likely-mark { box-shadow: inset 0 -2px 0 var(--brass-mark); }
+  .filters { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .filters button[aria-pressed="true"] { background: var(--green); color: var(--paper); border-color: var(--green); }
+  .rail-note { margin: 0.8rem 0 0; color: #3d4a42; font-size: 0.86rem; }
+  .keys { margin: 0.7rem 0 0; color: #3d4a42; font-size: 0.82rem; }
+
+  .paper {
+    background: var(--paper);
+    border: 1px solid #d4cbb8;
+    padding: 1.1rem 1.25rem 2.2rem;
+    min-height: 70vh;
+    scroll-margin-top: calc(var(--head) + 0.7rem);
+  }
+  .lede { margin: 0 0 0.4rem; max-width: 62ch; }
+  .report {
+    margin: 0.8rem 0 0.2rem;
+    padding: 0.75rem 0.85rem;
+    background: var(--green-soft);
+    border-left: 3px solid var(--green);
+    scroll-margin-top: calc(var(--head) + 0.7rem);
+  }
+  .report p { margin: 0.25rem 0; }
+  .report.warn { background: var(--miss-soft); border-left-color: var(--miss); }
+  .batch {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin: 1.3rem 0 0.2rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--rule);
+  }
+  .batch:first-child { border-top: 0; margin-top: 0.6rem; padding-top: 0; }
+  .batch { scroll-margin-top: calc(var(--head) + 0.8rem); }
+  .batch h2 { margin: 0; font-size: 1.05rem; font-weight: 700; }
+  .batch p { margin: 0.15rem 0 0; color: #3d4a42; font-size: 0.9rem; }
+  .q {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    gap: 0.15rem 0.55rem;
+    padding: 0.95rem 0.2rem 0.85rem 0;
+    border-top: 1px solid #eee6d8;
+    scroll-margin-top: calc(var(--head) + 0.8rem);
+  }
+  .q.current { background: #fbf8f2; }
+  .num {
+    border-right: 1px solid #e1d3b8;
+    text-align: right;
+    padding: 0.15rem 0.45rem 0 0;
+    color: var(--green);
+    font-weight: 700;
+  }
+  .stem {
+    margin: 0;
+    font-family: "DejaVu Serif", Palatino, Georgia, serif;
+    font-size: 1.12rem;
+    font-weight: 500;
+    line-height: 1.45;
+    max-width: 68ch;
+  }
+  .likely {
+    display: inline-block;
+    margin-right: 0.35rem;
+    padding: 0.02rem 0.32rem 0.08rem;
+    border: 1px solid #c4b08a;
+    color: var(--brass);
+    font-family: Lato, "DejaVu Sans", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    vertical-align: 0.15em;
+  }
+  .opts { display: flex; flex-direction: column; gap: 0.28rem; margin-top: 0.65rem; }
+  .opt {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.7rem minmax(0, 1fr);
+    gap: 0.65rem;
+    align-items: start;
+    padding: 0.5rem 0.65rem;
+    border-left: 3px solid transparent;
+    min-height: 2.75rem;
+    cursor: pointer;
+  }
+  .opt input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .opt input:disabled { cursor: default; }
+  .letter {
+    width: 1.7rem;
+    height: 1.7rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid #cfc5b4;
+    font-weight: 700;
+    font-size: 0.86rem;
+  }
+  .opt:has(input:checked) { background: var(--brass-soft); border-left-color: var(--brass-mark); }
+  .opt:has(input:checked) .letter { border-color: var(--brass-mark); background: var(--brass-mark); color: var(--paper); }
+  .opt.is-key,
+  .opt.is-key:has(input:checked) { background: var(--green-soft); border-left-color: var(--green); }
+  .opt.is-key .letter,
+  .opt.is-key:has(input:checked) .letter { background: var(--green); color: var(--paper); border-color: var(--green); }
+  .opt.is-wrong,
+  .opt.is-wrong:has(input:checked) { background: var(--miss-soft); border-left-color: var(--miss); }
+  .opt.is-wrong .letter,
+  .opt.is-wrong:has(input:checked) .letter { background: var(--miss); color: var(--paper); border-color: var(--miss); }
+  .text { padding-top: 0.12rem; max-width: 66ch; }
+  .why {
+    margin: 0.55rem 0 0.1rem;
+    padding: 0.15rem 0 0.1rem 0.75rem;
+    border-left: 2px solid var(--green);
+    max-width: 66ch;
+  }
+  .q.is-miss .why { border-left-color: var(--miss); }
+  .empty { margin: 1rem 0; color: #3d4a42; }
+
+  @media (max-width: 860px) {
+    header { padding: 0.65rem 0.8rem; }
+    h1 { font-size: 1.4rem; }
+    .shell { display: block; padding: 0 0 3rem; }
+    .rail {
+      position: static;
+      display: block;
+      max-height: none;
+      overflow: visible;
+      padding: 0 0 0.4rem;
+    }
+    .rail-sticky {
+      position: sticky;
+      top: var(--head);
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      background: var(--desk);
+      border-bottom: 1px solid var(--rule);
+      padding: 0.55rem 0.8rem 0.65rem;
+    }
+    .grid {
+      display: flex;
+      max-height: none;
+      overflow-x: auto;
+      gap: 0.3rem;
+      padding-bottom: 0.15rem;
+    }
+    .cell { flex: 0 0 1.85rem; }
+    .paper { margin: 0.7rem 0.7rem 0; padding: 0.9rem 0.8rem 1.6rem; }
+    .keys { display: none; }
+    .rail-note { margin-left: 0.8rem; margin-right: 0.8rem; }
+    .q { grid-template-columns: 2rem minmax(0, 1fr); }
+    .stem { font-size: 1.05rem; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#paper">Skip to the questions</a>
+<header>
+  <div>
+    <p class="course">North South University, Fall 2026. Kazi Sumaita Nahar.</p>
+    <h1>Practice paper</h1>
+  </div>
+  <div class="controls">
+    <label class="field">Paper
+      <select id="mode">
+        <option value="all">All 100 questions</option>
+        <option value="1">Questions 1–20</option>
+        <option value="21">Questions 21–40</option>
+        <option value="41">Questions 41–60</option>
+        <option value="61">Questions 61–80</option>
+        <option value="81">Questions 81–100</option>
+        <option value="A">Dress rehearsal A</option>
+        <option value="B">Dress rehearsal B</option>
+      </select>
+    </label>
+    <p id="score" aria-live="polite"></p>
+    <p id="clock" aria-live="polite" hidden></p>
+    <label class="toggle"><input type="checkbox" id="immediate"> Show the reason as soon as I answer</label>
+    <button type="button" class="quiet" id="clear">Clear every mark</button>
+  </div>
+</header>
+<div class="shell">
+  <aside class="rail" aria-label="Question index">
+    <div class="rail-sticky">
+      <div class="filters" role="group" aria-label="Filter questions">
+        <button type="button" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" data-filter="likely">Likely</button>
+        <button type="button" data-filter="open">Unanswered</button>
+        <button type="button" data-filter="missed">Missed</button>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+    <p class="rail-note" id="rail-note"></p>
+    <p class="keys">A to D marks the question in view. Arrow keys move.</p>
+  </aside>
+  <main class="paper" id="paper"></main>
+</div>
+<script>
+const BANK = [{"n": 1, "likely": true, "stem": "In the lecture, biology is built from the Greek words \u003cem>BIOS\u003c/em> and \u003cem>logos\u003c/em>. What do those words mean on the slide?", "options": {"A": "\u003cem>BIOS\u003c/em> = cell, \u003cem>logos\u003c/em> = study", "B": "\u003cem>BIOS\u003c/em> = life, \u003cem>logos\u003c/em> = thought", "C": "\u003cem>BIOS\u003c/em> = animal, \u003cem>logos\u003c/em> = law", "D": "\u003cem>BIOS\u003c/em> = water, \u003cem>logos\u003c/em> = energy"}, "answer": "B", "why": "\u003cem>BIOS\u003c/em> = life, \u003cem>logos\u003c/em> = thought."}, {"n": 2, "likely": true, "stem": "The shortest definition of biology given in the lecture is", "options": {"A": "the study of life", "B": "the study of animals only", "C": "the classification of rocks", "D": "the study of chemical symbols"}, "answer": "A", "why": "Biology = the study of life."}, {"n": 3, "likely": false, "stem": "The broader definition says biology studies living organisms, their interactions with one another and with their environment, and", "options": {"A": "only the names of noble gases", "B": "the processes that sustain life", "C": "office-hour schedules", "D": "radioactive dating methods alone"}, "answer": "B", "why": "The broader definition adds interactions and the processes that sustain life."}, {"n": 4, "likely": true, "stem": "Robert Hooke, 1665, is credited with", "options": {"A": "the first detailed observations of microorganisms", "B": "evolution by natural selection", "C": "coining the term “cell” after observing cork", "D": "the molecular structure of DNA"}, "answer": "C", "why": "1665, Hooke, cork, the word cell."}, {"n": 5, "likely": true, "stem": "Antonie van Leeuwenhoek, 1674–1683, is credited with", "options": {"A": "coining the term “cell” from cork", "B": "the first detailed observations of microorganisms", "C": "proposing natural selection with Wallace", "D": "discovering bicarbonate buffer"}, "answer": "B", "why": "1674–1683, Leeuwenhoek, microorganisms. Do not swap him with Hooke."}, {"n": 6, "likely": true, "stem": "Evolution by natural selection is credited in the lecture to", "options": {"A": "Watson and Crick, 1665", "B": "Hooke and Leeuwenhoek, 1953", "C": "Darwin and Wallace, 1858–1859", "D": "Darwin alone, 1953"}, "answer": "C", "why": "Darwin and Wallace, 1858–1859, natural selection."}, {"n": 7, "likely": true, "stem": "The molecular structure of DNA (1953) is credited to", "options": {"A": "Darwin, Wallace, Hooke, and Leeuwenhoek", "B": "Watson and Crick only, with Franklin and Wilkins excluded", "C": "Watson, Crick, Franklin, and Wilkins", "D": "Mora and colleagues, 2011"}, "answer": "C", "why": "1953, four names: Watson, Crick, Franklin, and Wilkins."}, {"n": 8, "likely": true, "stem": "Electronegativity is", "options": {"A": "the number of neutrons in an isotope", "B": "the tendency of an atom to attract the shared electrons. The more electronegative atom pulls those electrons toward itself more strongly", "C": "the diffusion of water across a membrane", "D": "another name for mass number"}, "answer": "B", "why": "Electronegativity is pull on shared electrons. In the HCl drawing, chlorine pulls electrons away from hydrogen."}, {"n": 9, "likely": true, "stem": "The IUCN 2025 number on the “Biology Today” slide is", "options": {"A": "about 8.7 million species, known and unknown together", "B": "more than 2 million species (the chart prints 2.17 million for all groups)", "C": "6,815 species in total", "D": "1 million species in total, all of them mammals"}, "answer": "B", "why": "IUCN 2025 is the described total, above 2 million (chart: 2.17 million)."}, {"n": 10, "likely": false, "stem": "The estimate of about 8.7 million, for known and unknown species together, is from", "options": {"A": "IUCN 2025", "B": "Mora et al. 2011", "C": "Watson, Crick, Franklin, and Wilkins", "D": "the trophic pyramid"}, "answer": "B", "why": "About 8.7 million, known and unknown, is Mora et al. 2011."}, {"n": 11, "likely": false, "stem": "On that species chart, the largest bar is", "options": {"A": "mammals, 6,815", "B": "birds, 11,185", "C": "amphibians, 8,918", "D": "insects, 1 million"}, "answer": "D", "why": "Insects are the longest bar, 1 million. Mammals are the shortest, 6,815."}, {"n": 12, "likely": true, "stem": "Which branch is matched correctly?", "options": {"A": "Mycology — viruses", "B": "Virology — fungi", "C": "Mycology — fungi", "D": "Entomology — birds"}, "answer": "C", "why": "Mycology studies fungi. Viruses are virology."}, {"n": 13, "likely": true, "stem": "Bacteriology and virology study, respectively,", "options": {"A": "bacteria and viruses", "B": "viruses and bacteria", "C": "birds and insects", "D": "fungi and plants"}, "answer": "A", "why": "Bacteriology = bacteria. Virology = viruses."}, {"n": 14, "likely": false, "stem": "Ornithology is the study of birds. Entomology is the study of", "options": {"A": "worms only", "B": "internal organs", "C": "insects", "D": "inheritance"}, "answer": "C", "why": "Entomology = insects. Ornithology = birds."}, {"n": 15, "likely": false, "stem": "Botany and zoology are, respectively, the study of", "options": {"A": "animals and plants", "B": "plants and animals", "C": "cells and diseases", "D": "fungi and viruses"}, "answer": "B", "why": "Botany = plants. Zoology = animals."}, {"n": 16, "likely": false, "stem": "Microbiology, on this list, is the study of", "options": {"A": "microscopic organisms", "B": "only insects", "C": "only the heart", "D": "classification systems and nothing else"}, "answer": "A", "why": "Microbiology = microscopic organisms."}, {"n": 17, "likely": true, "stem": "Morphology and anatomy are distinguished as", "options": {"A": "morphology = internal structure; anatomy = external form", "B": "morphology = external form and structure; anatomy = internal structure", "C": "both words mean inheritance", "D": "morphology = disease; anatomy = function"}, "answer": "B", "why": "Morphology is external. Anatomy is internal."}, {"n": 18, "likely": false, "stem": "Physiology is the study of", "options": {"A": "classification", "B": "function in a living system", "C": "external shape only", "D": "fossils only"}, "answer": "B", "why": "Physiology is function."}, {"n": 19, "likely": false, "stem": "Which set matches the lecture?", "options": {"A": "Taxonomy — classification; cytology — cells; genetics — inheritance; ecology — organisms and their environment; pathology — disease", "B": "Taxonomy — disease; pathology — classification", "C": "Cytology — birds; ornithology — cells", "D": "Genetics — external form; morphology — inheritance"}, "answer": "A", "why": "Taxonomy classifies. Cytology is cells. Genetics is inheritance. Ecology is organisms and environment. Pathology is disease."}, {"n": 20, "likely": true, "stem": "On the origin timeline, 13.8 billion years ago is", "options": {"A": "Earth", "B": "Chemistry", "C": "the Universe", "D": "Evolution"}, "answer": "C", "why": "13.8 billion years ago = Universe."}, {"n": 21, "likely": true, "stem": "4.5 billion years ago is labeled Earth. The point made with that date is that", "options": {"A": "DNA structure was solved", "B": "among all planets, only Earth contains life", "C": "mammals replaced reptiles", "D": "cells were observed in cork"}, "answer": "B", "why": "4.5 = Earth, and only Earth is said to contain life."}, {"n": 22, "likely": true, "stem": "The “Chemistry” stage on the timeline is described as", "options": {"A": "cool, oxygen-rich, and already full of animals", "B": "high temperature, poisonous gases, and no free oxygen or water", "C": "the appearance of redwoods", "D": "survival of the fittest among birds"}, "answer": "B", "why": "The chemistry stage: high temperature, poisonous gases, no free oxygen or water."}, {"n": 23, "likely": true, "stem": "The lecture says life began when", "options": {"A": "the universe expanded from a pin-sized point", "B": "cells formed", "C": "Hooke named the cell in 1665", "D": "hemoglobin bound carbon monoxide"}, "answer": "B", "why": "Life began when cells formed."}, {"n": 24, "likely": false, "stem": "Which dating is the one on the arrow?", "options": {"A": "3.8 billion years ago, Life; 3.5 billion years ago, Evolution, including the change from single cells to multicellular organisms and survival of the fittest", "B": "3.8 billion years ago, Evolution; 3.5 billion years ago, Life", "C": "4 billion years ago, Universe; 13.8, Chemistry", "D": "4.5 billion years ago, Evolution; 3.5, Earth"}, "answer": "A", "why": "3.8 = Life. 3.5 = Evolution, with single cells to multicellular life and survival of the fittest."}, {"n": 25, "likely": true, "stem": "Polar and nonpolar covalent bonds differ because", "options": {"A": "polar bonds share electrons unequally, so the two ends differ in charge; nonpolar bonds share electrons equally, so the ends do not differ in charge", "B": "polar bonds share equally, and nonpolar bonds always make ions", "C": "both bonds are electron transfer", "D": "a nonpolar bond is a hydrogen bond"}, "answer": "A", "why": "Polar = unequal sharing and a charge difference. Nonpolar = equal sharing, no charge difference. H2 is the equal case drawn."}, {"n": 26, "likely": true, "stem": "The cell-theory theme states that", "options": {"A": "all living organisms are made of cells", "B": "only animals are made of cells", "C": "cells are found only in plants", "D": "bacteria are not living because the drawing shows no nucleus"}, "answer": "A", "why": "Cell theory: all living organisms are made of cells."}, {"n": 27, "likely": true, "stem": "Heredity, as a unifying theme, means", "options": {"A": "populations become better suited over a single afternoon", "B": "biological information is passed from parents to offspring", "C": "energy is created from nothing", "D": "external form is the only way to classify life"}, "answer": "B", "why": "Heredity: information passes from parents to offspring."}, {"n": 28, "likely": true, "stem": "In the water molecule on the electronegativity slide,", "options": {"A": "each hydrogen is δ− and the oxygen is δ+", "B": "the oxygen is δ− and each hydrogen is δ+, because oxygen pulls the shared electrons more strongly", "C": "the molecule is ionic and has no partial charges", "D": "both ends are δ−"}, "answer": "B", "why": "In water, oxygen is partially negative and the hydrogens are partially positive."}, {"n": 29, "likely": false, "stem": "The regulation theme says organisms", "options": {"A": "regulate their internal environment to maintain life", "B": "have no internal constancy", "C": "cannot use buffers", "D": "respond only if they have leaves"}, "answer": "A", "why": "Regulation: the internal environment is kept able to support life. Buffers are the later chemical example."}, {"n": 30, "likely": false, "stem": "“Biological structure is closely related to function” is the theme of", "options": {"A": "taxonomy", "B": "structure and function", "C": "ornithology", "D": "radioactive decay"}, "answer": "B", "why": "Structure is closely related to function. Sickle cell and carbon monoxide are the case studies."}, {"n": 31, "likely": true, "stem": "A hydrogen bond is", "options": {"A": "transfer of an electron from sodium to chlorine", "B": "equal sharing of electrons inside an H2 molecule", "C": "a weak electrostatic attraction between a partially positive hydrogen and an electronegative atom such as O or N", "D": "a bond that joins protons inside a nucleus"}, "answer": "C", "why": "Hydrogen bond: weak attraction between δ+ hydrogen and O or N."}, {"n": 32, "likely": true, "stem": "On the mouse figure, a light beach mouse compared with a dark inland mouse illustrates", "options": {"A": "information", "B": "evolution", "C": "osmosis", "D": "an ionic bond"}, "answer": "B", "why": "Beach mouse versus inland mouse is the evolution panel."}, {"n": 33, "likely": true, "stem": "On the same figure, a gene for brown fur and a gene for white fur illustrate", "options": {"A": "information", "B": "cohesion", "C": "a buffer", "D": "locomotion by wind"}, "answer": "A", "why": "Fur-color genes are the information panel, the heredity theme in picture form. The energy-and-matter panel is flow of energy and cycling of matter."}, {"n": 34, "likely": false, "stem": "The organization labels on that figure, from smaller to larger, run", "options": {"A": "organ, tissue, cell, molecule", "B": "molecule, cell, tissue, organ", "C": "biosphere, pride, atom", "D": "ecosystem, electron, organ"}, "answer": "B", "why": "Smaller to larger on that figure: molecule, cell, tissue, organ."}, {"n": 35, "likely": true, "stem": "According to the lecture, hydrogen bonds", "options": {"A": "share electrons and therefore are covalent bonds", "B": "are stronger than covalent bonds and almost never break", "C": "do not share electrons to form molecules, so they are not called chemical bonds. They form and break much more easily than covalent bonds", "D": "change the number of protons in oxygen"}, "answer": "C", "why": "The lecture says hydrogen bonds do not share electrons to make molecules, so they are not chemical bonds, and they form and break easily."}, {"n": 36, "likely": true, "stem": "Which of these is one of the nine characteristics of living things?", "options": {"A": "Possession of a noble-gas shell", "B": "Variation and adaptation", "C": "A fixed office hour", "D": "Radioactive decay as a required life process"}, "answer": "B", "why": "Variation and adaptation is characteristic 8 of the nine."}, {"n": 37, "likely": true, "stem": "Which statement about water matches the lecture?", "options": {"A": "Polar covalent bonds give water properties that make life possible. Water is an excellent solvent. Hydrophilic means water-loving, and hydrophobic means water-fearing", "B": "Water dissolves nothing, and both words mean “ionic bond”", "C": "Hydrophilic means water-fearing", "D": "Water is a nonpolar covalent element"}, "answer": "A", "why": "Water’s polar bonds make life possible. It is an excellent solvent. Hydrophilic = water-loving. Hydrophobic = water-fearing."}, {"n": 38, "likely": true, "stem": "The figure that answers “why ice floats” shows", "options": {"A": "no hydrogen bonds in ice, which is why ice sinks", "B": "stable hydrogen bonds in ice, in an open arrangement, and hydrogen bonds that constantly break and re-form in liquid water. Ice is less dense than liquid water, so it floats", "C": "ice as a hypertonic solution", "D": "liquid water with no partial charges"}, "answer": "B", "why": "Ice: hydrogen bonds stable, open structure, lower density, floats. Liquid: hydrogen bonds break and re-form."}, {"n": 39, "likely": true, "stem": "Sunlight is described as", "options": {"A": "a minor energy source used only by fungi", "B": "the primary energy source", "C": "the product of radioactive decay in every cell", "D": "unnecessary for producers"}, "answer": "B", "why": "Sunlight is the primary energy source."}, {"n": 40, "likely": true, "stem": "Primary producers are", "options": {"A": "herbivores", "B": "animals that eat herbivores", "C": "plants, algae, and some bacteria", "D": "only tertiary predators"}, "answer": "C", "why": "Primary producers: plants, algae, and some bacteria."}, {"n": 41, "likely": true, "stem": "Cohesion and adhesion in the xylem figure mean", "options": {"A": "cohesion is water attracted to water; adhesion is water attracted to the wall of the vessel element. Evaporation and transpiration pull this column up the xylem. The vessel element has thick walls with lignin", "B": "cohesion is water attracted only to lignin, and adhesion is water molecules repelling each other", "C": "both words mean active transport by ATP", "D": "cohesion is a buffer and adhesion is an isotope"}, "answer": "A", "why": "Cohesion is water–water. Adhesion is water–wall. The context is transpiration in a lignified vessel element."}, {"n": 42, "likely": false, "stem": "Secondary consumers obtain energy by", "options": {"A": "photosynthesis only", "B": "eating primary consumers (herbivores)", "C": "absorbing noble gases", "D": "sharing electrons in H2"}, "answer": "B", "why": "Secondary consumers eat primary consumers. Primary consumers are the herbivores."}, {"n": 43, "likely": true, "stem": "The pyramid labels producers, primary consumers, secondary consumers, and tertiary consumers as", "options": {"A": "1, 10, 100, and 1,000 kcal", "B": "1,000, 100, 10, and 1 kcal", "C": "100 kcal at every level", "D": "1,000 kcal at the tertiary level and 1 kcal at the producers"}, "answer": "B", "why": "The pyramid reads 1,000, 100, 10, and 1 kcal from producers up to tertiary consumers. Each level is a tenth of the one below. This is the energy-flow theme in numbers."}, {"n": 44, "likely": true, "stem": "Which statement about movement matches the lecture?", "options": {"A": "Every movement is locomotion, including a branch moved by wind", "B": "Locomotion is self-propulsion, such as swimming, running, flying, or walking. Wind moving a branch is not locomotion", "C": "Plants never move", "D": "Microorganisms cannot move by their own mechanisms"}, "answer": "B", "why": "Locomotion is self-propulsion. Wind moving a branch is not locomotion."}, {"n": 45, "likely": true, "stem": "\u003cem>Mimosa pudica\u003c/em> and the sundew of northern bogs are examples of", "options": {"A": "a touch-sensitive plant, and a carnivorous plant", "B": "two noble gases", "C": "the mimic and the bitter model in butterfly mimicry", "D": "cations and anions"}, "answer": "A", "why": "\u003cem>Mimosa pudica\u003c/em> is touch-sensitive. The sundew is carnivorous."}, {"n": 46, "likely": true, "stem": "Protoplasm is described as all of the following except", "options": {"A": "a complex mixture present in all living cells", "B": "material made of carbohydrates, fats, proteins, water, and other substances", "C": "something whose composition can differ between organisms and between parts of one organism, and which keeps changing", "D": "a particle found only in the nucleus of helium and absent from every other cell"}, "answer": "D", "why": "A, B, and C are what the slide says about protoplasm. D is false. Protoplasm is in all living cells, not only in helium."}, {"n": 47, "likely": true, "stem": "Diffusion is", "options": {"A": "movement from low concentration to high concentration, using ATP", "B": "the spread of molecules from an area of high concentration to an area of low concentration", "C": "disintegration of a nucleus", "D": "a change in atomic number"}, "answer": "B", "why": "Diffusion is high concentration to low concentration. The dye beaker ends at equilibrium. The body-organization ladder is still on the protoplasm slide: molecules to cells to tissues, organs, and organ systems."}, {"n": 48, "likely": true, "stem": "Which statement about growth matches the lecture?", "options": {"A": "Any accumulation of materials is growth", "B": "Getting larger is the only definition required", "C": "Growth is organized production of cellular materials, an increase in cell number or cell size, and changes in structure and state. Mere accumulation of materials is not growth", "D": "Growth is the loss of electrons"}, "answer": "C", "why": "Growth is organized cellular production, not a pile of accumulated material."}, {"n": 49, "likely": false, "stem": "Development is", "options": {"A": "a series of changes toward the mature form, giving specialized structures and functions", "B": "the diffusion of dye until equilibrium", "C": "the transfer of one electron from sodium to chlorine", "D": "another name for mass number"}, "answer": "A", "why": "Development is the series of changes to the mature, specialized form."}, {"n": 50, "likely": true, "stem": "Maintenance and repair is illustrated by", "options": {"A": "replacement of dead skin cells, healing of a cut finger, and tail recovery of a house lizard. When obvious growth appears to stop, this system continues as maintenance and repair", "B": "the naming of cobalt", "C": "ice sinking", "D": "a change in proton number during an ordinary reaction"}, "answer": "A", "why": "Skin replacement, a healed cut, and a lizard tail. Mature organisms keep this going as maintenance and repair."}, {"n": 51, "likely": true, "stem": "On the membrane figure for diffusion,", "options": {"A": "a penetrating solute can cross, so diffusion occurs; a nonpenetrating solute cannot cross, so no diffusion of that solute occurs", "B": "every solute crosses every membrane", "C": "the nonpenetrating solute is moved by ATP from low to high", "D": "water is the only substance that can be a penetrating solute, and it moves toward lower solute"}, "answer": "A", "why": "Green penetrating solute: diffusion occurs. Red nonpenetrating solute: no diffusion of that solute."}, {"n": 52, "likely": true, "stem": "The reproduction slide states that", "options": {"A": "nonliving objects also produce offspring like themselves", "B": "only living things produce offspring like themselves, and the stated law is “life produces life” and “like produces like”", "C": "every organism uses only one method, live birth", "D": "seeds are not a reproductive process"}, "answer": "B", "why": "Only living things reproduce their own kind. “Life produces life” and “like produces like.”"}, {"n": 53, "likely": false, "stem": "Approximate life spans given on the slide are", "options": {"A": "human about 70 years, horse about 30 years", "B": "human about 30 years, horse about 70 years", "C": "both about 1,000 years", "D": "human about 10 years, horse about 12 years"}, "answer": "A", "why": "Human about 70 years. Horse about 30 years."}, {"n": 54, "likely": true, "stem": "Response to stimuli is also called irritability. Which statement matches the lecture?", "options": {"A": "Plants have a nervous system and respond exactly as animals do", "B": "Plants lack a nervous system and therefore cannot respond", "C": "Plants lack a nervous system, yet they respond slowly to factors such as light, oxygen, and nutrients. Animals use a nervous system, including eyes, nose, and ears", "D": "Single-celled organisms cannot respond"}, "answer": "C", "why": "Plants have no nervous system and still respond, slowly. Animals use eyes, nose, and ears. Single cells can respond."}, {"n": 55, "likely": false, "stem": "Coordination and behaviour are defined as", "options": {"A": "coordination = doing the right thing at the right time; behaviour = a pattern of response to a stimulus", "B": "coordination = a pattern of response; behaviour = neutron number", "C": "both words mean mimicry", "D": "coordination = catabolism; behaviour = anabolism"}, "answer": "A", "why": "Coordination = the right thing at the right time. Behaviour = a pattern of response to a stimulus."}, {"n": 56, "likely": true, "stem": "Variation, as defined here, is", "options": {"A": "any difference between two kingdoms", "B": "differences in characteristics among individuals of the same species. Many variations have little or no effect on survival, and a variation may be advantageous or disadvantageous", "C": "always fatal", "D": "possible only in plants"}, "answer": "B", "why": "Variation is within one species. Many variations do little, and they can help or harm."}, {"n": 57, "likely": true, "stem": "Osmosis is", "options": {"A": "ATP-driven movement of any solute from low to high concentration", "B": "the diffusion of water across a membrane, toward the side with higher solute concentration and therefore lower water concentration", "C": "sharing of electrons in O2", "D": "catabolism of food"}, "answer": "B", "why": "Osmosis is diffusion of water across a membrane toward higher solute."}, {"n": 58, "likely": true, "stem": "Adaptation is defined as", "options": {"A": "a single organism deciding to change during its own life", "B": "the evolutionary process by which populations become better suited to their environment over generations", "C": "the diffusion of water", "D": "the gain of electrons"}, "answer": "B", "why": "Adaptation is populations, over generations, becoming better suited. That is also the evolution theme: populations change over generations."}, {"n": 59, "likely": true, "stem": "In the mimicry example,", "options": {"A": "the monarch mimics the viceroy, and the viceroy is bitter", "B": "the viceroy mimics the monarch by coloration, and the monarch is bitter, so predators avoid it", "C": "both butterflies are cations", "D": "hibernation is the bitter taste"}, "answer": "B", "why": "The viceroy is the mimic. The monarch is bitter, so predators avoid that coloration."}, {"n": 60, "likely": true, "stem": "Metabolism is", "options": {"A": "only the building reactions", "B": "only the breaking reactions", "C": "the sum of all chemical reactions and processes in an organism", "D": "the passage of water across a membrane"}, "answer": "C", "why": "Metabolism is the sum of all the chemical reactions and processes."}, {"n": 61, "likely": true, "stem": "Anabolism and catabolism are", "options": {"A": "anabolism builds up; catabolism breaks down", "B": "anabolism breaks down; catabolism builds up", "C": "both words mean diffusion", "D": "both words mean a gain of neutrons"}, "answer": "A", "why": "Anabolism builds. Catabolism breaks. The pathway figure also shows energy lost as heat."}, {"n": 62, "likely": false, "stem": "Life processes the lecture ties to metabolism are", "options": {"A": "ingestion, digestion, assimilation, respiration, and excretion", "B": "osmosis, tonicity, pH, buffer, and isotope", "C": "botany, zoology, mycology, virology, and entomology", "D": "adhesion only"}, "answer": "A", "why": "Ingestion, digestion, assimilation, respiration, excretion."}, {"n": 63, "likely": true, "stem": "The opening claim of the chemistry lectures is that", "options": {"A": "biology can ignore chemistry", "B": "life depends on chemistry, because food and inhaled oxygen are used in reactions that keep the body alive, and living things are made of chemical compounds", "C": "only geneticists need chemistry", "D": "compounds are found only in nonliving buildings"}, "answer": "B", "why": "Life depends on chemistry. Food and oxygen enter reactions that keep you alive."}, {"n": 64, "likely": true, "stem": "In the carbon monoxide figure, CO binds very tightly to hemoglobin. The direct result shown is that", "options": {"A": "oxygen and carbon dioxide can no longer be carried", "B": "the red cell gains a nucleus", "C": "sodium becomes a noble gas", "D": "water moves into a plant cell and the cell is labeled flaccid"}, "answer": "A", "why": "CO binds hemoglobin very tightly, so O2 and CO2 can no longer be carried."}, {"n": 65, "likely": false, "stem": "The same figure states that hemoglobin normally carries", "options": {"A": "only carbon monoxide", "B": "oxygen and carbon dioxide", "C": "neutrons and protons", "D": "glucose and starch as gases"}, "answer": "B", "why": "Hemoglobin normally carries oxygen and carbon dioxide."}, {"n": 66, "likely": true, "stem": "In the sickle-cell figure, the protein change is", "options": {"A": "GLU to VAL", "B": "VAL to GLU", "C": "Na+ to Cl−", "D": "producer to tertiary consumer"}, "answer": "A", "why": "The protein letters change from GLU to VAL."}, {"n": 67, "likely": true, "stem": "The DNA change drawn for that mutation is", "options": {"A": "GAG (with CTC) becoming GTG (with CAC), so the RNA codon goes from GAG to GUG", "B": "a change in neutron number from 6 to 8", "C": "loss of the plasma membrane only", "D": "carbon-12 becoming carbon-14"}, "answer": "A", "why": "DNA GAG/CTC becomes GTG/CAC. RNA GAG becomes GUG."}, {"n": 68, "likely": true, "stem": "The protein slide states the relationship", "options": {"A": "function → heat → neutron → isotope", "B": "sequence → folding → structure → function", "C": "osmosis → tonicity → pH → cobalt", "D": "community → atom → electron → biosphere"}, "answer": "B", "why": "Sequence folds into structure, and structure performs function."}, {"n": 69, "likely": false, "stem": "The small molecule beside that protein figure is a general amino acid. It shows a central carbon attached to H, an amino nitrogen, a carboxyl group, and", "options": {"A": "an R group", "B": "a chloride ion only", "C": "a xylem wall", "D": "eight neutrons"}, "answer": "A", "why": "The general amino acid has an R group plus H, nitrogen, and a carboxyl group."}, {"n": 70, "likely": true, "stem": "On the big hierarchy figure, the level at which “Life” is marked is the", "options": {"A": "atom", "B": "molecule", "C": "cell", "D": "biosphere, skipping the cell"}, "answer": "C", "why": "The figure marks Life at the cell."}, {"n": 71, "likely": false, "stem": "Which example is paired with the correct level on that figure?", "options": {"A": "Pride of lions — community", "B": "Lions and zebras — population", "C": "Pride of lions — population; lions and zebras — community", "D": "\u003cem>Panthera leo\u003c/em> — macromolecule"}, "answer": "C", "why": "A pride is a population. Lions and zebras together are a community. \u003cem>Panthera leo\u003c/em> is the organism."}, {"n": 72, "likely": false, "stem": "An ecosystem, on that figure, differs from a community because the ecosystem example includes", "options": {"A": "lions, zebras, and the environment. The biosphere on the same figure is life on Earth", "B": "only one lion", "C": "only the atom oxygen", "D": "only epithelial tissue"}, "answer": "A", "why": "Ecosystem = organisms plus the environment. Biosphere = life on Earth."}, {"n": 73, "likely": true, "stem": "The comparison figure of diffusion and osmosis shows", "options": {"A": "osmosis across a semipermeable membrane, with water moving from pure water toward the solution, and diffusion from a high-concentration region toward a low-concentration region", "B": "both processes using ATP and moving solute from low to high", "C": "sugar crossing into pure water, which the slide calls osmosis", "D": "diffusion that requires a membrane and osmosis that does not"}, "answer": "A", "why": "Osmosis needs the semipermeable membrane and moves water toward solute. Diffusion is the high-to-low spread."}, {"n": 74, "likely": true, "stem": "Atomic number is", "options": {"A": "protons plus neutrons", "B": "the number of protons in the nucleus, and it determines the element", "C": "the number of electrons only, with protons free to vary inside one element", "D": "always equal to the number of neutrons"}, "answer": "B", "why": "Atomic number = protons, and that number decides the element."}, {"n": 75, "likely": true, "stem": "A neutral atom has", "options": {"A": "more protons than electrons", "B": "equal numbers of electrons and protons", "C": "no protons", "D": "a proton number that changes in every chemical reaction"}, "answer": "B", "why": "A neutral atom has equal electrons and protons. Proton number is fixed for the element."}, {"n": 76, "likely": true, "stem": "Active transport is", "options": {"A": "movement of substances across a cell membrane from low concentration to high concentration, using ATP", "B": "spread from high concentration to low concentration with no energy named", "C": "water moving toward lower solute", "D": "radioactive decay of carbon-14"}, "answer": "A", "why": "Active transport goes from low to high and uses ATP."}, {"n": 77, "likely": true, "stem": "Mass number is", "options": {"A": "protons only", "B": "electrons only", "C": "protons plus neutrons", "D": "protons minus electrons"}, "answer": "C", "why": "Mass number = protons + neutrons."}, {"n": 78, "likely": true, "stem": "Isotopes of an element differ in", "options": {"A": "proton number", "B": "neutron number", "C": "the name of the element", "D": "whether they are hydrophilic"}, "answer": "B", "why": "Isotopes differ in neutrons, not protons."}, {"n": 79, "likely": true, "stem": "Carbon-12, carbon-13, and carbon-14 have 6 protons each. Their neutrons are", "options": {"A": "6, 7, and 8", "B": "12, 13, and 14", "C": "6, 6, and 6", "D": "2, 8, and 8"}, "answer": "A", "why": "6, 7, and 8 neutrons. A neutral carbon atom also has 6 electrons, because electrons equal protons."}, {"n": 80, "likely": true, "stem": "Tonicity is", "options": {"A": "a unit used to report pH", "B": "the effect of a solution on the osmotic movement of water across a cell membrane. It has no units. It compares non-penetrating solutes outside the cell with those inside", "C": "protons plus neutrons", "D": "the attraction of water to lignin"}, "answer": "B", "why": "Tonicity has no units. It is about non-penetrating solutes and the direction water moves."}, {"n": 81, "likely": true, "stem": "A radioisotope is an isotope with", "options": {"A": "a stable noble-gas shell and no nucleus", "B": "an unstable nucleus", "C": "equal protons and neutrons by definition", "D": "a positive charge from gaining electrons"}, "answer": "B", "why": "A radioisotope has an unstable nucleus."}, {"n": 82, "likely": false, "stem": "Radioactive decay is the process in which atoms of a radioisotope", "options": {"A": "share electrons to form H2", "B": "spontaneously emit energy and subatomic particles when the nucleus disintegrates", "C": "become less acidic without a buffer", "D": "turn into a community"}, "answer": "B", "why": "Radioactive decay: the nucleus disintegrates and emits energy and subatomic particles."}, {"n": 83, "likely": true, "stem": "An ion is", "options": {"A": "a neutral molecule of one element", "B": "an atom, or group of atoms, with a net positive or negative charge", "C": "a form of an element that differs only in neutrons", "D": "a vessel element with lignin"}, "answer": "B", "why": "An ion has a net charge. An isotope does not, merely because of neutrons."}, {"n": 84, "likely": true, "stem": "A cation and an anion form when a neutral atom", "options": {"A": "loses electrons (cation, positive) or gains electrons (anion, negative). Proton number does not change", "B": "gains electrons (cation) or loses electrons (anion)", "C": "changes proton number", "D": "changes neutron number and keeps the same charge"}, "answer": "A", "why": "Loss of electrons → cation, positive. Gain → anion, negative. Protons stay."}, {"n": 85, "likely": true, "stem": "The ion figures give these counts", "options": {"A": "Na+ has 11 protons and 10 electrons; Cl− has 17 protons and 18 electrons", "B": "Na+ has 11 protons and 12 electrons; Cl− has 17 protons and 16 electrons", "C": "Na+ has 10 protons and 11 electrons; Cl− has 18 protons and 17 electrons", "D": "both ions have equal protons and electrons"}, "answer": "A", "why": "Na+ is 11 protons and 10 electrons. Cl− is 17 protons and 18 electrons."}, {"n": 86, "likely": false, "stem": "A molecule, as defined in the lecture, is", "options": {"A": "always charged", "B": "at least two atoms in a definite arrangement and a fixed ratio, held by chemical forces, and electrically neutral. Examples on the slide include O2, H2, H2O, and C6H12O6", "C": "a single atom of sodium", "D": "any mixture whose ratio can change freely"}, "answer": "B", "why": "A molecule is neutral, at least two atoms, fixed ratio. Slide examples: O2, H2, H2O, C6H12O6."}, {"n": 87, "likely": true, "stem": "Which statement matches the tonicity definitions?", "options": {"A": "Hypotonic: less solute outside, so water enters. Isotonic: equal solute, so water moves both ways with no net change. Hypertonic: more solute outside, so water leaves. HYPO means less and HYPER means more", "B": "Hypotonic means more solute outside, so water leaves", "C": "Isotonic means the cell always bursts", "D": "These words are units of atomic mass"}, "answer": "A", "why": "Water enters in hypotonic solution, does not change net amount in isotonic solution, and leaves in hypertonic solution."}, {"n": 88, "likely": true, "stem": "Carbon, cobalt, and carbon monoxide are distinguished as", "options": {"A": "C, Co, and CO respectively: carbon, cobalt, and a compound of carbon and oxygen", "B": "all three are the same element", "C": "Co is carbon and C is cobalt", "D": "CO is a noble gas"}, "answer": "A", "why": "C is carbon, Co is cobalt, CO is carbon monoxide."}, {"n": 89, "likely": true, "stem": "An element, unlike a compound,", "options": {"A": "can be broken into simpler substances by ordinary chemical reactions", "B": "cannot be broken down into other substances by chemical reactions, and contains atoms with the same number of protons", "C": "must contain at least two different elements", "D": "is always an ion"}, "answer": "B", "why": "An element is not broken into other substances by chemical reactions. A compound contains different elements."}, {"n": 90, "likely": true, "stem": "In hypotonic, isotonic, and hypertonic solution, the red blood cell on the figure is", "options": {"A": "shriveled, then lysed, then normal", "B": "lysed, then normal, then shriveled", "C": "turgid, then flaccid, then plasmolyzed", "D": "plasmolyzed in all three"}, "answer": "B", "why": "Animal cell: lysed, normal, shriveled."}, {"n": 91, "likely": true, "stem": "O2 is best classified, using the three drawings, as", "options": {"A": "a molecule of an element, not a compound", "B": "a compound, because two atoms are present", "C": "an ion", "D": "a mixture with no fixed ratio"}, "answer": "A", "why": "O2 is a molecule of one element. Two atoms do not make it a compound."}, {"n": 92, "likely": false, "stem": "H2O is", "options": {"A": "a molecule of a compound: different elements in a fixed ratio", "B": "an isotope of hydrogen", "C": "a noble gas", "D": "a cation"}, "answer": "A", "why": "H2O has different elements in a fixed ratio, so it is a molecule of a compound."}, {"n": 93, "likely": true, "stem": "Atoms with vacancies in the outer shell", "options": {"A": "never interact", "B": "give up, acquire, or share electrons until the outer shell has no vacancies. The most stable state is no vacancies", "C": "change proton number until the shell is full", "D": "become radioisotopes by definition"}, "answer": "B", "why": "Vacancies lead the atom to give up, acquire, or share electrons. No vacancies is the stable state."}, {"n": 94, "likely": false, "stem": "Which atoms are drawn in the no-vacancy state?", "options": {"A": "H, Na, and Cl", "B": "He, Ne, and Ar. The noble-gas column of the periodic table is labeled the no-vacancy state", "C": "only carbon", "D": "Na+ and a water molecule, which are the same thing"}, "answer": "B", "why": "He, Ne, and Ar are drawn full. That column is the no-vacancy state. H, Na, and Cl have vacancies."}, {"n": 95, "likely": true, "stem": "In hypotonic, isotonic, and hypertonic solution, the plant cell on the figure is", "options": {"A": "lysed, normal, and shriveled", "B": "shriveled, lysed, and normal", "C": "turgid (normal), flaccid, and plasmolyzed", "D": "flaccid, plasmolyzed, and turgid"}, "answer": "C", "why": "Plant cell: turgid (normal), flaccid, plasmolyzed. Normal for the plant is the hypotonic panel."}, {"n": 96, "likely": true, "stem": "Which statement matches the acid, base, and pH slide?", "options": {"A": "An acid increases H+. A base decreases H+ or accepts H+. On the pH scale, 7 is neutral, lower values are more acidic, higher values are more alkaline, and the scale is logarithmic", "B": "An acid removes H+, and pH 7 is the most acidic point", "C": "A higher pH is more acidic", "D": "pH measures neutron number"}, "answer": "A", "why": "Acid up, H+ up. Base down, or the base accepts H+. pH 7 is neutral. Lower pH is more acidic."}, {"n": 97, "likely": true, "stem": "An ionic bond, as taught here, is", "options": {"A": "equal sharing with no ions", "B": "transfer of outer electrons, described as strong. The example is NaCl, sodium and chlorine in a 1:1 ratio. Sodium’s outer shell has one electron and chlorine’s has seven; the electron is transferred", "C": "a hydrogen bond between two water molecules", "D": "the diffusion of dye"}, "answer": "B", "why": "Ionic bond = electron transfer, called strong. NaCl is the 1:1 example."}, {"n": 98, "likely": false, "stem": "Ionic compounds dissolved in water", "options": {"A": "stay as intact neutral molecules and do not conduct electricity", "B": "dissociate into cations and anions that conduct electricity; those ions are electrolytes", "C": "become nonpolar", "D": "lose protons and become a new element"}, "answer": "B", "why": "In water the ionic compound separates into ions that conduct electricity: electrolytes. “Strong” does not mean “stays together in water.”"}, {"n": 99, "likely": true, "stem": "A covalent bond", "options": {"A": "transfers electrons and must produce a cation", "B": "is sharing of outer electrons, used when transfer is not favorable. O2 and H2 are the examples", "C": "is always a hydrogen bond", "D": "occurs only inside the nucleus"}, "answer": "B", "why": "Covalent bond = sharing, when transfer is not favorable. O2 and H2."}, {"n": 100, "likely": true, "stem": "A buffer, and the bicarbonate figure, are described as follows", "options": {"A": "A buffer resists a change in pH when acid or alkali is added. Buffers keep the pH of body fluids stable and are part of homeostasis. If pH rises, carbonic acid (H2CO3) donates H+. If pH drops, bicarbonate (HCO3−) accepts H+. The figure marks lungs on the CO2 side and kidneys on the bicarbonate side", "B": "A buffer is designed to make pH swing as far as possible. Bicarbonate donates H+ when pH falls", "C": "Carbonic acid is the H+ acceptor used when pH falls", "D": "Buffers work by changing the proton number of carbon"}, "answer": "A", "why": "Buffer resists pH change and serves homeostasis. Rise in pH: H2CO3 donates H+. Drop in pH: HCO3− accepts H+."}];
+const BY = Object.fromEntries(BANK.map((q) => [q.n, q]));
+const REHEARSALS = {
+  A: {
+    ids: [6, 12, 24, 32, 43, 48, 54, 59, 61, 67, 85, 35, 57, 90, 100],
+    title: "Dress rehearsal A",
+    blurb: "Fifteen questions, about 15 minutes, closed notes. This mix is the shape of the real paper: history and themes, one number, one case study, bonds, water movement, tonicity."
+  },
+  B: {
+    ids: [1, 7, 17, 23, 40, 44, 52, 58, 64, 70, 79, 8, 47, 95, 96],
+    title: "Dress rehearsal B",
+    blurb: "A second paper, so A is not the only pattern you have seen. Fifteen minutes, closed notes."
+  }
+};
+const TRAPS = [35, 85, 87, 90, 95, 100];
+const KEY = "bio103-quiz1-practice-v1";
+const paper = document.getElementById("paper");
+const grid = document.getElementById("grid");
+
+function fresh() {
+  return {
+    answers: {},
+    checked: {},
+    mode: "all",
+    filter: "all",
+    focus: 1,
+    immediate: false,
+    rehearsals: {
+      A: { endsAt: null, submitted: false },
+      B: { endsAt: null, submitted: false }
+    }
+  };
+}
+function load() {
+  const base = fresh();
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || "null");
+    if (!saved) return base;
+    base.answers = saved.answers || {};
+    base.checked = saved.checked || {};
+    base.mode = saved.mode || "all";
+    base.filter = "all";
+    base.immediate = !!saved.immediate;
+    if (saved.rehearsals) {
+      for (const id of ["A", "B"]) {
+        const r = saved.rehearsals[id] || {};
+        base.rehearsals[id] = { endsAt: r.endsAt || null, submitted: !!r.submitted };
+      }
+    }
+  } catch (err) { /* keep a clean paper */ }
+  return base;
+}
+let state = load();
+
+function save() {
+  const { focus, ...rest } = state;
+  localStorage.setItem(KEY, JSON.stringify(rest));
+}
+function idsFor(mode) {
+  if (mode === "all") return BANK.map((q) => q.n);
+  if (mode === "A" || mode === "B") return REHEARSALS[mode].ids;
+  const start = Number(mode);
+  return Array.from({ length: 20 }, (_, i) => start + i);
+}
+function rehearsalMode() {
+  return state.mode === "A" || state.mode === "B";
+}
+function rehearsalOpen() {
+  if (!rehearsalMode()) return false;
+  return !state.rehearsals[state.mode].submitted;
+}
+function revealed(n) {
+  if (rehearsalOpen() && REHEARSALS[state.mode].ids.includes(n)) return false;
+  return !!state.checked[String(n)];
+}
+function passes(q) {
+  if (state.filter === "likely") return q.likely;
+  if (state.filter === "open") return !state.answers[String(q.n)];
+  if (state.filter === "missed") return revealed(q.n) && state.answers[String(q.n)] !== q.answer;
+  return true;
+}
+function stats(ids) {
+  let marked = 0, checked = 0, correct = 0, blank = 0;
+  ids.forEach((n) => {
+    const chosen = state.answers[String(n)];
+    if (chosen) marked += 1;
+    else blank += 1;
+    if (revealed(n)) {
+      checked += 1;
+      if (chosen === BY[n].answer) correct += 1;
+    }
+  });
+  return { marked, checked, correct, blank, total: ids.length };
+}
+function groups(ids) {
+  if (rehearsalMode()) return [{ title: REHEARSALS[state.mode].title, ids, rehearsal: true }];
+  const chunks = [];
+  for (let i = 0; i < ids.length; i += 20) {
+    const slice = ids.slice(i, i + 20);
+    const a = slice[0], b = slice[slice.length - 1];
+    chunks.push({ title: `Questions ${a}–${b}`, ids: slice, rehearsal: false });
+  }
+  return chunks;
+}
+
+function pick(n, letter) {
+  if (revealed(n)) return;
+  state.answers[String(n)] = letter;
+  state.focus = n;
+  if (state.immediate && !rehearsalOpen()) state.checked[String(n)] = true;
+  save();
+  render();
+  const input = paper.querySelector(`input[name="q${n}"][value="${letter}"]`);
+  if (input) input.focus({ preventScroll: true });
+}
+function checkIds(ids) {
+  ids.forEach((n) => { state.checked[String(n)] = true; });
+  save();
+  render();
+  const firstMiss = ids.find((n) => state.answers[String(n)] !== BY[n].answer);
+  document.getElementById(`q-${firstMiss || ids[0]}`)?.scrollIntoView({ block: "center" });
+}
+function wipe(ids) {
+  ids.forEach((n) => {
+    delete state.answers[String(n)];
+    delete state.checked[String(n)];
+  });
+}
+function retryIds(ids) {
+  wipe(ids);
+  save();
+  render();
+}
+function startRehearsal(id) {
+  REHEARSALS[id].ids.forEach((n) => {
+    delete state.answers[String(n)];
+    delete state.checked[String(n)];
+  });
+  state.rehearsals[id] = { endsAt: Date.now() + 15 * 60 * 1000, submitted: false };
+  save();
+  render();
+}
+function handIn(id) {
+  const run = state.rehearsals[id];
+  if (!run || run.submitted) return;
+  run.submitted = true;
+  REHEARSALS[id].ids.forEach((n) => { state.checked[String(n)] = true; });
+  save();
+  render();
+  paper.querySelector(".report")?.scrollIntoView({ block: "start" });
+}
+function advice(ids) {
+  const s = stats(ids);
+  if (s.checked !== ids.length) return "";
+  const traps = TRAPS.filter((n) => ids.includes(n) && state.answers[String(n)] !== BY[n].answer);
+  const trapLine = traps.length
+    ? `A miss on ${traps.join(", ")} is more expensive than a miss on a single branch name. Those are the usual 15-question traps.`
+    : "";
+  if (rehearsalMode()) {
+    const perfect = s.correct === 15
+      ? "15 out of 15, with the reason available in your own words, is the standard this quiz asks for."
+      : "";
+    const blanks = s.blank ? `${s.blank} left blank, counted as misses.` : "";
+    return [perfect, blanks, trapLine].filter(Boolean).join(" ");
+  }
+  if (state.mode === "all" && ids.length === 100) {
+    let band = "Below 75. Rebuild the cram sheet from memory before a second full attempt.";
+    if (s.correct >= 90) band = "90 or above. Do Dress rehearsal A under the timer. Review only the misses.";
+    else if (s.correct >= 75) band = "75 to 89. Reread the comparison tables in the study guide, then redo every miss.";
+    return [band, trapLine].filter(Boolean).join(" ");
+  }
+  return trapLine;
+}
+
+function render() {
+  const y = window.scrollY;
+  const ids = idsFor(state.mode);
+  const s = stats(ids);
+  const score = document.getElementById("score");
+  score.innerHTML = s.checked
+    ? `${s.correct} correct <small>of ${s.checked} checked, ${s.marked} marked</small>`
+    : `${s.marked} marked <small>of ${s.total}</small>`;
+
+  document.getElementById("mode").value = state.mode;
+  document.getElementById("immediate").checked = state.immediate;
+  document.getElementById("immediate").disabled = rehearsalOpen();
+  document.querySelectorAll("[data-filter]").forEach((btn) => {
+    btn.setAttribute("aria-pressed", String(btn.dataset.filter === state.filter));
+  });
+
+  grid.innerHTML = ids.map((n) => {
+    const q = BY[n];
+    const chosen = state.answers[String(n)];
+    const cls = ["cell"];
+    if (revealed(n)) cls.push(chosen === q.answer ? "correct" : "wrong");
+    else if (chosen) cls.push("marked");
+    if (q.likely) cls.push("likely-mark");
+    if (state.focus === n) cls.push("current");
+    const label = revealed(n)
+      ? `Question ${n}, ${chosen === q.answer ? "correct" : "missed"}`
+      : `Question ${n}${chosen ? ", marked" : ""}`;
+    return `<button type="button" class="${cls.join(" ")}" data-n="${n}" aria-label="${label}">${n}</button>`;
+  }).join("");
+
+  const shown = ids.filter((n) => passes(BY[n]));
+  document.getElementById("rail-note").textContent = shown.length === ids.length
+    ? `${ids.length} on this paper.`
+    : `Showing ${shown.length} of ${ids.length}.`;
+
+  const note = advice(ids);
+  const run = rehearsalMode() ? state.rehearsals[state.mode] : null;
+  let head = "";
+  if (!rehearsalMode()) {
+    head = `<p class="lede">Mark a letter. Check a batch of 20 before you read the reason. Two lecture wordings decide several items: logos means thought, and hydrogen bonds are not chemical bonds.</p>`;
+  } else {
+    const r = REHEARSALS[state.mode];
+    let action = "";
+    if (!run.endsAt && !run.submitted) {
+      action = `<button type="button" class="primary" data-act="start" data-id="${state.mode}">Start a clean 15 minutes</button>`;
+    } else if (!run.submitted) {
+      action = `<button type="button" class="primary" data-act="hand" data-id="${state.mode}">Hand in</button>`;
+    } else {
+      action = `<button type="button" data-act="retry-paper" data-id="${state.mode}">Try this paper again</button>`;
+    }
+    const warn = (!run.endsAt && !run.submitted)
+      ? `<p>Starting clears any marks already on these 15 questions. The other questions stay as they are.</p>`
+      : "";
+    head = `<div class="batch"><div><h2>${r.title}</h2><p>${r.blurb}</p>${warn}</div>${action}</div>`;
+  }
+  if (note) {
+    const klass = s.correct === s.checked ? "report" : "report warn";
+    head += `<div class="${klass}"><p><strong>${s.correct} of ${s.total}.</strong> ${note}</p></div>`;
+  }
+
+  if (!shown.length) {
+    const empty = state.filter === "missed" && stats(ids).checked === 0
+      ? "Misses show up after you check a batch. Choose All to see every question."
+      : "Nothing on this paper matches this filter. Choose All to see every question.";
+    paper.innerHTML = head + `<p class="empty">${empty}</p>`;
+  } else {
+    paper.innerHTML = head + groups(ids).map((group) => {
+      const visible = group.ids.filter((n) => passes(BY[n]));
+      if (!visible.length) return "";
+      let bar = "";
+      if (!group.rehearsal) {
+        const gs = stats(group.ids);
+        const ready = group.ids.every((n) => state.answers[String(n)]);
+        const done = group.ids.every((n) => revealed(n));
+        const status = done
+          ? `${gs.correct} of ${group.ids.length} correct`
+          : ready
+            ? "All 20 are marked."
+            : `${group.ids.length - gs.marked} still open`;
+        const button = done
+          ? `<button type="button" data-act="retry" data-ids="${group.ids.join(",")}">Try these 20 again</button>`
+          : `<button type="button" class="primary" data-act="check" data-ids="${group.ids.join(",")}" ${ready ? "" : "disabled"}>Check ${group.title.replace("Questions ", "")}</button>`;
+        bar = `<div class="batch"><div><h2>${group.title}</h2><p>${status}</p></div>${button}</div>`;
+      }
+      return bar + visible.map(questionHTML).join("");
+    }).join("");
+  }
+
+  paintClock();
+  pinHeader();
+  watchQuestions();
+  window.scrollTo(0, y);
+}
+
+function questionHTML(n) {
+  const q = BY[n];
+  const chosen = state.answers[String(n)] || "";
+  const open = revealed(n);
+  const miss = open && chosen !== q.answer;
+  const opts = ["A", "B", "C", "D"].map((letter) => {
+    const cls = ["opt"];
+    if (open && letter === q.answer) cls.push("is-key");
+    if (open && letter === chosen && letter !== q.answer) cls.push("is-wrong");
+    return `<label class="${cls.join(" ")}">
+      <input type="radio" name="q${n}" value="${letter}" ${chosen === letter ? "checked" : ""} ${open ? "disabled" : ""}>
+      <span class="letter">${letter}</span>
+      <span class="text">${q.options[letter]}</span>
+    </label>`;
+  }).join("");
+  const why = open ? `<p class="why">${q.why}</p>` : "";
+  const tag = q.likely ? `<span class="likely">Likely</span>` : "";
+  return `<article class="q${miss ? " is-miss" : ""}${state.focus === n ? " current" : ""}" id="q-${n}" data-n="${n}">
+    <div class="num">${n}</div>
+    <div>
+      <h3 class="stem" id="stem-${n}">${tag}${q.stem}</h3>
+      <div class="opts" role="radiogroup" aria-labelledby="stem-${n}">${opts}${why}</div>
+    </div>
+  </article>`;
+}
+
+function paintClock() {
+  const el = document.getElementById("clock");
+  if (!rehearsalMode()) { el.textContent = ""; el.hidden = true; el.classList.remove("warn"); return; }
+  const run = state.rehearsals[state.mode];
+  if (!run.endsAt || run.submitted) { el.textContent = ""; el.hidden = true; el.classList.remove("warn"); return; }
+  el.hidden = false;
+  const left = Math.max(0, run.endsAt - Date.now());
+  const secs = Math.ceil(left / 1000);
+  el.textContent = `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`;
+  el.classList.toggle("warn", secs <= 60);
+  if (left === 0) handIn(state.mode);
+}
+function pinHeader() {
+  document.documentElement.style.setProperty("--head", document.querySelector("header").offsetHeight + "px");
+}
+let observer;
+function watchQuestions() {
+  observer?.disconnect();
+  observer = new IntersectionObserver((entries) => {
+    const hit = entries.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (!hit) return;
+    const n = Number(hit.target.dataset.n);
+    if (state.focus === n) return;
+    state.focus = n;
+    document.querySelectorAll(".current").forEach((el) => el.classList.remove("current"));
+    hit.target.classList.add("current");
+    grid.querySelector(`[data-n="${n}"]`)?.classList.add("current");
+  }, { rootMargin: "-30% 0px -55% 0px", threshold: [0.25, 0.6] });
+  paper.querySelectorAll(".q").forEach((el) => observer.observe(el));
+}
+function move(step) {
+  const ids = idsFor(state.mode).filter((n) => passes(BY[n]));
+  const i = Math.max(0, ids.indexOf(state.focus));
+  const n = ids[Math.min(ids.length - 1, Math.max(0, i + step))];
+  state.focus = n;
+  document.getElementById(`q-${n}`)?.scrollIntoView({ block: "center" });
+}
+
+document.getElementById("mode").addEventListener("change", (e) => {
+  state.mode = e.target.value;
+  state.filter = "all";
+  state.focus = idsFor(state.mode)[0];
+  save();
+  render();
+  paper.scrollIntoView({ behavior: "instant" });
+});
+document.getElementById("immediate").addEventListener("change", (e) => {
+  state.immediate = e.target.checked;
+  save();
+});
+document.getElementById("clear").addEventListener("click", () => {
+  if (!confirm("Clear every mark and both timers?")) return;
+  state = fresh();
+  save();
+  render();
+});
+grid.addEventListener("click", (e) => {
+  const btn = e.target.closest(".cell");
+  if (!btn) return;
+  state.focus = Number(btn.dataset.n);
+  document.getElementById(`q-${state.focus}`)?.scrollIntoView({ block: "start" });
+});
+document.querySelector(".filters").addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-filter]");
+  if (!btn) return;
+  state.filter = btn.dataset.filter;
+  save();
+  render();
+});
+paper.addEventListener("change", (e) => {
+  const input = e.target.closest('input[type="radio"]');
+  if (!input) return;
+  pick(Number(input.name.slice(1)), input.value);
+});
+paper.addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-act]");
+  if (!btn) return;
+  const ids = (btn.dataset.ids || "").split(",").filter(Boolean).map(Number);
+  if (btn.dataset.act === "check") checkIds(ids);
+  if (btn.dataset.act === "retry") retryIds(ids);
+  if (btn.dataset.act === "start") startRehearsal(btn.dataset.id);
+  if (btn.dataset.act === "hand") handIn(btn.dataset.id);
+  if (btn.dataset.act === "retry-paper") {
+    const id = btn.dataset.id;
+    wipe(REHEARSALS[id].ids);
+    state.rehearsals[id] = { endsAt: null, submitted: false };
+    save();
+    render();
+  }
+});
+document.addEventListener("keydown", (e) => {
+  const tag = document.activeElement?.tagName;
+  if (tag === "SELECT" || tag === "BUTTON" || document.activeElement?.id === "immediate") return;
+  const map = { a: "A", b: "B", c: "C", d: "D", "1": "A", "2": "B", "3": "C", "4": "D" };
+  const letter = map[e.key.toLowerCase()];
+  if (letter && state.focus) {
+    e.preventDefault();
+    pick(state.focus, letter);
+    return;
+  }
+  if (e.key === "ArrowDown" || e.key === "j") { e.preventDefault(); move(1); }
+  if (e.key === "ArrowUp" || e.key === "k") { e.preventDefault(); move(-1); }
+});
+window.addEventListener("resize", pinHeader);
+document.fonts?.ready?.then(pinHeader);
+setInterval(paintClock, 250);
+
+if (rehearsalMode()) {
+  const run = state.rehearsals[state.mode];
+  if (run.endsAt && !run.submitted && Date.now() >= run.endsAt) handIn(state.mode);
+}
+render();
+</script>
+</body>
+</html>
